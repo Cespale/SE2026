@@ -78,11 +78,11 @@ module.exports = (env, argv) => {
       allowedHosts: 'all',
 
       hot: false,
-      liveReload: false,
+      liveReload: true,
 
       client: {
         overlay: false,
-        reconnect: false,
+        reconnect: true,
         webSocketURL: {
           hostname: 'localhost',
           port: 5173,
@@ -95,7 +95,8 @@ module.exports = (env, argv) => {
         paths: ['src/**/*'],
         options: {
           ignored: ['**/public/**', '**/node_modules/**'],
-          usePolling: false,
+          usePolling: true,
+          interval: 1000,
         },
       },
     },

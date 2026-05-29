@@ -48,8 +48,13 @@ export function Sidebar() {
   const isCreator = isLoggedIn && userType >= 1;
   const isAdmin = isLoggedIn && userType === 2;
 
+  // 登录后:"我的" 链接到自己的用户主页(与右上角"个人主页"一致)
+  const myProfilePath = isLoggedIn && user?.id ? `/user/${user.id}` : '/profile';
+
   const menuItems = [
-    ...baseMenuItems,
+    ...baseMenuItems.map((item) =>
+      item.id === 'profile' ? { ...item, path: myProfilePath } : item
+    ),
     ...(isCreator ? creatorMenuItems : []),
     ...(isAdmin ? adminMenuItems : []),
   ];

@@ -15,7 +15,10 @@ import re
 
 
 from .database import Base, engine, get_db, SessionLocal
-from .models import Category, Comment, Danmaku, LiveRoom, User, Video
+from .models import (
+    Category, Comment, CommentMention, Conversation, Danmaku, Follow,
+    LiveRoom, Message, Notification, User, Video,
+)
 from .schemas import *
 from .security import create_token, get_current_user, hash_password, require_admin, require_creator, verify_password, parse_token
 from sqlalchemy import func
@@ -154,11 +157,15 @@ def video_out(v: Video) -> VideoOut:
         uploadTime=v.created_at.isoformat() if v.created_at else '', auditStatus=v.audit_status or 0
     )
 
-def comment_out(c: Comment) -> CommentOut:
-    return CommentOut(
+def comment_out(c: Comment, reply_count: int = 0) -> CommentOutV2:
+    reply_to_user = c.reply_to_user if c.reply_to_user_id else None
+    return CommentOutV2(
         id=str(c.id), content=c.content, userId=str(c.user_id), username=c.user.nickname if c.user else '匿名用户',
         userAvatar=c.user.avatar if c.user else '', videoId=str(c.video_id), parentId=str(c.parent_id) if c.parent_id else '0',
-        likeCount=c.like_count or 0, isTop=bool(c.is_top), createTime=c.created_at.isoformat() if c.created_at else ''
+        likeCount=c.like_count or 0, isTop=bool(c.is_top), createTime=c.created_at.isoformat() if c.created_at else '',
+        replyToUserId=str(c.reply_to_user_id) if c.reply_to_user_id else '',
+        replyToUsername=reply_to_user.nickname if reply_to_user else '',
+        replyCount=reply_count,
     )
 
 def danmaku_out(d: Danmaku) -> DanmakuOut:
@@ -688,9 +695,22 @@ def sync_local_videos_api(
     }
 
 
+def apply_social_migration():
+    """为已存在的 comments 表追加 reply_to_user_id 字段。新表由 create_all 处理。"""
+    from sqlalchemy import text
+    with engine.begin() as conn:
+        conn.execute(text(
+            "ALTER TABLE comments ADD COLUMN IF NOT EXISTS reply_to_user_id UUID"
+        ))
+
+
 @app.on_event('startup')
 def startup():
     Base.metadata.create_all(bind=engine)
+    try:
+        apply_social_migration()
+    except Exception as e:
+        print("社区互动迁移失败：", e)
     db = SessionLocal()
     try:
         seed_data(db)
@@ -867,20 +887,117 @@ def favorite_video(video_id: UUID, user: User = Depends(get_current_user), db: S
     v.favorite_count += 1; db.commit(); db.refresh(v)
     return video_out(v)
 
+MENTION_RE = re.compile(r'@([\w一-龥]+)')
+
+
+def parse_mentions(db: Session, content: str) -> List[User]:
+    """从评论正文里提取 @用户名,返回匹配到的用户列表(去重)。"""
+    names = list(dict.fromkeys(MENTION_RE.findall(content)))
+    if not names:
+        return []
+    users = db.query(User).filter(User.nickname.in_(names)).all()
+    return users
+
+
 @app.get('/api/videos/{video_id}/comments')
 def get_comments(video_id: UUID, db: Session = Depends(get_db)):
-    rows = db.query(Comment).filter(Comment.video_id == video_id).order_by(desc(Comment.created_at)).all()
-    return [comment_out(c).dict() for c in rows]
+    # 只返回顶层评论(parent_id 为空),回复数由前端按需展开拉取
+    rows = db.query(Comment).filter(
+        Comment.video_id == video_id,
+        Comment.parent_id == None,
+    ).order_by(desc(Comment.created_at)).all()
+    # 计算每条顶层评论的回复数
+    counts = {}
+    if rows:
+        parent_ids = [c.id for c in rows]
+        from sqlalchemy import func as sa_func
+        rc = (
+            db.query(Comment.parent_id, sa_func.count(Comment.id))
+            .filter(Comment.parent_id.in_(parent_ids))
+            .group_by(Comment.parent_id)
+            .all()
+        )
+        counts = {pid: cnt for pid, cnt in rc}
+    return [comment_out(c, counts.get(c.id, 0)).model_dump() for c in rows]
+
+
+@app.get('/api/comments/{comment_id}/replies')
+def get_comment_replies(comment_id: UUID, db: Session = Depends(get_db)):
+    rows = db.query(Comment).filter(Comment.parent_id == comment_id).order_by(Comment.created_at).all()
+    return [comment_out(c).model_dump() for c in rows]
+
 
 @app.post('/api/videos/{video_id}/comments')
-def add_comment(video_id: UUID, data: CommentCreate, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+def add_comment(
+    video_id: UUID, data: CommentCreateV2,
+    user: User = Depends(get_current_user), db: Session = Depends(get_db),
+):
     v = db.get(Video, video_id)
-    if not v: raise HTTPException(status_code=404, detail='视频不存在')
-    parent = None if data.parentId == '0' else data.parentId
-    c = Comment(content=data.content, user_id=user.id, video_id=video_id, parent_id=parent)
+    if not v:
+        raise HTTPException(status_code=404, detail='视频不存在')
+
+    parent_id = None if data.parentId == '0' else UUID(data.parentId)
+    reply_to_user_id = UUID(data.replyToUserId) if data.replyToUserId else None
+
+    # 如果是回复,校验父评论存在;并自动填充 reply_to_user_id
+    parent_comment: Optional[Comment] = None
+    if parent_id:
+        parent_comment = db.get(Comment, parent_id)
+        if not parent_comment or parent_comment.video_id != video_id:
+            raise HTTPException(status_code=400, detail='父评论不存在')
+        # 二级回复始终挂在顶层评论下(平铺,不无限嵌套)
+        if parent_comment.parent_id:
+            parent_id = parent_comment.parent_id
+        if not reply_to_user_id:
+            reply_to_user_id = parent_comment.user_id
+
+    c = Comment(
+        content=data.content,
+        user_id=user.id,
+        video_id=video_id,
+        parent_id=parent_id,
+        reply_to_user_id=reply_to_user_id,
+    )
     v.comment_count += 1
-    db.add(c); db.commit(); db.refresh(c)
-    return comment_out(c)
+    db.add(c)
+    db.flush()
+
+    # 解析 @提及 → 写入 comment_mentions,并向被 @ 的人发通知
+    mentioned = parse_mentions(db, data.content)
+    notify_to = set()
+    for u in mentioned:
+        if str(u.id) == str(user.id):
+            continue
+        db.add(CommentMention(comment_id=c.id, mentioned_user_id=u.id))
+        notify_to.add(str(u.id))
+
+    db.commit()
+    db.refresh(c)
+
+    # 通知:被 @ 的人
+    for uid_str in notify_to:
+        create_notification(
+            db, recipient_id=UUID(uid_str), sender_id=user.id,
+            notif_type=3, target_type=0, target_id=video_id,
+            content=f'{user.nickname} 在评论里 @了你: {data.content[:60]}',
+        )
+    # 通知:被回复的人
+    if reply_to_user_id and str(reply_to_user_id) not in notify_to:
+        create_notification(
+            db, recipient_id=reply_to_user_id, sender_id=user.id,
+            notif_type=1, target_type=0, target_id=video_id,
+            content=f'{user.nickname} 回复了你: {data.content[:60]}',
+        )
+    # 通知:视频作者(顶层评论才通知,避免和回复通知重复)
+    if not parent_id and v.uploader_id and str(v.uploader_id) != str(user.id) \
+            and str(v.uploader_id) not in notify_to:
+        create_notification(
+            db, recipient_id=v.uploader_id, sender_id=user.id,
+            notif_type=1, target_type=0, target_id=video_id,
+            content=f'{user.nickname} 评论了你的视频: {data.content[:60]}',
+        )
+
+    return comment_out(c).model_dump()
 
 @app.get('/api/videos/{video_id}/danmaku')
 def get_danmaku(video_id: UUID, db: Session = Depends(get_db)):
@@ -973,3 +1090,536 @@ async def live_ws(ws: WebSocket, room_id: str, token: str = ''):
     except WebSocketDisconnect:
         live_hub.disconnect(room_id, ws)
         await live_hub.broadcast(room_id, {'type': 'online', 'count': len(live_hub.rooms.get(room_id, []))})
+
+
+# ======================================================================
+# 社区互动:关注 / 粉丝
+# ======================================================================
+
+def user_brief(u: User) -> UserBrief:
+    return UserBrief(
+        id=str(u.id), account=u.account, nickname=u.nickname,
+        avatar=u.avatar or '', bio=u.bio or '',
+    )
+
+
+def create_notification(
+    db: Session,
+    *,
+    recipient_id,
+    sender_id,
+    notif_type: int,
+    target_type: int = 0,
+    target_id=None,
+    content: str = '',
+    auto_commit: bool = True,
+):
+    """统一创建通知。不要给自己发通知。"""
+    if str(recipient_id) == str(sender_id):
+        return None
+    n = Notification(
+        recipient_id=recipient_id,
+        sender_id=sender_id,
+        notif_type=notif_type,
+        target_type=target_type,
+        target_id=target_id,
+        content=content[:500],
+    )
+    db.add(n)
+    if auto_commit:
+        db.commit()
+        db.refresh(n)
+    return n
+
+
+@app.post('/api/users/{user_id}/follow')
+def follow_user(user_id: UUID, me: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    if str(user_id) == str(me.id):
+        raise HTTPException(status_code=400, detail='不能关注自己')
+    target = db.get(User, user_id)
+    if not target:
+        raise HTTPException(status_code=404, detail='用户不存在')
+
+    existing = db.query(Follow).filter(
+        Follow.follower_id == me.id,
+        Follow.followee_id == user_id,
+    ).first()
+    if existing:
+        return {'ok': True, 'isFollowing': True}
+
+    db.add(Follow(follower_id=me.id, followee_id=user_id))
+    db.commit()
+
+    create_notification(
+        db,
+        recipient_id=user_id,
+        sender_id=me.id,
+        notif_type=2,  # 关注
+        target_type=0,
+        target_id=None,
+        content=f'{me.nickname} 关注了你',
+    )
+    return {'ok': True, 'isFollowing': True}
+
+
+@app.delete('/api/users/{user_id}/follow')
+def unfollow_user(user_id: UUID, me: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    db.query(Follow).filter(
+        Follow.follower_id == me.id,
+        Follow.followee_id == user_id,
+    ).delete()
+    db.commit()
+    return {'ok': True, 'isFollowing': False}
+
+
+@app.get('/api/users/{user_id}/relation')
+def get_relation(user_id: UUID, me: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    is_following = db.query(Follow).filter(
+        Follow.follower_id == me.id, Follow.followee_id == user_id,
+    ).first() is not None
+    is_followed_by = db.query(Follow).filter(
+        Follow.follower_id == user_id, Follow.followee_id == me.id,
+    ).first() is not None
+    follower_count = db.query(Follow).filter(Follow.followee_id == user_id).count()
+    following_count = db.query(Follow).filter(Follow.follower_id == user_id).count()
+    return RelationOut(
+        isFollowing=is_following,
+        isFollowedBy=is_followed_by,
+        isMutual=is_following and is_followed_by,
+        followerCount=follower_count,
+        followingCount=following_count,
+    )
+
+
+@app.get('/api/users/{user_id}/followers')
+def list_followers(
+    user_id: UUID,
+    limit: int = Query(20, ge=1, le=100),
+    offset: int = Query(0, ge=0),
+    db: Session = Depends(get_db),
+):
+    rows = (
+        db.query(Follow, User)
+        .join(User, User.id == Follow.follower_id)
+        .filter(Follow.followee_id == user_id)
+        .order_by(desc(Follow.created_at))
+        .offset(offset).limit(limit).all()
+    )
+    return [
+        FollowListItem(
+            **user_brief(u).model_dump(),
+            followedAt=f.created_at.isoformat() if f.created_at else '',
+        ) for f, u in rows
+    ]
+
+
+@app.get('/api/users/{user_id}/following')
+def list_following(
+    user_id: UUID,
+    limit: int = Query(20, ge=1, le=100),
+    offset: int = Query(0, ge=0),
+    db: Session = Depends(get_db),
+):
+    rows = (
+        db.query(Follow, User)
+        .join(User, User.id == Follow.followee_id)
+        .filter(Follow.follower_id == user_id)
+        .order_by(desc(Follow.created_at))
+        .offset(offset).limit(limit).all()
+    )
+    return [
+        FollowListItem(
+            **user_brief(u).model_dump(),
+            followedAt=f.created_at.isoformat() if f.created_at else '',
+        ) for f, u in rows
+    ]
+
+
+@app.get('/api/users/{user_id}')
+def get_user_profile(user_id: UUID, db: Session = Depends(get_db)):
+    u = db.get(User, user_id)
+    if not u:
+        raise HTTPException(status_code=404, detail='用户不存在')
+    return user_out(u)
+
+
+# ======================================================================
+# 社区互动:通知中心
+# ======================================================================
+
+def notification_out(n: Notification) -> NotificationOut:
+    sender = n.sender
+    return NotificationOut(
+        id=str(n.id),
+        notifType=n.notif_type or 0,
+        targetType=n.target_type or 0,
+        targetId=str(n.target_id) if n.target_id else '',
+        senderId=str(n.sender_id) if n.sender_id else '',
+        senderName=sender.nickname if sender else '系统',
+        senderAvatar=sender.avatar if sender else '',
+        content=n.content or '',
+        isRead=bool(n.is_read),
+        createTime=n.created_at.isoformat() if n.created_at else '',
+    )
+
+
+@app.get('/api/notifications')
+def list_notifications(
+    notif_type: Optional[int] = Query(None, ge=0, le=4),
+    only_unread: bool = Query(False),
+    limit: int = Query(20, ge=1, le=100),
+    offset: int = Query(0, ge=0),
+    me: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    q = db.query(Notification).filter(Notification.recipient_id == me.id)
+    if notif_type is not None:
+        q = q.filter(Notification.notif_type == notif_type)
+    if only_unread:
+        q = q.filter(Notification.is_read == False)
+    rows = q.order_by(desc(Notification.created_at)).offset(offset).limit(limit).all()
+    return [notification_out(n) for n in rows]
+
+
+@app.get('/api/notifications/unread-count')
+def unread_count(me: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    notif_unread = db.query(Notification).filter(
+        Notification.recipient_id == me.id,
+        Notification.is_read == False,
+    ).count()
+    chat_unread = db.query(Message).filter(
+        Message.receiver_id == me.id,
+        Message.is_read == False,
+        Message.is_recalled == False,
+    ).count()
+    return UnreadCountOut(
+        total=notif_unread + chat_unread,
+        chat=chat_unread,
+        notification=notif_unread,
+    )
+
+
+@app.post('/api/notifications/{notif_id}/read')
+def mark_notification_read(
+    notif_id: UUID,
+    me: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    n = db.get(Notification, notif_id)
+    if not n or n.recipient_id != me.id:
+        raise HTTPException(status_code=404, detail='通知不存在')
+    n.is_read = True
+    db.commit()
+    return {'ok': True}
+
+
+@app.post('/api/notifications/read-all')
+def mark_all_read(
+    notif_type: Optional[int] = Query(None, ge=0, le=4),
+    me: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    q = db.query(Notification).filter(
+        Notification.recipient_id == me.id,
+        Notification.is_read == False,
+    )
+    if notif_type is not None:
+        q = q.filter(Notification.notif_type == notif_type)
+    q.update({Notification.is_read: True}, synchronize_session=False)
+    db.commit()
+    return {'ok': True}
+
+
+# ======================================================================
+# 社区互动:私聊
+# ======================================================================
+
+def _order_pair(a, b):
+    """保证 user_a_id < user_b_id,这样每对用户只会有一个会话。"""
+    sa, sb = str(a), str(b)
+    return (a, b) if sa < sb else (b, a)
+
+
+def get_or_create_conversation(db: Session, user1, user2) -> Conversation:
+    ua, ub = _order_pair(user1, user2)
+    conv = db.query(Conversation).filter(
+        Conversation.user_a_id == ua,
+        Conversation.user_b_id == ub,
+    ).first()
+    if conv:
+        return conv
+    conv = Conversation(user_a_id=ua, user_b_id=ub)
+    db.add(conv)
+    db.commit()
+    db.refresh(conv)
+    return conv
+
+
+def message_out(m: Message, sender_user: Optional[User] = None) -> MessageOut:
+    s = sender_user or m.sender
+    content = '消息已撤回' if m.is_recalled else (m.content or '')
+    return MessageOut(
+        id=str(m.id),
+        conversationId=str(m.conversation_id),
+        senderId=str(m.sender_id),
+        senderName=s.nickname if s else '',
+        senderAvatar=s.avatar if s else '',
+        receiverId=str(m.receiver_id),
+        content=content,
+        messageType=m.message_type or 0,
+        isRecalled=bool(m.is_recalled),
+        isRead=bool(m.is_read),
+        createTime=m.created_at.isoformat() if m.created_at else '',
+    )
+
+
+def conversation_out(db: Session, conv: Conversation, me_id) -> ConversationOut:
+    peer_id = conv.user_b_id if str(conv.user_a_id) == str(me_id) else conv.user_a_id
+    peer = db.get(User, peer_id)
+    last_msg = db.get(Message, conv.last_message_id) if conv.last_message_id else None
+    unread = db.query(Message).filter(
+        Message.conversation_id == conv.id,
+        Message.receiver_id == me_id,
+        Message.is_read == False,
+        Message.is_recalled == False,
+    ).count()
+    return ConversationOut(
+        id=str(conv.id),
+        peerId=str(peer_id),
+        peerName=peer.nickname if peer else '未知用户',
+        peerAvatar=peer.avatar if peer else '',
+        lastMessage=('[已撤回]' if last_msg and last_msg.is_recalled else (last_msg.content if last_msg else '')),
+        lastMessageType=last_msg.message_type if last_msg else 0,
+        lastMessageAt=conv.last_message_at.isoformat() if conv.last_message_at else '',
+        unreadCount=unread,
+    )
+
+
+class ChatHub:
+    """每个用户可同时有多端在线;按 user_id 广播。"""
+    def __init__(self):
+        self.user_conns: Dict[str, List[WebSocket]] = {}
+
+    async def connect(self, user_id: str, ws: WebSocket):
+        await ws.accept()
+        self.user_conns.setdefault(user_id, []).append(ws)
+
+    def disconnect(self, user_id: str, ws: WebSocket):
+        if user_id in self.user_conns and ws in self.user_conns[user_id]:
+            self.user_conns[user_id].remove(ws)
+            if not self.user_conns[user_id]:
+                del self.user_conns[user_id]
+
+    async def push_to_user(self, user_id: str, payload: dict):
+        dead = []
+        for ws in self.user_conns.get(user_id, []):
+            try:
+                await ws.send_json(payload)
+            except Exception:
+                dead.append(ws)
+        for ws in dead:
+            self.disconnect(user_id, ws)
+
+    def is_online(self, user_id: str) -> bool:
+        return user_id in self.user_conns and len(self.user_conns[user_id]) > 0
+
+
+chat_hub = ChatHub()
+
+
+@app.get('/api/chat/conversations')
+def list_conversations(me: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    convs = db.query(Conversation).filter(
+        or_(Conversation.user_a_id == me.id, Conversation.user_b_id == me.id)
+    ).all()
+    # 按最后消息时间倒序(无消息的放最后)
+    convs.sort(key=lambda c: (c.last_message_at is None, -(c.last_message_at.timestamp() if c.last_message_at else 0)))
+    return [conversation_out(db, c, me.id) for c in convs]
+
+
+@app.post('/api/chat/conversations')
+def create_conversation(payload: dict, me: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    peer_id_str = payload.get('peerId')
+    if not peer_id_str:
+        raise HTTPException(status_code=400, detail='缺少 peerId')
+    try:
+        peer_id = UUID(peer_id_str)
+    except ValueError:
+        raise HTTPException(status_code=400, detail='peerId 不是有效 UUID')
+    if str(peer_id) == str(me.id):
+        raise HTTPException(status_code=400, detail='不能跟自己聊天')
+    peer = db.get(User, peer_id)
+    if not peer:
+        raise HTTPException(status_code=404, detail='用户不存在')
+    conv = get_or_create_conversation(db, me.id, peer_id)
+    return conversation_out(db, conv, me.id)
+
+
+@app.get('/api/chat/conversations/{conv_id}/messages')
+def list_messages(
+    conv_id: UUID,
+    limit: int = Query(50, ge=1, le=200),
+    before: Optional[str] = Query(None, description='ISO 时间戳,只返回此时间之前的'),
+    me: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    conv = db.get(Conversation, conv_id)
+    if not conv or (str(conv.user_a_id) != str(me.id) and str(conv.user_b_id) != str(me.id)):
+        raise HTTPException(status_code=404, detail='会话不存在')
+    q = db.query(Message).filter(Message.conversation_id == conv_id)
+    if before:
+        try:
+            t = datetime.fromisoformat(before.replace('Z', '+00:00'))
+            q = q.filter(Message.created_at < t)
+        except ValueError:
+            pass
+    msgs = q.order_by(desc(Message.created_at)).limit(limit).all()
+    msgs.reverse()  # 时间正序返回
+    return [message_out(m) for m in msgs]
+
+
+async def _persist_and_push_message(
+    db: Session, sender: User, receiver_id, content: str, message_type: int
+) -> Message:
+    if not content.strip():
+        raise HTTPException(status_code=400, detail='消息不能为空')
+    if str(sender.id) == str(receiver_id):
+        raise HTTPException(status_code=400, detail='不能给自己发消息')
+    receiver = db.get(User, receiver_id)
+    if not receiver:
+        raise HTTPException(status_code=404, detail='接收人不存在')
+    conv = get_or_create_conversation(db, sender.id, receiver_id)
+    m = Message(
+        conversation_id=conv.id,
+        sender_id=sender.id,
+        receiver_id=receiver_id,
+        content=content[:2000],
+        message_type=message_type,
+    )
+    db.add(m)
+    db.flush()
+    conv.last_message_id = m.id
+    conv.last_message_at = datetime.now(timezone.utc)
+    db.commit()
+    db.refresh(m)
+
+    payload = {'type': 'message', 'data': message_out(m, sender).model_dump()}
+    await chat_hub.push_to_user(str(receiver_id), payload)
+    await chat_hub.push_to_user(str(sender.id), payload)  # 多端同步
+    return m
+
+
+@app.post('/api/chat/conversations/{conv_id}/messages')
+async def send_message_http(
+    conv_id: UUID,
+    data: MessageCreate,
+    me: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    conv = db.get(Conversation, conv_id)
+    if not conv or (str(conv.user_a_id) != str(me.id) and str(conv.user_b_id) != str(me.id)):
+        raise HTTPException(status_code=404, detail='会话不存在')
+    peer_id = conv.user_b_id if str(conv.user_a_id) == str(me.id) else conv.user_a_id
+    m = await _persist_and_push_message(db, me, peer_id, data.content, data.messageType)
+    return message_out(m, me)
+
+
+@app.post('/api/chat/messages/{msg_id}/recall')
+async def recall_message(
+    msg_id: UUID,
+    me: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    m = db.get(Message, msg_id)
+    if not m or str(m.sender_id) != str(me.id):
+        raise HTTPException(status_code=404, detail='消息不存在')
+    if m.is_recalled:
+        return {'ok': True}
+    # 2 分钟内可撤回
+    if m.created_at and (datetime.now(timezone.utc) - m.created_at).total_seconds() > 120:
+        raise HTTPException(status_code=400, detail='超过 2 分钟,无法撤回')
+    m.is_recalled = True
+    m.recalled_at = datetime.now(timezone.utc)
+    db.commit()
+
+    payload = {'type': 'recall', 'messageId': str(m.id), 'conversationId': str(m.conversation_id)}
+    await chat_hub.push_to_user(str(m.receiver_id), payload)
+    await chat_hub.push_to_user(str(m.sender_id), payload)
+    return {'ok': True}
+
+
+@app.post('/api/chat/conversations/{conv_id}/read')
+async def mark_conversation_read(
+    conv_id: UUID,
+    me: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    conv = db.get(Conversation, conv_id)
+    if not conv or (str(conv.user_a_id) != str(me.id) and str(conv.user_b_id) != str(me.id)):
+        raise HTTPException(status_code=404, detail='会话不存在')
+    db.query(Message).filter(
+        Message.conversation_id == conv_id,
+        Message.receiver_id == me.id,
+        Message.is_read == False,
+    ).update({Message.is_read: True}, synchronize_session=False)
+    db.commit()
+    peer_id = conv.user_b_id if str(conv.user_a_id) == str(me.id) else conv.user_a_id
+    await chat_hub.push_to_user(str(peer_id), {
+        'type': 'read', 'conversationId': str(conv_id), 'readerId': str(me.id)
+    })
+    return {'ok': True}
+
+
+@app.websocket('/ws/chat')
+async def chat_ws(ws: WebSocket, token: str = ''):
+    if not token:
+        await ws.close(code=4401)
+        return
+    try:
+        uid = parse_token(token)
+    except Exception:
+        await ws.close(code=4401)
+        return
+    db = SessionLocal()
+    user = db.get(User, uid)
+    if not user:
+        db.close()
+        await ws.close(code=4401)
+        return
+    user_id_str = str(user.id)
+    await chat_hub.connect(user_id_str, ws)
+    await ws.send_json({'type': 'connected', 'userId': user_id_str})
+    try:
+        while True:
+            raw = await ws.receive_text()
+            try:
+                data = json.loads(raw)
+            except Exception:
+                continue
+            mtype = data.get('type')
+            if mtype == 'ping':
+                await ws.send_json({'type': 'pong'})
+            elif mtype == 'send':
+                peer_id_str = data.get('peerId') or ''
+                content = (data.get('content') or '').strip()
+                message_type = int(data.get('messageType') or 0)
+                if not peer_id_str or not content:
+                    continue
+                try:
+                    peer_id = UUID(peer_id_str)
+                except ValueError:
+                    continue
+                try:
+                    await _persist_and_push_message(db, user, peer_id, content, message_type)
+                except HTTPException as e:
+                    await ws.send_json({'type': 'error', 'detail': e.detail})
+            elif mtype == 'typing':
+                peer_id_str = data.get('peerId') or ''
+                if peer_id_str:
+                    await chat_hub.push_to_user(peer_id_str, {
+                        'type': 'typing', 'fromUserId': user_id_str
+                    })
+    except WebSocketDisconnect:
+        chat_hub.disconnect(user_id_str, ws)
+    finally:
+        db.close()

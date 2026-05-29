@@ -308,7 +308,46 @@ user_type = 2    管理员
 
 ---
 
-### 10. 直播功能
+### 10. 社区互动:关注 / 私聊 / 通知 / @提及
+
+系统支持完整的社区互动功能,模拟主流视频平台的社交体验。
+
+#### 关注 / 粉丝
+
+- 用户主页和视频作者卡片均带"关注"按钮
+- 关注后按钮变成"已关注",双向关注显示"互相关注"
+- 用户主页实时显示**真实**粉丝数和关注数
+
+#### 私聊(1 对 1 实时聊天)
+
+- 任意用户主页右上角有"**发消息**"按钮,点击直接打开会话窗
+- 导航栏右上角💬图标进入私信中心,左侧会话列表(带未读角标)+ 右侧聊天窗
+- 消息基于 **WebSocket** 实时推送,无需刷新
+- 支持**撤回**(2 分钟内 hover 自己消息即可撤回)
+- **已读状态**显示
+- 多端同步:同一账号在多个窗口登录,所有窗口都能实时收到消息
+
+#### 通知中心
+
+- 导航栏右上角🔔图标,有未读时显示红点 + 数字
+- 通知页分 6 类 Tab:全部 / 点赞 / 评论 / 关注 / @提及 / 系统
+- 触发场景:
+  - 别人关注你
+  - 别人在你的视频下评论
+  - 别人回复你的评论
+  - 别人在评论里 @你
+- 点击通知可跳到对应视频或用户主页
+
+#### @提及 + 评论二级回复
+
+- 评论里输入 `@用户昵称` → 该用户收到 @提醒,评论里 @文本自动渲染为蓝色
+- 任意评论下的"回复"按钮可用 → 输入框顶部显示 `回复 @xxx`
+- 二级回复折叠为"查看 N 条回复",点击展开懒加载
+- 回复显示 "xxx 回复 @yyy: ..." 嵌套样式
+
+---
+
+### 11. 直播功能
 
 系统提供直播相关页面，包括：
 
@@ -323,7 +362,7 @@ user_type = 2    管理员
 
 ---
 
-### 11. 本地视频自动导入
+### 12. 本地视频自动导入
 
 后端启动时，会扫描：
 
@@ -1050,6 +1089,61 @@ POST /api/live/rooms/{room_id}/end
 ```text
 /ws/live/{room_id}
 ```
+
+---
+
+### 9. 社区互动接口
+
+#### 关注 / 粉丝
+
+```text
+POST   /api/users/{user_id}/follow         关注
+DELETE /api/users/{user_id}/follow         取关
+GET    /api/users/{user_id}/relation       获取关系 + 粉丝/关注数
+GET    /api/users/{user_id}/followers      粉丝列表
+GET    /api/users/{user_id}/following      关注列表
+GET    /api/users/{user_id}                用户主页资料
+```
+
+#### 通知中心
+
+```text
+GET  /api/notifications                  通知列表(?notif_type=&only_unread=&offset=&limit=)
+GET  /api/notifications/unread-count     未读数(通知 + 私聊)
+POST /api/notifications/{id}/read        标记单条已读
+POST /api/notifications/read-all         全部已读
+```
+
+#### 私聊
+
+```text
+GET    /api/chat/conversations                   我的会话列表
+POST   /api/chat/conversations                   创建/获取与某人的会话
+GET    /api/chat/conversations/{id}/messages    历史消息(分页)
+POST   /api/chat/conversations/{id}/messages    HTTP 发消息(WS 兜底)
+POST   /api/chat/messages/{id}/recall            撤回(2分钟内)
+POST   /api/chat/conversations/{id}/read         标记会话已读
+```
+
+私聊 WebSocket:
+
+```text
+/ws/chat?token=xxx
+```
+
+WS 消息协议:
+
+```text
+send / message / recall / read / typing / ping-pong
+```
+
+#### 评论二级回复
+
+```text
+GET  /api/comments/{id}/replies           获取某条评论的回复列表
+```
+
+`POST /api/videos/{id}/comments` 升级支持参数 `parentId`、`replyToUserId`,自动解析评论正文中的 `@用户名` 并触发通知。
 
 ---
 

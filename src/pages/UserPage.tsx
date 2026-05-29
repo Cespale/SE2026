@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { VideoCard } from '../components/video/VideoCard';
 import { useVideoStore } from '../stores/videoStore';
 import { useAuthStore } from '../stores/authStore';
 import { User, Heart, Video, Users } from 'lucide-react';
+import { FollowButton } from '../components/social/FollowButton';
+import { getUserProfile, getRelation, Relation } from '../api/social';
+import { MessageCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const mockUserVideos = [
   {
@@ -74,18 +78,33 @@ const mockLikedVideos = [
 
 export function UserPage() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'works' | 'likes'>('works');
-  const { user: currentUser } = useAuthStore();
+  const { user: currentUser, isLoggedIn, openLoginModal } = useAuthStore();
   const isOwnProfile = currentUser?.id === id;
 
+  const [profile, setProfile] = useState<any>(null);
+  const [relation, setRelation] = useState<Relation | null>(null);
+
+  useEffect(() => {
+    if (!id) return;
+    getUserProfile(id).then(setProfile).catch(() => setProfile(null));
+    if (!isOwnProfile) {
+      getRelation(id).then(setRelation).catch(() => setRelation(null));
+    } else {
+      // 看自己主页时也想知道粉丝/关注数,借用 relation 接口(对自己 isFollowing 永远 false)
+      getRelation(id).then(setRelation).catch(() => setRelation(null));
+    }
+  }, [id, isOwnProfile]);
+
   const userInfo = {
-    id: id || '2',
-    nickname: '创作者小王',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=creator',
-    bio: '热爱分享的视频创作者',
-    followers: 1234,
-    following: 56,
-    likes: 5678
+    id: id || '',
+    nickname: profile?.nickname || '加载中...',
+    avatar: profile?.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=user',
+    bio: profile?.bio || '',
+    followers: relation?.followerCount ?? 0,
+    following: relation?.followingCount ?? 0,
+    likes: 0,
   };
 
   const videos = activeTab === 'works' ? mockUserVideos : mockLikedVideos;
@@ -133,9 +152,38 @@ export function UserPage() {
                   编辑资料
                 </button>
               ) : (
-                <button className="px-6 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors">
-                  关注
-                </button>
+                id && (
+                  <>
+                    <FollowButton
+                      userId={id}
+                      onChange={(isFollowing) => {
+                        setRelation((r) =>
+                          r
+                            ? {
+                                ...r,
+                                isFollowing,
+                                isMutual: isFollowing && r.isFollowedBy,
+                                followerCount: r.followerCount + (isFollowing ? 1 : -1),
+                              }
+                            : r
+                        );
+                      }}
+                    />
+                    <button
+                      onClick={() => {
+                        if (!isLoggedIn) {
+                          openLoginModal();
+                          return;
+                        }
+                        navigate(`/messages?peer=${id}`);
+                      }}
+                      className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex items-center gap-1.5"
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                      发消息
+                    </button>
+                  </>
+                )
               )}
             </div>
           </div>

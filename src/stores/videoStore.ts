@@ -87,6 +87,9 @@ function normalizeComment(c: any): Comment {
       c.created_at ||
       new Date().toISOString(),
     replies: c.replies || [],
+    replyToUserId: String(c.replyToUserId || c.reply_to_user_id || ''),
+    replyToUsername: c.replyToUsername || c.reply_to_username || '',
+    replyCount: Number(c.replyCount ?? c.reply_count ?? 0),
   };
 }
 
@@ -159,6 +162,9 @@ export interface Comment {
   isTop: boolean;
   createTime: string;
   replies?: Comment[];
+  replyToUserId?: string;
+  replyToUsername?: string;
+  replyCount?: number;
 }
 
 export interface Danmaku {
@@ -201,7 +207,8 @@ interface VideoStore {
   searchVideos: (keyword: string, sort?: string) => Promise<void>;
   likeVideo: (videoId: string) => Promise<void>;
   favoriteVideo: (videoId: string) => Promise<void>;
-  addComment: (videoId: string, content: string) => Promise<void>;
+  addComment: (videoId: string, content: string, parentId?: string, replyToUserId?: string) => Promise<void>;
+  fetchReplies: (parentCommentId: string) => Promise<void>;
   sendDanmaku: (
     videoId: string,
     content: string,
@@ -374,6 +381,21 @@ export const useVideoStore = create<VideoStore>((set, get) => ({  videos: [],
     });
   }
 },
+
+  fetchReplies: async (parentCommentId: string) => {
+    try {
+      const data: any = await apiRequest(`/api/comments/${parentCommentId}/replies`);
+      const list = Array.isArray(data) ? data : [];
+      const replies = list.map(normalizeComment);
+      set((state) => ({
+        comments: state.comments.map((c) =>
+          c.id === parentCommentId ? { ...c, replies } : c
+        ),
+      }));
+    } catch (e) {
+      console.error('加载回复失败:', e);
+    }
+  },
 
   fetchComments: async (videoId: string) => {
   try {
@@ -592,35 +614,39 @@ export const useVideoStore = create<VideoStore>((set, get) => ({  videos: [],
       }
     },
 
-  addComment: async (videoId: string, content: string) => {
+  addComment: async (
+    videoId: string,
+    content: string,
+    parentId: string = '0',
+    replyToUserId: string = '',
+  ) => {
   try {
     const data: any = await apiRequest(`/api/videos/${videoId}/comments`, {
       method: 'POST',
-      body: JSON.stringify({ content }),
+      body: JSON.stringify({ content, parentId, replyToUserId }),
     });
 
     const newComment = normalizeComment(data);
 
-    set((state) => ({
-      comments: [newComment, ...state.comments],
-    }));
+    set((state) => {
+      // 回复:挂到父评论的 replies 里,并 +1 计数
+      if (newComment.parentId && newComment.parentId !== '0') {
+        return {
+          comments: state.comments.map((c) =>
+            c.id === newComment.parentId
+              ? {
+                  ...c,
+                  replies: [...(c.replies || []), newComment],
+                  replyCount: (c.replyCount || 0) + 1,
+                }
+              : c
+          ),
+        };
+      }
+      return { comments: [newComment, ...state.comments] };
+    });
   } catch (error) {
     console.error('发表评论失败:', error);
-
-    const mockComment = normalizeComment({
-      id: Date.now(),
-      videoId,
-      userId: 1,
-      username: 'xuyue',
-      userAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user',
-      content,
-      likeCount: 0,
-      createTime: new Date().toISOString(),
-    });
-
-    set((state) => ({
-      comments: [mockComment, ...state.comments],
-    }));
   }
 },
 

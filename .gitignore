@@ -13,3 +13,14 @@ __pycache__/
 
 # Docker 数据卷不要提交
 pgdata/
+
+# Claude Code 助手内存(不该跟代码一起提交)
+.claude/
+
+# 演示视频太大,不放进仓库;运行项目时把 mp4 放进此目录即可
+public/demo-videos/*.mp4
+public/demo-videos/*.MP4
+
+# IDE
+.vscode/
+.idea/

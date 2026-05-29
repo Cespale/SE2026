@@ -12,6 +12,8 @@ import {
   Shield,
 } from 'lucide-react';
 import { useAuthStore } from '../../stores/authStore';
+import { NotificationBell } from '../notification/NotificationBell';
+import { MessageButton } from '../notification/MessageButton';
 
 const DEFAULT_AVATAR =
   'https://api.dicebear.com/7.x/avataaars/svg?seed=user';
@@ -99,6 +101,9 @@ export function TopNav() {
               投稿
             </button>
           )}
+
+          <MessageButton />
+          <NotificationBell />
 
           {isLoggedIn ? (
             <div className="relative">

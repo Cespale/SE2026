@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { FollowButton } from '../components/social/FollowButton';
 import {
   Play,
   Pause,
@@ -68,6 +69,12 @@ export function VideoPage() {
   const [danmakuInput, setDanmakuInput] = useState('');
   const [danmakuColor, setDanmakuColor] = useState('#FFFFFF');
   const [commentInput, setCommentInput] = useState('');
+  const [replyTo, setReplyTo] = useState<{
+    parentId: string;
+    replyToUserId: string;
+    replyToUsername: string;
+  } | null>(null);
+  const [expandedReplies, setExpandedReplies] = useState<Record<string, boolean>>({});
   const [activeDanmaku, setActiveDanmaku] = useState<Danmaku[]>([]);
   const [videoErrorText, setVideoErrorText] = useState('');
 
@@ -277,8 +284,54 @@ export function VideoPage() {
       return;
     }
 
-    await addComment(id, commentInput.trim());
+    await addComment(
+      id,
+      commentInput.trim(),
+      replyTo?.parentId || '0',
+      replyTo?.replyToUserId || ''
+    );
     setCommentInput('');
+    if (replyTo) {
+      setExpandedReplies((s) => ({ ...s, [replyTo.parentId]: true }));
+      setReplyTo(null);
+    }
+  };
+
+  const startReply = (parentId: string, userId: string, username: string) => {
+    if (!isLoggedIn) {
+      openLoginModal();
+      return;
+    }
+    setReplyTo({ parentId, replyToUserId: userId, replyToUsername: username });
+    // 滚到评论输入框附近
+    setTimeout(() => {
+      document.getElementById('comment-input-anchor')?.scrollIntoView({ behavior: 'smooth' });
+    }, 50);
+  };
+
+  const toggleReplies = async (commentId: string) => {
+    const isOpen = !!expandedReplies[commentId];
+    if (!isOpen) {
+      const c = visibleComments.find((x) => x.id === commentId);
+      if (c && (!c.replies || c.replies.length === 0) && (c.replyCount || 0) > 0) {
+        await useVideoStore.getState().fetchReplies(commentId);
+      }
+    }
+    setExpandedReplies((s) => ({ ...s, [commentId]: !isOpen }));
+  };
+
+  /** 把 @nickname 渲染成蓝色高亮 */
+  const renderContent = (text: string) => {
+    const parts = text.split(/(@[\w一-龥]+)/g);
+    return parts.map((p, i) =>
+      p.startsWith('@') ? (
+        <span key={i} className="text-blue-500">
+          {p}
+        </span>
+      ) : (
+        <span key={i}>{p}</span>
+      )
+    );
   };
 
   const handleFullscreen = () => {
@@ -579,22 +632,25 @@ export function VideoPage() {
 
           <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
             <div className="flex items-center gap-4">
-              <img
-                src={currentVideo.uploaderAvatar}
-                alt={currentVideo.uploaderName}
-                className="w-12 h-12 rounded-full"
-              />
+              <Link to={`/user/${currentVideo.uploaderId}`}>
+                <img
+                  src={currentVideo.uploaderAvatar}
+                  alt={currentVideo.uploaderName}
+                  className="w-12 h-12 rounded-full hover:opacity-80 transition-opacity"
+                />
+              </Link>
 
               <div className="flex-1">
-                <h3 className="font-semibold text-gray-900 dark:text-white">
+                <Link
+                  to={`/user/${currentVideo.uploaderId}`}
+                  className="font-semibold text-gray-900 dark:text-white hover:text-blue-500 transition-colors"
+                >
                   {currentVideo.uploaderName}
-                </h3>
+                </Link>
                 <p className="text-sm text-gray-500">视频创作者</p>
               </div>
 
-              <button className="px-6 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors">
-                关注
-              </button>
+              <FollowButton userId={currentVideo.uploaderId} />
             </div>
           </div>
 
@@ -605,7 +661,16 @@ export function VideoPage() {
             </h3>
 
             {isLoggedIn ? (
-              <div className="flex gap-3 mb-6">
+              <div id="comment-input-anchor" className="flex flex-col gap-2 mb-6">
+                {replyTo && (
+                  <div className="flex items-center justify-between bg-blue-50 dark:bg-blue-900/30 text-sm px-3 py-2 rounded-lg">
+                    <span className="text-blue-600 dark:text-blue-400">
+                      回复 <strong>@{replyTo.replyToUsername}</strong>
+                    </span>
+                    <button onClick={() => setReplyTo(null)} className="text-gray-500 hover:text-red-500">取消</button>
+                  </div>
+                )}
+              <div className="flex gap-3">
                 <img
                   src={
                     user?.avatar ||
@@ -620,7 +685,7 @@ export function VideoPage() {
                     type="text"
                     value={commentInput}
                     onChange={(e) => setCommentInput(e.target.value)}
-                    placeholder="写下你的评论..."
+                    placeholder={replyTo ? `回复 @${replyTo.replyToUsername}...` : '写下你的评论(支持 @用户名)...'}
                     className="flex-1 px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg border-0 focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white"
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') {
@@ -636,6 +701,7 @@ export function VideoPage() {
                     <Send size={18} />
                   </button>
                 </div>
+              </div>
               </div>
             ) : (
               <div className="mb-6 p-4 rounded-lg bg-gray-100 dark:bg-gray-700 text-sm text-gray-500 flex items-center justify-between">
@@ -671,7 +737,7 @@ export function VideoPage() {
                     </div>
 
                     <p className="text-gray-700 dark:text-gray-300 mt-1">
-                      {comment.content}
+                      {renderContent(comment.content)}
                     </p>
 
                     <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
@@ -684,11 +750,25 @@ export function VideoPage() {
                         {comment.likeCount}
                       </button>
 
-                      <button className="hover:text-blue-500">回复</button>
+                      <button
+                        onClick={() => startReply(comment.id, comment.userId, comment.username)}
+                        className="hover:text-blue-500"
+                      >
+                        回复
+                      </button>
+
+                      {(comment.replyCount || 0) > 0 && (
+                        <button
+                          onClick={() => toggleReplies(comment.id)}
+                          className="hover:text-blue-500"
+                        >
+                          {expandedReplies[comment.id] ? '收起回复' : `查看 ${comment.replyCount} 条回复`}
+                        </button>
+                      )}
                     </div>
 
-                    {comment.replies && comment.replies.length > 0 && (
-                      <div className="mt-3 pl-4 border-l-2 border-gray-200 space-y-3">
+                    {expandedReplies[comment.id] && comment.replies && comment.replies.length > 0 && (
+                      <div className="mt-3 pl-4 border-l-2 border-gray-200 dark:border-gray-700 space-y-3">
                         {comment.replies.map((reply) => (
                           <div key={reply.id} className="flex gap-2">
                             <img
@@ -697,13 +777,27 @@ export function VideoPage() {
                               className="w-8 h-8 rounded-full"
                             />
 
-                            <div>
-                              <span className="font-medium text-sm text-gray-900 dark:text-white">
-                                {reply.username}
-                              </span>
+                            <div className="flex-1">
+                              <div className="text-sm">
+                                <span className="font-medium text-gray-900 dark:text-white">
+                                  {reply.username}
+                                </span>
+                                {reply.replyToUsername && (
+                                  <span className="text-gray-500">
+                                    {' '}回复{' '}
+                                    <span className="text-blue-500">@{reply.replyToUsername}</span>
+                                  </span>
+                                )}
+                              </div>
                               <p className="text-gray-700 dark:text-gray-300 text-sm">
-                                {reply.content}
+                                {renderContent(reply.content)}
                               </p>
+                              <button
+                                onClick={() => startReply(comment.id, reply.userId, reply.username)}
+                                className="text-xs text-gray-500 hover:text-blue-500 mt-1"
+                              >
+                                回复
+                              </button>
                             </div>
                           </div>
                         ))}

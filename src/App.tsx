@@ -18,6 +18,8 @@ import { ShortVideoPage } from './pages/ShortVideoPage';
 import { SubscriptionPage } from './pages/SubscriptionPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { ExplorePage } from './pages/ExplorePage';
+import { NotificationPage } from './pages/NotificationPage';
+import { MessagePage } from './pages/MessagePage';
 
 import { LoginModal } from './components/auth/LoginModal';
 import { RegisterModal } from './components/auth/RegisterModal';
@@ -67,6 +69,24 @@ function App() {
               element={
                 <RequireAuth message="请先登录后再查看个人主页。">
                   <ProfilePage />
+                </RequireAuth>
+              }
+            />
+
+            <Route
+              path="/notifications"
+              element={
+                <RequireAuth message="请先登录后再查看通知。">
+                  <NotificationPage />
+                </RequireAuth>
+              }
+            />
+
+            <Route
+              path="/messages"
+              element={
+                <RequireAuth message="请先登录后再使用私信。">
+                  <MessagePage />
                 </RequireAuth>
               }
             />

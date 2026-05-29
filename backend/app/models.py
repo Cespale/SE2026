@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, SmallInteger, String, Text, func
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Index, Integer, SmallInteger, String, Text, UniqueConstraint, func
 from sqlalchemy.dialects.postgresql import ARRAY, UUID
 from sqlalchemy.orm import relationship
 import uuid
@@ -54,11 +54,13 @@ class Comment(Base):
     user_id = Column(UUID(as_uuid=True), ForeignKey('users.id'))
     video_id = Column(UUID(as_uuid=True), ForeignKey('videos.id'))
     parent_id = Column(UUID(as_uuid=True), nullable=True)
+    reply_to_user_id = Column(UUID(as_uuid=True), ForeignKey('users.id'), nullable=True)
     like_count = Column(Integer, default=0)
     is_top = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
-    user = relationship('User')
+    user = relationship('User', foreign_keys=[user_id])
+    reply_to_user = relationship('User', foreign_keys=[reply_to_user_id])
 
 class Danmaku(Base):
     __tablename__ = 'danmaku'
@@ -92,3 +94,97 @@ class LiveRoom(Base):
 
     anchor = relationship('User')
     category = relationship('Category')
+
+
+class Follow(Base):
+    __tablename__ = 'follows'
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    follower_id = Column(UUID(as_uuid=True), ForeignKey('users.id'), nullable=False)
+    followee_id = Column(UUID(as_uuid=True), ForeignKey('users.id'), nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    follower = relationship('User', foreign_keys=[follower_id])
+    followee = relationship('User', foreign_keys=[followee_id])
+
+    __table_args__ = (
+        UniqueConstraint('follower_id', 'followee_id', name='uq_follow_pair'),
+        Index('ix_follows_follower', 'follower_id'),
+        Index('ix_follows_followee', 'followee_id'),
+    )
+
+
+class Conversation(Base):
+    """1对1 私聊会话。user_a_id < user_b_id 强制排序,避免同一对用户出现两条会话。"""
+    __tablename__ = 'conversations'
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_a_id = Column(UUID(as_uuid=True), ForeignKey('users.id'), nullable=False)
+    user_b_id = Column(UUID(as_uuid=True), ForeignKey('users.id'), nullable=False)
+    last_message_id = Column(UUID(as_uuid=True), nullable=True)
+    last_message_at = Column(DateTime(timezone=True), nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    user_a = relationship('User', foreign_keys=[user_a_id])
+    user_b = relationship('User', foreign_keys=[user_b_id])
+
+    __table_args__ = (
+        UniqueConstraint('user_a_id', 'user_b_id', name='uq_conversation_pair'),
+    )
+
+
+class Message(Base):
+    __tablename__ = 'messages'
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    conversation_id = Column(UUID(as_uuid=True), ForeignKey('conversations.id'), nullable=False)
+    sender_id = Column(UUID(as_uuid=True), ForeignKey('users.id'), nullable=False)
+    receiver_id = Column(UUID(as_uuid=True), ForeignKey('users.id'), nullable=False)
+    content = Column(Text, nullable=False)
+    message_type = Column(SmallInteger, default=0)  # 0文本 1图片 2表情
+    is_recalled = Column(Boolean, default=False)
+    is_read = Column(Boolean, default=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    recalled_at = Column(DateTime(timezone=True), nullable=True)
+
+    sender = relationship('User', foreign_keys=[sender_id])
+    receiver = relationship('User', foreign_keys=[receiver_id])
+
+    __table_args__ = (
+        Index('ix_messages_conv_created', 'conversation_id', 'created_at'),
+        Index('ix_messages_receiver_unread', 'receiver_id', 'is_read'),
+    )
+
+
+class Notification(Base):
+    __tablename__ = 'notifications'
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    recipient_id = Column(UUID(as_uuid=True), ForeignKey('users.id'), nullable=False)
+    sender_id = Column(UUID(as_uuid=True), ForeignKey('users.id'), nullable=True)  # 系统通知时为空
+    notif_type = Column(SmallInteger, default=0)  # 0点赞 1评论 2关注 3@提及 4系统
+    target_type = Column(SmallInteger, default=0)  # 0视频 1评论 2直播
+    target_id = Column(UUID(as_uuid=True), nullable=True)
+    content = Column(Text, default='')
+    is_read = Column(Boolean, default=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    recipient = relationship('User', foreign_keys=[recipient_id])
+    sender = relationship('User', foreign_keys=[sender_id])
+
+    __table_args__ = (
+        Index('ix_notif_recipient_unread', 'recipient_id', 'is_read', 'created_at'),
+    )
+
+
+class CommentMention(Base):
+    """评论正文中 @用户名 被解析后的索引,用于'有人@我'通知和聚合查询。"""
+    __tablename__ = 'comment_mentions'
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    comment_id = Column(UUID(as_uuid=True), ForeignKey('comments.id'), nullable=False)
+    mentioned_user_id = Column(UUID(as_uuid=True), ForeignKey('users.id'), nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    comment = relationship('Comment')
+    mentioned_user = relationship('User')
+
+    __table_args__ = (
+        UniqueConstraint('comment_id', 'mentioned_user_id', name='uq_comment_mention'),
+        Index('ix_mention_user', 'mentioned_user_id'),
+    )
