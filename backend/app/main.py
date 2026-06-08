@@ -17,14 +17,20 @@ import re
 from .database import Base, engine, get_db, SessionLocal
 from .models import (
     Category, Comment, CommentMention, Conversation, Danmaku, Follow,
-    LiveRoom, Message, Notification, User, Video,
+    LiveRoom, Message, Notification, User, Video, VideoLike,
 )
 from .schemas import *
 from .security import create_token, get_current_user, hash_password, require_admin, require_creator, verify_password, parse_token
 from sqlalchemy import func
 app = FastAPI(title='StreamHub API', description='在线视频与直播网站 Python 后端', version='1.0.0')
 origins = os.getenv('CORS_ORIGINS', 'http://localhost:3000,http://localhost:5173,http://localhost:8080').split(',')
-app.add_middleware(CORSMiddleware, allow_origins=origins + ['*'], allow_credentials=True, allow_methods=['*'], allow_headers=['*'])
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173", "http://localhost:3000", "http://127.0.0.1:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 class LiveHub:
     def __init__(self):
@@ -873,12 +879,113 @@ def audit_video(video_id: UUID, data: AuditIn, _: User = Depends(require_admin),
     db.commit(); db.refresh(v)
     return video_out(v)
 
+"""
 @app.post('/api/videos/{video_id}/like')
 def like_video(video_id: UUID, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     v = db.get(Video, video_id)
     if not v: raise HTTPException(status_code=404, detail='视频不存在')
     v.like_count += 1; db.commit(); db.refresh(v)
     return video_out(v)
+"""
+@app.post('/api/videos/{video_id}/like')
+def like_video(
+    video_id: UUID,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    # 检查视频是否存在
+    v = db.get(Video, video_id)
+    if not v:
+        raise HTTPException(status_code=404, detail='视频不存在')
+    
+    # 检查是否已经点过赞
+    existing_like = db.query(VideoLike).filter(
+        VideoLike.user_id == user.id,
+        VideoLike.video_id == video_id
+    ).first()
+    
+    if existing_like:
+        raise HTTPException(status_code=400, detail='已经点过赞了')
+    
+    # 创建点赞记录
+    like = VideoLike(user_id=user.id, video_id=video_id)
+    db.add(like)
+    
+    # 视频点赞数 +1
+    v.like_count += 1
+    
+    db.commit()
+    db.refresh(v)
+    
+    return {
+        'code': 0,
+        'message': '点赞成功',
+        'data': {
+            'likeCount': v.like_count,
+            'isLiked': True
+        }
+    }
+
+@app.delete('/api/videos/{video_id}/like')
+def unlike_video(
+    video_id: UUID,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    # 检查视频是否存在
+    v = db.get(Video, video_id)
+    if not v:
+        raise HTTPException(status_code=404, detail='视频不存在')
+    
+    # 查找点赞记录
+    like = db.query(VideoLike).filter(
+        VideoLike.user_id == user.id,
+        VideoLike.video_id == video_id
+    ).first()
+    
+    if not like:
+        raise HTTPException(status_code=400, detail='还没有点过赞')
+    
+    # 删除点赞记录
+    db.delete(like)
+    
+    # 视频点赞数 -1
+    v.like_count -= 1
+    if v.like_count < 0:
+        v.like_count = 0
+    
+    db.commit()
+    db.refresh(v)
+    
+    return {
+        'code': 0,
+        'message': '取消点赞成功',
+        'data': {
+            'likeCount': v.like_count,
+            'isLiked': False
+        }
+    }
+
+@app.get('/api/videos/{video_id}/like-status')
+def get_like_status(
+    video_id: UUID,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user)
+):
+    """检查当前用户是否点赞了该视频"""
+    v = db.get(Video, video_id)
+    if not v:
+        raise HTTPException(status_code=404, detail='视频不存在')
+    
+    is_liked = db.query(VideoLike).filter(
+        VideoLike.user_id == user.id,
+        VideoLike.video_id == video_id
+    ).first() is not None
+    
+    return {
+        'isLiked': is_liked,
+        'likeCount': v.like_count
+    }
 
 @app.post('/api/videos/{video_id}/favorite')
 def favorite_video(video_id: UUID, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
@@ -1242,6 +1349,69 @@ def get_user_profile(user_id: UUID, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail='用户不存在')
     return user_out(u)
 
+@app.get('/api/users/{user_id}/videos')
+def get_user_videos(
+    user_id: UUID,
+    page: int = 1,
+    page_size: int = 20,
+    db: Session = Depends(get_db)
+):
+    """获取指定用户上传的视频列表"""
+    # 检查用户是否存在
+    user = db.get(User, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail='用户不存在')
+    
+    # 查询该用户的已审核通过的视频
+    q = db.query(Video).filter(
+        Video.uploader_id == user_id,
+        Video.audit_status == 1,
+        Video.status == 0
+    ).order_by(desc(Video.created_at))
+    
+    total = q.count()
+    items = q.offset((page - 1) * page_size).limit(page_size).all()
+    
+    return {
+        'items': [video_out(v).dict() for v in items],
+        'total': total,
+        'page': page,
+        'pageSize': page_size,
+        'hasMore': page * page_size < total
+    }
+
+@app.get('/api/users/{user_id}/likes')
+def get_user_likes(
+    user_id: UUID,
+    page: int = 1,
+    page_size: int = 20,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """获取用户喜欢的视频列表"""
+    user = db.get(User, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail='用户不存在')
+    
+    # 查询用户点赞的视频
+    q = db.query(Video).join(
+        VideoLike, VideoLike.video_id == Video.id
+    ).filter(
+        VideoLike.user_id == user_id,
+        Video.audit_status == 1,
+        Video.status == 0
+    ).order_by(desc(VideoLike.created_at))
+    
+    total = q.count()
+    items = q.offset((page - 1) * page_size).limit(page_size).all()
+    
+    return {
+        'items': [video_out(v).dict() for v in items],
+        'total': total,
+        'page': page,
+        'pageSize': page_size,
+        'hasMore': page * page_size < total
+    }
 
 # ======================================================================
 # 社区互动:通知中心
@@ -1623,3 +1793,129 @@ async def chat_ws(ws: WebSocket, token: str = ''):
         chat_hub.disconnect(user_id_str, ws)
     finally:
         db.close()
+
+# ======================================================================
+# 修改密码
+# ======================================================================
+
+class ChangePasswordRequest(BaseModel):
+    old_password: str
+    new_password: str
+
+@app.put('/api/auth/change-password')
+def change_password(
+    data: ChangePasswordRequest,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    if not verify_password(data.old_password, user.password_hash):
+        raise HTTPException(status_code=400, detail='原密码错误')
+    if len(data.new_password) < 6:
+        raise HTTPException(status_code=400, detail='新密码至少6位')
+    if data.old_password == data.new_password:
+        raise HTTPException(status_code=400, detail='新密码不能与原密码相同')
+    
+    user.password_hash = hash_password(data.new_password)
+    db.commit()
+    return {'code': 0, 'message': '密码修改成功'}
+
+# ======================================================================
+# 成为创作者
+# ======================================================================
+
+@app.post('/api/auth/upgrade-to-creator')
+def upgrade_to_creator(
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """将普通用户升级为创作者"""
+    # 已经是创作者或管理员
+    if user.user_type >= 1:
+        raise HTTPException(status_code=400, detail='已经是创作者或管理员')
+    
+    # 升级为创作者
+    user.user_type = 1
+    db.commit()
+    db.refresh(user)
+    
+    return {
+        'code': 0,
+        'message': '已成功升级为创作者',
+        'data': {
+            'userType': user.user_type
+        }
+    }
+
+# ======================================================================
+# 头像
+# ======================================================================
+
+import shutil
+from fastapi import UploadFile, File
+
+# 头像上传目录
+AVATAR_UPLOAD_DIR = Path("/app/public/avatars")
+AVATAR_UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+
+@app.post('/api/auth/upload-avatar')
+async def upload_avatar(
+    file: UploadFile = File(...),
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """上传头像"""
+    # 验证文件类型
+    if not file.content_type or not file.content_type.startswith('image/'):
+        raise HTTPException(status_code=400, detail='只支持图片文件')
+    
+    # 生成唯一文件名
+    ext = file.filename.split('.')[-1] if '.' in file.filename else 'jpg'
+    filename = f"{user.id}_{int(datetime.now().timestamp())}.{ext}"
+    filepath = AVATAR_UPLOAD_DIR / filename
+    
+    # 保存文件
+    with open(filepath, 'wb') as buffer:
+        shutil.copyfileobj(file.file, buffer)
+    
+    # 生成访问URL
+    avatar_url = f"/avatars/{filename}"
+    
+    # 更新用户头像
+    user.avatar = avatar_url
+    db.commit()
+    db.refresh(user)
+    
+    return {
+        'code': 0,
+        'message': '头像上传成功',
+        'data': {'avatar': avatar_url}
+    }
+
+# ======================================================================
+# 数据统计
+# ======================================================================
+
+@app.get('/api/users/{user_id}/stats')
+def get_user_stats(
+    user_id: UUID,
+    db: Session = Depends(get_db)
+):
+    """获取用户统计数据：粉丝数、关注数、获赞数"""
+    user = db.get(User, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail='用户不存在')
+    
+    # 粉丝数：关注该用户的人数
+    follower_count = db.query(Follow).filter(Follow.followee_id == user_id).count()
+    
+    # 关注数：该用户关注的人数
+    following_count = db.query(Follow).filter(Follow.follower_id == user_id).count()
+    
+    # 获赞数：该用户所有视频的点赞总数
+    like_count = db.query(func.sum(Video.like_count)).filter(Video.uploader_id == user_id).scalar() or 0
+    
+    return {
+        'followerCount': follower_count,
+        'followingCount': following_count,
+        'likeCount': like_count
+    }

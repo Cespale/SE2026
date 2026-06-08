@@ -1,60 +1,20 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Video, Heart, History, Settings, User } from 'lucide-react';
 import { VideoCard } from '../components/video/VideoCard';
 import { useAuthStore } from '../stores/authStore';
 import { useNavigate } from 'react-router-dom';
-
-const mockVideos = [
-  {
-    id: '1',
-    title: '我的作品1',
-    description: '',
-    tags: [],
-    coverUrl: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=640&h=360&fit=crop',
-    videoUrl: '',
-    duration: 180,
-    categoryId: '1',
-    categoryName: '游戏',
-    viewCount: 1200,
-    likeCount: 89,
-    commentCount: 12,
-    favoriteCount: 45,
-    uploaderId: '1',
-    uploaderName: '我',
-    uploaderAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user',
-    uploadTime: '2024-01-15T10:00:00Z',
-    auditStatus: 1
-  }
-];
-
-const mockHistory = [
-  {
-    id: '2',
-    title: '观看历史1',
-    description: '',
-    tags: [],
-    coverUrl: 'https://images.unsplash.com/photo-1611162616305-c69b3fa7f81e?w=640&h=360&fit=crop',
-    videoUrl: '',
-    duration: 240,
-    categoryId: '2',
-    categoryName: '音乐',
-    viewCount: 5600,
-    likeCount: 456,
-    commentCount: 78,
-    favoriteCount: 234,
-    uploaderId: '2',
-    uploaderName: '创作者',
-    uploaderAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=creator',
-    uploadTime: '2024-01-14T15:00:00Z',
-    auditStatus: 1
-  }
-];
+import { apiRequest } from '../api';
 
 export function ProfilePage() {
   const [activeTab, setActiveTab] = useState<'works' | 'likes' | 'history'>('works');
   const { user } = useAuthStore();
   const navigate = useNavigate();
+
+  const [works, setWorks] = useState<any[]>([]);
+  const [likes, setLikes] = useState<any[]>([]);
+  const [history, setHistory] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const tabs = [
     { id: 'works' as const, label: '我的作品', icon: Video },
@@ -62,6 +22,41 @@ export function ProfilePage() {
     { id: 'history' as const, label: '观看历史', icon: History },
   ];
 
+  // 获取我的作品
+  const fetchWorks = async () => {
+    try {
+      const data = await apiRequest('/api/creator/videos');
+      setWorks(data.items || []);
+    } catch (error) {
+      console.error('获取作品失败:', error);
+      setWorks([]);
+    }
+  };
+
+  // 获取喜欢的视频
+  const fetchLikes = async () => {
+    // 后端可能需要实现收藏接口，暂时返回空数组
+    setLikes([]);
+  };
+
+  // 获取观看历史
+  const fetchHistory = async () => {
+    // 后端可能需要实现历史记录接口，暂时返回空数组
+    setHistory([]);
+  };
+
+  useEffect(() => {
+    const loadData = async () => {
+      setLoading(true);
+      await fetchWorks();
+      await fetchLikes();
+      await fetchHistory();
+      setLoading(false);
+    };
+    loadData();
+  }, []);
+
+  /* 
   const getVideos = () => {
     switch (activeTab) {
       case 'works': return mockVideos;
@@ -70,9 +65,22 @@ export function ProfilePage() {
       default: return [];
     }
   };
+  */
+
+  const getVideos = () => {
+    switch (activeTab) {
+      case 'works': return works;
+      case 'likes': return likes;
+      case 'history': return history;
+      default: return [];
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="fixed top-20 right-4 z-50 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">
+        🚀 新版本 - 下午修改
+      </div>
       <div className="max-w-7xl mx-auto px-4 py-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -124,16 +132,20 @@ export function ProfilePage() {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-          {getVideos().map((video, index) => (
-            <motion.div
-              key={video.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
-            >
-              <VideoCard video={video} />
-            </motion.div>
-          ))}
+          {loading ? (
+            <div className="col-span-full text-center py-20 text-gray-500">加载中...</div>
+          ) : (
+            getVideos().map((video, index) => (
+              <motion.div
+                key={video.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
+              >
+                <VideoCard video={video} />
+              </motion.div>
+            ))
+          )}
         </div>
 
         {getVideos().length === 0 && (

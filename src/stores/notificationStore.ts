@@ -46,12 +46,14 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
     }
   },
 
-  refreshUnread: async () => {
+    refreshUnread: async () => {
     try {
       const u = await getUnreadCount();
       set({ unread: u });
-    } catch {
+    } catch (error) {
       // 未登录或网络问题忽略
+      console.error('获取未读计数失败:', error);
+      set({ unread: { total: 0, chat: 0, notification: 0 } });
     }
   },
 

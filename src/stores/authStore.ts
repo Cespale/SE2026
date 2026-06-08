@@ -37,6 +37,7 @@ interface AuthState {
 
   updateUser: (user: Partial<User>) => Promise<void>;
   refreshMe: () => Promise<void>;
+  upgradeToCreator: () => Promise<boolean>;
 }
 
 function normalizeUser(user: any): User {
@@ -239,6 +240,31 @@ export const useAuthStore = create<AuthState>()(
             user: null,
             isLoggedIn: false,
           });
+        }
+      },
+
+        upgradeToCreator: async () => {
+        try {
+          const data: any = await apiRequest('/api/auth/upgrade-to-creator', {
+            method: 'POST',
+          });
+          
+          // 更新本地用户信息
+          const currentUser = get().user;
+          if (currentUser) {
+            const updatedUser = {
+              ...currentUser,
+              userType: data.data?.userType ?? 1,
+            };
+            set({ user: updatedUser });
+          }
+          
+          return true;
+        } catch (error: any) {
+          console.error('升级失败:', error);
+          const message = error.message || '升级失败';
+          alert(message);
+          return false;
         }
       },
     }),

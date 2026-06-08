@@ -188,3 +188,17 @@ class CommentMention(Base):
         UniqueConstraint('comment_id', 'mentioned_user_id', name='uq_comment_mention'),
         Index('ix_mention_user', 'mentioned_user_id'),
     )
+
+class VideoLike(Base):
+    __tablename__ = 'video_likes'
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(UUID(as_uuid=True), ForeignKey('users.id'), nullable=False)
+    video_id = Column(UUID(as_uuid=True), ForeignKey('videos.id'), nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    # 联合唯一索引，防止重复点赞
+    __table_args__ = (
+        UniqueConstraint('user_id', 'video_id', name='uq_user_video_like'),
+        Index('ix_video_likes_user', 'user_id'),
+        Index('ix_video_likes_video', 'video_id'),
+    )

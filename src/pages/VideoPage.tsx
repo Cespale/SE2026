@@ -78,6 +78,10 @@ export function VideoPage() {
   const [activeDanmaku, setActiveDanmaku] = useState<Danmaku[]>([]);
   const [videoErrorText, setVideoErrorText] = useState('');
 
+  const [isLiked, setIsLiked] = useState(false);
+  const [localLikeCount, setLocalLikeCount] = useState(0);
+  const [isLikeLoading, setIsLikeLoading] = useState(false);
+
   const {
     currentVideo,
     comments,
@@ -96,6 +100,65 @@ export function VideoPage() {
 
   const { isLoggedIn, user, openLoginModal } = useAuthStore();
 
+  // 点赞/取消点赞处理函数
+  const handleLike = async () => {
+    if (!isLoggedIn) {
+      openLoginModal();
+      return;
+    }
+    
+    if (isLikeLoading) return;
+    setIsLikeLoading(true);
+    
+    try {
+      const token = localStorage.getItem('auth-storage') 
+        ? JSON.parse(localStorage.getItem('auth-storage')!).state?.token 
+        : '';
+      
+      if (isLiked) {
+        // 取消点赞
+        const response = await fetch(`http://localhost:8000/api/videos/${id}/like`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        const data = await response.json();
+        if (response.ok) {
+          setIsLiked(false);
+          setLocalLikeCount(data.data.likeCount);
+        } else {
+          console.error('取消点赞失败:', data);
+        }
+      } else {
+        // 点赞
+        const response = await fetch(`http://localhost:8000/api/videos/${id}/like`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        const data = await response.json();
+        if (response.ok) {
+          setIsLiked(true);
+          setLocalLikeCount(data.data.likeCount);
+        } else if (response.status === 400 && data.detail === '已经点过赞了') {
+          setIsLiked(true);
+          await fetchLikeStatus();
+        } else {
+          console.error('点赞失败:', data);
+        }
+      }
+    } catch (error) {
+      console.error('点赞请求失败:', error);
+    } finally {
+      setIsLikeLoading(false);
+    }
+  };
+
+
   useEffect(() => {
     if (!id) return;
 
@@ -103,13 +166,35 @@ export function VideoPage() {
     fetchComments(id);
     fetchDanmaku(id);
     fetchRelatedVideos(id);
+    fetchLikeStatus();
 
     setCurrentTime(0);
     setDuration(0);
     setIsPlaying(false);
     setActiveDanmaku([]);
     setVideoErrorText('');
-  }, [id, fetchVideoDetail, fetchComments, fetchDanmaku, fetchRelatedVideos]);
+
+    if (currentVideo) {
+      setLocalLikeCount(currentVideo.likeCount);
+    }
+  }, [id, fetchVideoDetail, fetchComments, fetchDanmaku, fetchRelatedVideos, currentVideo]);
+
+    // 获取当前用户是否点赞了该视频
+  const fetchLikeStatus = async () => {
+    if (!id || !isLoggedIn) return;
+    
+    try {
+      const response = await fetch(`http://localhost:8000/api/videos/${id}/like-status`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('auth-storage') ? JSON.parse(localStorage.getItem('auth-storage')!).state?.token : ''}`
+        }
+      });
+      const data = await response.json();
+      setIsLiked(data.isLiked);
+    } catch (error) {
+      console.error('获取点赞状态失败:', error);
+    }
+  };
 
   const safeVideoUrl = getPlayableVideoUrl(currentVideo?.videoUrl);
   const safePosterUrl = currentVideo?.coverUrl || DEFAULT_COVER_URL;
@@ -604,12 +689,17 @@ export function VideoPage() {
             </p>
 
             <div className="flex flex-wrap items-center gap-4 mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
-              <button
-                onClick={() => likeVideo(currentVideo.id)}
-                className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-full hover:bg-red-50 hover:text-red-500 transition-colors"
+                            <button
+                onClick={handleLike}
+                disabled={isLikeLoading}
+                className={`flex items-center gap-2 px-4 py-2 rounded-full transition-colors ${
+                  isLiked
+                    ? 'bg-red-500 text-white hover:bg-red-600'
+                    : 'bg-gray-100 dark:bg-gray-700 hover:bg-red-50 hover:text-red-500'
+                }`}
               >
-                <Heart size={20} />
-                <span>{currentVideo.likeCount.toLocaleString()}</span>
+                <Heart size={20} fill={isLiked ? 'currentColor' : 'none'} />
+                <span>{(localLikeCount || currentVideo.likeCount).toLocaleString()}</span>
               </button>
 
               <button

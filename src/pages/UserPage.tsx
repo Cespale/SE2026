@@ -10,73 +10,11 @@ import { getUserProfile, getRelation, Relation } from '../api/social';
 import { MessageCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-const mockUserVideos = [
-  {
-    id: '1',
-    title: '我的第一个视频',
-    description: '这是我的第一个视频作品',
-    tags: ['生活', 'Vlog'],
-    coverUrl: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=640&h=360&fit=crop',
-    videoUrl: '',
-    duration: 180,
-    categoryId: '5',
-    categoryName: '生活',
-    viewCount: 1200,
-    likeCount: 89,
-    commentCount: 12,
-    favoriteCount: 45,
-    uploaderId: '2',
-    uploaderName: '创作者小王',
-    uploaderAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=creator',
-    uploadTime: '2024-01-10T10:00:00Z',
-    auditStatus: 1
-  },
-  {
-    id: '2',
-    title: '游戏精彩集锦',
-    description: '王者荣耀精彩操作',
-    tags: ['游戏', '王者荣耀'],
-    coverUrl: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=640&h=360&fit=crop',
-    videoUrl: '',
-    duration: 240,
-    categoryId: '1',
-    categoryName: '游戏',
-    viewCount: 5600,
-    likeCount: 456,
-    commentCount: 78,
-    favoriteCount: 234,
-    uploaderId: '2',
-    uploaderName: '创作者小王',
-    uploaderAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=creator',
-    uploadTime: '2024-01-08T15:00:00Z',
-    auditStatus: 1
-  }
-];
-
-const mockLikedVideos = [
-  {
-    id: '3',
-    title: '科技前沿解读',
-    description: '最新科技动态',
-    tags: ['科技'],
-    coverUrl: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=640&h=360&fit=crop',
-    videoUrl: '',
-    duration: 300,
-    categoryId: '4',
-    categoryName: '科技',
-    viewCount: 8900,
-    likeCount: 678,
-    commentCount: 123,
-    favoriteCount: 345,
-    uploaderId: '3',
-    uploaderName: '普通用户',
-    uploaderAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user',
-    uploadTime: '2024-01-05T09:00:00Z',
-    auditStatus: 1
-  }
-];
-
 export function UserPage() {
+  const [works, setWorks] = useState<any[]>([]);
+  const [likes, setLikes] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'works' | 'likes'>('works');
@@ -107,7 +45,77 @@ export function UserPage() {
     likes: 0,
   };
 
-  const videos = activeTab === 'works' ? mockUserVideos : mockLikedVideos;
+  // 获取用户的视频作品
+  const fetchUserVideos = async () => {
+    if (!id) return;
+    try {
+      // 调用获取用户视频的接口（需要后端支持）
+      const response = await fetch(`http://localhost:8000/api/users/${id}/videos`);
+      const data = await response.json();
+      setWorks(data.items || []);
+    } catch (error) {
+      console.error('获取用户视频失败:', error);
+      setWorks([]);
+    }
+  };
+
+  // 获取用户喜欢的视频
+  const fetchUserLikes = async () => {
+    if (!id) return;
+    try {
+      const response = await fetch(`http://localhost:8000/api/users/${id}/likes`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('auth-storage') ? JSON.parse(localStorage.getItem('auth-storage')!).state?.token : ''}`
+        }
+      });
+      const data = await response.json();
+      setLikes(data.items || []);
+    } catch (error) {
+      console.error('获取用户喜欢失败:', error);
+      setLikes([]);
+    }
+  };
+
+  const [stats, setStats] = useState({ followerCount: 0, followingCount: 0, likeCount: 0 });
+
+  const fetchUserStats = async () => {
+    if (!id) return;
+    try {
+      const response = await fetch(`http://localhost:8000/api/users/${id}/stats`);
+      const data = await response.json();
+      setStats({
+        followerCount: data.followerCount || 0,
+        followingCount: data.followingCount || 0,
+        likeCount: data.likeCount || 0
+      });
+    } catch (error) {
+      console.error('获取用户统计失败:', error);
+    }
+  };
+
+  // 组件加载时获取数据
+  useEffect(() => {
+    if (!id) return;
+    getUserProfile(id).then(setProfile).catch(() => setProfile(null));
+    fetchUserStats();
+    if (!isOwnProfile) {
+      getRelation(id).then(setRelation).catch(() => setRelation(null));
+    } else {
+      getRelation(id).then(setRelation).catch(() => setRelation(null));
+    }
+    
+    // 加载视频数据
+    const loadVideos = async () => {
+      setLoading(true);
+      await fetchUserVideos();
+      await fetchUserLikes();
+      setLoading(false);
+    };
+    loadVideos();
+  }, [id, isOwnProfile]);
+
+  // const videos = activeTab === 'works' ? mockUserVideos : mockLikedVideos;
+  const videos = activeTab === 'works' ? works : likes;
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -131,24 +139,27 @@ export function UserPage() {
               <div className="flex items-center gap-6 text-sm">
                 <div className="flex items-center gap-2">
                   <Users className="w-4 h-4 text-gray-500" />
-                  <span className="font-semibold">{userInfo.followers}</span>
+                  <span className="font-semibold">{stats.followerCount}</span>
                   <span className="text-gray-500">粉丝</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <User className="w-4 h-4 text-gray-500" />
-                  <span className="font-semibold">{userInfo.following}</span>
+                  <span className="font-semibold">{stats.followingCount}</span>
                   <span className="text-gray-500">关注</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Heart className="w-4 h-4 text-gray-500" />
-                  <span className="font-semibold">{userInfo.likes}</span>
+                  <span className="font-semibold">{stats.likeCount}</span>
                   <span className="text-gray-500">获赞</span>
                 </div>
               </div>
             </div>
             <div className="flex gap-3">
               {isOwnProfile ? (
-                <button className="px-6 py-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                <button 
+                  onClick={() => navigate('/settings')}
+                  className="px-6 py-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                >
                   编辑资料
                 </button>
               ) : (
@@ -157,16 +168,12 @@ export function UserPage() {
                     <FollowButton
                       userId={id}
                       onChange={(isFollowing) => {
-                        setRelation((r) =>
-                          r
-                            ? {
-                                ...r,
-                                isFollowing,
-                                isMutual: isFollowing && r.isFollowedBy,
-                                followerCount: r.followerCount + (isFollowing ? 1 : -1),
-                              }
-                            : r
-                        );
+                        setRelation((r) => r ? { ...r, isFollowing } : r);
+                        // 更新统计数据
+                        setStats(prev => ({
+                          ...prev,
+                          followerCount: prev.followerCount + (isFollowing ? 1 : -1)
+                        }));
                       }}
                     />
                     <button
@@ -214,17 +221,24 @@ export function UserPage() {
           </button>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-          {videos.map((video, index) => (
-            <motion.div
-              key={video.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
-            >
-              <VideoCard video={video} />
-            </motion.div>
-          ))}
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          {loading ? (
+            <div className="col-span-full text-center py-20 text-gray-500">加载中...</div>
+          ) : (
+            videos.map((video, index) => (
+              <motion.div
+                key={video.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
+              >
+                <VideoCard 
+                  video={video} 
+                  onClick={() => navigate(`/video/${video.id}`)}
+                />
+              </motion.div>
+            ))
+          )}
         </div>
 
         {videos.length === 0 && (

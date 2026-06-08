@@ -112,3 +112,10 @@ export async function apiRequest<T = any>(
 }
 
 export { API_BASE };
+
+export const changePassword = async (oldPassword: string, newPassword: string) => {
+  return apiRequest('/api/auth/change-password', {
+    method: 'PUT',
+    body: JSON.stringify({ old_password: oldPassword, new_password: newPassword }),
+  });
+};
