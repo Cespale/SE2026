@@ -177,7 +177,13 @@ export function VideoPage() {
     if (currentVideo) {
       setLocalLikeCount(currentVideo.likeCount);
     }
-  }, [id, fetchVideoDetail, fetchComments, fetchDanmaku, fetchRelatedVideos, currentVideo]);
+  }, [id]);
+
+  useEffect(() => {
+    if (currentVideo) {
+      setLocalLikeCount(currentVideo.likeCount);
+    }
+  }, [currentVideo]);
 
     // 获取当前用户是否点赞了该视频
   const fetchLikeStatus = async () => {
@@ -199,36 +205,7 @@ export function VideoPage() {
   const safeVideoUrl = getPlayableVideoUrl(currentVideo?.videoUrl);
   const safePosterUrl = currentVideo?.coverUrl || DEFAULT_COVER_URL;
 
-  const visibleComments =
-    comments && comments.length > 0
-      ? comments
-      : [
-          {
-            id: 'mock-comment-1',
-            content: '这个视频可以正常播放，评论区也有内容显示。',
-            userId: '1',
-            username: 'xuyue',
-            userAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user',
-            videoId: id || '1',
-            parentId: '0',
-            likeCount: 18,
-            isTop: false,
-            createTime: new Date().toISOString(),
-          },
-          {
-            id: 'mock-comment-2',
-            content: '这是固定模拟评论，用于作业展示。',
-            userId: '2',
-            username: '创作者小明',
-            userAvatar:
-              'https://api.dicebear.com/7.x/avataaars/svg?seed=creator',
-            videoId: id || '1',
-            parentId: '0',
-            likeCount: 9,
-            isTop: false,
-            createTime: new Date().toISOString(),
-          },
-        ];
+  const visibleComments = comments || [];
 
   const visibleDanmaku =
     danmakuList && danmakuList.length > 0
@@ -267,31 +244,32 @@ export function VideoPage() {
         ];
 
   useEffect(() => {
-    const current = Math.floor(currentTime);
+  // 使用精确的 currentTime（不取整），让弹幕在正确时间点出现
+  const current = currentTime;
+  
+  // 找出当前时间点应该出现的弹幕
+  const newDanmaku = visibleDanmaku.filter((item) => {
+    const itemTime = item.videoTime || 0;
+    const alreadyActive = activeDanmaku.some(
+      (active) => active.id === item.id
+    );
+    // 使用一个小的误差范围（0.3秒），确保弹幕准时出现
+    return Math.abs(itemTime - current) < 0.3 && !alreadyActive;
+  });
 
-    const newDanmaku = visibleDanmaku.filter((item) => {
-      const itemTime = Math.floor(item.videoTime || 0);
-      const alreadyActive = activeDanmaku.some(
-        (active) => active.id === item.id
-      );
+  if (newDanmaku.length === 0) return;
 
-      return itemTime === current && !alreadyActive;
-    });
+  setActiveDanmaku((prev) => [...prev, ...newDanmaku]);
 
-    if (newDanmaku.length === 0) return;
+  // 弹幕动画完成后移除（动画时长 + 0.5秒缓冲）
+  const timer = setTimeout(() => {
+    setActiveDanmaku((prev) =>
+      prev.filter((item) => !newDanmaku.some((newItem) => newItem.id === item.id))
+    );
+  }, Math.max(...newDanmaku.map(item => item.content.length / 10 + 2.5)) * 1000 + 500);
 
-    setActiveDanmaku((prev) => [...prev, ...newDanmaku]);
-
-    const timer = window.setTimeout(() => {
-      setActiveDanmaku((prev) =>
-        prev.filter(
-          (item) => !newDanmaku.some((newItem) => newItem.id === item.id)
-        )
-      );
-    }, 8000);
-
-    return () => window.clearTimeout(timer);
-  }, [currentTime, visibleDanmaku, activeDanmaku]);
+  return () => clearTimeout(timer);
+}, [currentTime, visibleDanmaku]);
 
   const togglePlay = async () => {
     const video = videoRef.current;
@@ -357,6 +335,8 @@ export function VideoPage() {
     );
 
     await sendDanmaku(id, danmakuInput.trim(), danmakuColor, videoTime);
+    // 重新获取弹幕列表
+    await fetchDanmaku(id);
 
     setDanmakuInput('');
   };
@@ -527,42 +507,29 @@ export function VideoPage() {
             )}
 
             {showDanmaku && (
-              <div
-                ref={danmakuRef}
-                className="absolute inset-0 pointer-events-none overflow-hidden"
-              >
-                {activeDanmaku.map((item, index) => (
-                  <motion.div
-                    key={item.id}
-                    initial={{ x: '100%' }}
-                    animate={{ x: '-100%' }}
-                    transition={{ duration: 8, ease: 'linear' }}
-                    className="absolute text-base md:text-lg font-medium whitespace-nowrap"
-                    style={{
-                      color: item.color || '#ffffff',
-                      top: `${(index % 10) * 9 + 5}%`,
-                      textShadow: '1px 1px 2px rgba(0,0,0,0.85)',
-                    }}
-                  >
-                    {item.content}
-                  </motion.div>
-                ))}
-
-                {activeDanmaku.length === 0 &&
-                  visibleDanmaku.slice(0, 3).map((item, index) => (
-                    <div
-                      key={`static-${item.id}`}
+              <div ref={danmakuRef} className="absolute inset-0 pointer-events-none overflow-hidden">
+                {activeDanmaku.map((item, index) => {
+                  const topPosition = 10 + (index % 7) * 10;
+                  // 动画时长根据弹幕长度调整
+                  const duration = Math.max(3, Math.min(6, item.content.length / 10 + 2.5));
+                  
+                  return (
+                    <motion.div
+                      key={item.id}
+                      initial={{ x: '100vw' }}
+                      animate={{ x: '-100%' }}
+                      transition={{ duration, ease: 'linear' }}
                       className="absolute text-base md:text-lg font-medium whitespace-nowrap"
                       style={{
                         color: item.color || '#ffffff',
-                        top: `${index * 12 + 8}%`,
-                        left: `${12 + index * 18}%`,
+                        top: `${topPosition}%`,
                         textShadow: '1px 1px 2px rgba(0,0,0,0.85)',
                       }}
                     >
                       {item.content}
-                    </div>
-                  ))}
+                    </motion.div>
+                  );
+                })}
               </div>
             )}
 
@@ -702,6 +669,7 @@ export function VideoPage() {
                 <span>{(localLikeCount || currentVideo.likeCount).toLocaleString()}</span>
               </button>
 
+              {/*
               <button
                 onClick={() => favoriteVideo(currentVideo.id)}
                 className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-full hover:bg-yellow-50 hover:text-yellow-500 transition-colors"
@@ -709,6 +677,7 @@ export function VideoPage() {
                 <Bookmark size={20} />
                 <span>{currentVideo.favoriteCount.toLocaleString()}</span>
               </button>
+              */}
 
               <button
                 onClick={handleShare}

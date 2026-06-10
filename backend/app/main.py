@@ -662,6 +662,7 @@ def sync_local_videos(db: Session):
         db.add(video)
         created_count += 1
 
+    """
     # 隐藏所有不是 public/demo-videos 里的视频，避免首页加载外网慢视频
     db.query(Video).filter(
         ~Video.video_url.like('/demo-videos/%')
@@ -671,6 +672,7 @@ def sync_local_videos(db: Session):
         },
         synchronize_session=False
     )
+    """
 
     # 确保本地视频全部可见并审核通过
     db.query(Video).filter(
@@ -770,8 +772,7 @@ def list_videos(
 ):
     q = db.query(Video).filter(
         Video.status == 0,
-        Video.audit_status == 1,
-        Video.video_url.like('/demo-videos/%')
+        Video.audit_status == 1
     )
 
     if category_id and category_id != '0':
@@ -799,6 +800,31 @@ def list_videos(
         'items': [video_out(v).dict() for v in items],
         'hasMore': page * page_size < total
     }
+
+# ======================================================================
+# 推荐视频
+# ======================================================================
+
+@app.get('/api/videos/recommended')
+def recommended_videos(
+    page: int = 1,
+    page_size: int = 20,
+    db: Session = Depends(get_db)
+):
+    """获取推荐视频（按播放量排序的热门视频）"""
+    q = db.query(Video).filter(
+        Video.status == 0,
+        Video.audit_status == 1
+    ).order_by(Video.view_count.desc())
+    
+    items = q.offset((page - 1) * page_size).limit(page_size).all()
+    total = q.count()
+    
+    return {
+        'items': [video_out(v).dict() for v in items],
+        'hasMore': page * page_size < total
+    }
+
 @app.get('/api/videos/{video_id}')
 def get_video(video_id: UUID, db: Session = Depends(get_db)):
     v = db.get(Video, video_id)
@@ -1919,3 +1945,360 @@ def get_user_stats(
         'followingCount': following_count,
         'likeCount': like_count
     }
+
+# ======================================================================
+# 真正的视频文件上传
+# ======================================================================
+
+import shutil
+from fastapi import UploadFile, File
+
+# 视频上传目录
+VIDEO_UPLOAD_DIR = Path("/app/public/uploads/videos")
+VIDEO_UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+
+COVER_UPLOAD_DIR = Path("/app/public/uploads/covers")
+COVER_UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+
+@app.post('/api/videos/upload-file')
+async def upload_video_file(
+    file: UploadFile = File(...),
+    user: User = Depends(require_creator),
+    db: Session = Depends(get_db)
+):
+    # 验证文件类型
+    if not file.content_type or not file.content_type.startswith('video/'):
+        raise HTTPException(status_code=400, detail='只支持视频文件')
+    
+    if file.size > 500 * 1024 * 1024:
+        raise HTTPException(status_code=400, detail='文件大小不能超过500MB')
+    
+    # 保存文件
+    ext = file.filename.split('.')[-1] if '.' in file.filename else 'mp4'
+    filename = f"{user.id}_{int(datetime.now().timestamp())}.{ext}"
+    filepath = VIDEO_UPLOAD_DIR / filename
+    
+    with open(filepath, 'wb') as buffer:
+        shutil.copyfileobj(file.file, buffer)
+    
+    video_url = f"/uploads/videos/{filename}"
+    
+    # 生成封面 - 使用 OpenCV
+    cover_dir = Path("/app/public/uploads/covers")
+    cover_dir.mkdir(parents=True, exist_ok=True)
+    
+    cover_filename = f"{user.id}_{int(datetime.now().timestamp())}.jpg"
+    cover_path = cover_dir / cover_filename
+    
+    cover_url = ""
+    try:
+        import cv2
+        cap = cv2.VideoCapture(str(filepath))
+        if cap.isOpened():
+            # 读取第一帧
+            ret, frame = cap.read()
+            if ret:
+                # 保存为图片
+                cv2.imwrite(str(cover_path), frame)
+                cover_url = f"/uploads/covers/{cover_filename}"
+                print(f"封面生成成功: {cover_url}")
+            else:
+                print("无法读取视频帧")
+        else:
+            print("无法打开视频文件")
+        cap.release()
+    except Exception as e:
+        print(f"封面生成失败: {e}")
+    
+    # 获取时长
+    duration = 0
+    try:
+        import cv2
+        cap = cv2.VideoCapture(str(filepath))
+        if cap.isOpened():
+            fps = cap.get(cv2.CAP_PROP_FPS)
+            frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+            if fps > 0:
+                duration = int(frame_count / fps)
+        cap.release()
+    except:
+        pass
+    
+    return {
+        'code': 0,
+        'message': '上传成功',
+        'data': {
+            'videoUrl': video_url,
+            'duration': duration,
+            'coverUrl': cover_url
+        }
+    }
+
+# ======================================================================
+# 视频封面上传
+# ======================================================================
+
+VIDEO_COVER_UPLOAD_DIR = Path("/app/public/uploads/covers")
+VIDEO_COVER_UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+
+@app.post('/api/videos/upload-cover')
+async def upload_video_cover(
+    file: UploadFile = File(...),
+    user: User = Depends(require_creator),
+):
+    """上传视频封面（独立接口，不影响用户头像）"""
+    if not file.content_type or not file.content_type.startswith('image/'):
+        raise HTTPException(status_code=400, detail='只支持图片文件')
+    
+    if file.size > 5 * 1024 * 1024:
+        raise HTTPException(status_code=400, detail='图片大小不能超过5MB')
+    
+    ext = file.filename.split('.')[-1] if '.' in file.filename else 'jpg'
+    filename = f"cover_{user.id}_{int(datetime.now().timestamp())}.{ext}"
+    filepath = VIDEO_COVER_UPLOAD_DIR / filename
+    
+    with open(filepath, 'wb') as buffer:
+        shutil.copyfileobj(file.file, buffer)
+    
+    cover_url = f"/uploads/covers/{filename}"
+    
+    return {
+        'code': 0,
+        'message': '封面上传成功',
+        'data': {'coverUrl': cover_url}
+    }
+
+# ======================================================================
+# 视频动态
+# ======================================================================
+
+@app.get('/api/feed')
+def get_feed(
+    page: int = 1,
+    page_size: int = 20,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """获取关注用户的动态（视频作品）"""
+    # 获取当前用户关注的人
+    following_ids = db.query(Follow.followee_id).filter(
+        Follow.follower_id == user.id
+    ).subquery()
+    
+    # 查询这些用户的视频
+    q = db.query(Video).filter(
+        Video.uploader_id.in_(following_ids),
+        Video.status == 0,
+        Video.audit_status == 1
+    ).order_by(Video.created_at.desc())
+    
+    # 分页
+    items = q.offset((page - 1) * page_size).limit(page_size).all()
+    total = q.count()
+    
+    return {
+        'items': [video_out(v).dict() for v in items],
+        'hasMore': page * page_size < total
+    }
+
+# ======================================================================
+# 创作者中心 - 粉丝列表
+# ======================================================================
+
+@app.get('/api/creator/fans')
+def creator_fans(
+    page: int = 1, 
+    limit: int = 20,
+    user: User = Depends(require_creator), 
+    db: Session = Depends(get_db)
+):
+    """获取创作者的粉丝列表"""
+    fans = db.query(Follow, User).join(
+        User, User.id == Follow.follower_id
+    ).filter(
+        Follow.followee_id == user.id
+    ).order_by(Follow.created_at.desc()).offset((page-1)*limit).limit(limit).all()
+    
+    return {
+        'items': [{
+            'id': str(f[0].id),
+            'name': f[1].nickname,
+            'avatar': f[1].avatar,
+            'followTime': f[0].created_at.isoformat()
+        } for f in fans],
+        'total': db.query(Follow).filter(Follow.followee_id == user.id).count()
+    }
+
+# ======================================================================
+# 创作者中心 - 评论管理
+# ======================================================================
+
+@app.get('/api/creator/comments')
+def creator_comments(
+    page: int = 1,
+    limit: int = 20,
+    user: User = Depends(require_creator),
+    db: Session = Depends(get_db)
+):
+    """获取创作者收到的评论"""
+    comments = db.query(Comment).join(
+        Video, Video.id == Comment.video_id
+    ).filter(
+        Video.uploader_id == user.id
+    ).order_by(Comment.created_at.desc()).offset((page-1)*limit).limit(limit).all()
+    
+    return {
+        'items': [{
+            'id': str(c.id),
+            'videoTitle': db.get(Video, c.video_id).title,
+            'content': c.content,
+            'userName': c.user.nickname,
+            'userAvatar': c.user.avatar,
+            'time': c.created_at.isoformat()
+        } for c in comments],
+        'total': db.query(Comment).join(Video).filter(Video.uploader_id == user.id).count()
+    }
+
+# ======================================================================
+# 创作者中心 - 近7天播放量趋势
+# ======================================================================
+
+from datetime import datetime, timedelta
+
+@app.get('/api/creator/week-stats')
+def creator_week_stats(
+    user: User = Depends(require_creator),
+    db: Session = Depends(get_db)
+):
+    """获取创作者近7天播放量趋势"""
+    today = datetime.now().date()
+    week_stats = []
+    
+    for i in range(6, -1, -1):
+        date = today - timedelta(days=i)
+        # 查询当天该创作者所有视频的播放量总和
+        # 注意：需要 video_views 每日统计表，这里简化处理
+        # 暂时返回模拟数据，后续可根据实际需求完善
+        week_stats.append({
+            'day': ['周一', '周二', '周三', '周四', '周五', '周六', '周日'][6-i],
+            'views': 0  # 实际需要从统计数据获取
+        })
+    
+    return week_stats
+
+# ======================================================================
+# 创作者中心 - 按状态获取视频
+# ======================================================================
+
+@app.get('/api/creator/videos/{status}')
+def creator_videos_by_status(
+    status: int,
+    user: User = Depends(require_creator),
+    db: Session = Depends(get_db)
+):
+    """获取创作者指定审核状态的视频"""
+    rows = db.query(Video).filter(
+        Video.uploader_id == user.id,
+        Video.audit_status == status
+    ).order_by(desc(Video.created_at)).all()
+    return {'items': [video_out(v).dict() for v in rows]}
+
+# ======================================================================
+# 删除视频
+# ======================================================================
+
+@app.delete('/api/creator/videos/{video_id}')
+def delete_video(
+    video_id: UUID,
+    user: User = Depends(require_creator),
+    db: Session = Depends(get_db)
+):
+    """删除创作者自己的视频"""
+    video = db.query(Video).filter(
+        Video.id == video_id,
+        Video.uploader_id == user.id
+    ).first()
+    
+    if not video:
+        raise HTTPException(status_code=404, detail='视频不存在或无权限删除')
+    
+    # 删除视频文件（可选）
+    if video.video_url and video.video_url.startswith('/uploads/'):
+        try:
+            file_path = Path(f"/app/public{video.video_url}")
+            if file_path.exists():
+                file_path.unlink()
+        except:
+            pass
+    
+    db.delete(video)
+    db.commit()
+    
+    return {'code': 0, 'message': '删除成功'}
+
+# ======================================================================
+# 编辑视频
+# ======================================================================
+
+class VideoUpdateRequest(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    category_id: Optional[int] = None
+
+@app.put('/api/creator/videos/{video_id}')
+def update_video(
+    video_id: UUID,
+    data: VideoUpdateRequest,
+    user: User = Depends(require_creator),
+    db: Session = Depends(get_db)
+):
+    """编辑创作者自己的视频"""
+    video = db.query(Video).filter(
+        Video.id == video_id,
+        Video.uploader_id == user.id
+    ).first()
+    
+    if not video:
+        raise HTTPException(status_code=404, detail='视频不存在或无权限编辑')
+    
+    if data.title is not None:
+        video.title = data.title
+    if data.description is not None:
+        video.description = data.description
+    if data.category_id is not None:
+        # 验证分类是否存在
+        category = db.get(Category, data.category_id)
+        if category:
+            video.category_id = data.category_id
+    
+    db.commit()
+    db.refresh(video)
+    
+    return {'code': 0, 'message': '更新成功', 'data': video_out(video).dict()}
+
+# ======================================================================
+# 删除评论
+# ======================================================================
+
+@app.delete('/api/creator/comments/{comment_id}')
+def delete_comment(
+    comment_id: UUID,
+    user: User = Depends(require_creator),
+    db: Session = Depends(get_db)
+):
+    """创作者删除自己视频下的评论"""
+    # 检查评论是否属于创作者的视频
+    comment = db.query(Comment).join(
+        Video, Video.id == Comment.video_id
+    ).filter(
+        Comment.id == comment_id,
+        Video.uploader_id == user.id
+    ).first()
+    
+    if not comment:
+        raise HTTPException(status_code=404, detail='评论不存在或无权限删除')
+    
+    db.delete(comment)
+    db.commit()
+    
+    return {'code': 0, 'message': '删除成功'}

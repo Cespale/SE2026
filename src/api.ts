@@ -119,3 +119,15 @@ export const changePassword = async (oldPassword: string, newPassword: string) =
     body: JSON.stringify({ old_password: oldPassword, new_password: newPassword }),
   });
 };
+
+// 获取创作者统计数据（粉丝数）
+export const getCreatorFans = async () => {
+  const data: any = await apiRequest('/api/creator/fans?page=1&limit=100');
+  return data;
+};
+
+// 获取创作者收到的评论
+export const getCreatorComments = async () => {
+  const data: any = await apiRequest('/api/creator/comments?page=1&limit=100');
+  return data;
+};

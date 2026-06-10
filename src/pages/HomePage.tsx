@@ -5,9 +5,11 @@ import { useVideoStore } from '../stores/videoStore';
 import { VideoCard } from '../components/video/VideoCard';
 import { CategoryBar } from '../components/video/CategoryBar';
 import { Loader2, Video } from 'lucide-react';
+import { useAuthStore } from '../stores/authStore';
 
 export function HomePage() {
   const navigate = useNavigate();
+  const { isLoggedIn } = useAuthStore();
 
   const {
     videos,
@@ -16,19 +18,32 @@ export function HomePage() {
     hasMore,
     fetchVideos,
     fetchCategories,
+    fetchRecommendedVideos,
     loadMore,
   } = useVideoStore();
 
-  const [selectedCategory, setSelectedCategory] = useState('0');
+  const [selectedCategory, setSelectedCategory] = useState('recommended');
 
   useEffect(() => {
     fetchCategories();
-    fetchVideos({ categoryId: '0', page: 1 });
-  }, [fetchCategories, fetchVideos]);
+    if (isLoggedIn) {
+      fetchRecommendedVideos(1);
+    } else {
+      fetchVideos({ page: 1 });
+    }
+  }, [fetchCategories, fetchVideos, fetchRecommendedVideos, isLoggedIn]);
 
   useEffect(() => {
-    fetchVideos({ categoryId: selectedCategory, page: 1 });
-  }, [selectedCategory, fetchVideos]);
+    if (selectedCategory === 'recommended') {
+      if (isLoggedIn) {
+        fetchRecommendedVideos(1);
+      } else {
+        fetchVideos({ page: 1 });
+      }
+    } else if (selectedCategory) {
+      fetchVideos({ categoryId: selectedCategory, page: 1 });
+    }
+  }, [selectedCategory, fetchVideos, fetchRecommendedVideos, isLoggedIn]);
 
   const handleCategoryChange = (categoryId: string) => {
     setSelectedCategory(categoryId);
@@ -39,9 +54,14 @@ export function HomePage() {
       window.innerHeight + window.scrollY >= document.body.offsetHeight - 120;
 
     if (nearBottom && hasMore && !isLoading) {
-      loadMore();
+      if (selectedCategory === 'recommended') {
+        const nextPage = Math.floor(videos.length / 20) + 1;
+        fetchRecommendedVideos(nextPage);
+      } else {
+        loadMore(selectedCategory);
+      }
     }
-  }, [hasMore, isLoading, loadMore]);
+  }, [hasMore, isLoading, loadMore, selectedCategory, fetchRecommendedVideos, videos.length]);
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll);
@@ -51,17 +71,14 @@ export function HomePage() {
     };
   }, [handleScroll]);
 
-  const visibleCategories =
-    categories && categories.length > 0
-      ? categories.filter((category) => category.type === 0)
-      : [
-          { id: '0', name: '推荐', type: 0 },
-          { id: '2', name: '影视', type: 0 },
-          { id: '3', name: '动画', type: 0 },
-          { id: '4', name: '科技', type: 0 },
-          { id: '5', name: '学习', type: 0 },
-          { id: '6', name: '生活', type: 0 },
-        ];
+  const realCategories = categories.filter(
+    (category) => category.type === 0 && category.name !== '推荐'
+  );
+  
+  const visibleCategories = [
+    { id: 'recommended', name: '推荐', type: 0 },
+    ...realCategories,
+  ];
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">

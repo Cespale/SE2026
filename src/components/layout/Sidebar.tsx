@@ -18,7 +18,7 @@ const baseMenuItems = [
   { id: 'home', label: '首页', icon: Home, path: '/' },
   { id: 'discover', label: '发现/直播', icon: Compass, path: '/discover' },
   { id: 'shorts', label: '短视频', icon: PlaySquare, path: '/shorts' },
-  { id: 'subscriptions', label: '订阅', icon: Heart, path: '/subscriptions' },
+  { id: 'subscriptions', label: '动态', icon: Heart, path: '/subscriptions' },
   { id: 'profile', label: '我的', icon: User, path: '/profile' },
 ];
 

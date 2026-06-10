@@ -58,7 +58,7 @@ function App() {
             <Route
               path="/subscriptions"
               element={
-                <RequireAuth message="请先登录后再查看订阅内容。">
+                <RequireAuth message="请先登录后再查看动态。">
                   <SubscriptionPage />
                 </RequireAuth>
               }

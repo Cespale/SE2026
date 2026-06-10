@@ -1,4 +1,4 @@
-import React, { useState, useRef  } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Camera, Lock, User, FileText, Save } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
@@ -16,6 +16,8 @@ export const SettingsPage: React.FC = () => {
   const [isUpgrading, setIsUpgrading] = useState(false);
   const [isPasswordExpanded, setIsPasswordExpanded] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSaveProfile = () => {
     updateUser({ nickname, bio });
@@ -23,37 +25,36 @@ export const SettingsPage: React.FC = () => {
     setTimeout(() => setMessage(''), 2000);
   };
 
-const handleChangePassword = async () => {
-  if (newPassword !== confirmPassword) {
-    setMessage('两次密码不一致');
-    return;
-  }
-  if (newPassword.length < 6) {
-    setMessage('密码至少6位');
-    return;
-  }
-  if (!oldPassword) {
-    setMessage('请输入原密码');
-    return;
-  }
+  const handleChangePassword = async () => {
+    if (newPassword !== confirmPassword) {
+      setMessage('两次密码不一致');
+      return;
+    }
+    if (newPassword.length < 6) {
+      setMessage('密码至少6位');
+      return;
+    }
+    if (!oldPassword) {
+      setMessage('请输入原密码');
+      return;
+    }
 
-  try {
-    await changePassword(oldPassword, newPassword);
-    setMessage('密码修改成功，请重新登录');
-    setOldPassword('');
-    setNewPassword('');
-    setConfirmPassword('');
-    // 3秒后退出登录
-    setTimeout(() => {
-      useAuthStore.getState().logout();
-      window.location.href = '/';
-    }, 3000);
-  } catch (error: any) {
-    const msg = error.message || '修改失败';
-    setMessage(msg);
-  }
-  setTimeout(() => setMessage(''), 3000);
-};
+    try {
+      await changePassword(oldPassword, newPassword);
+      setMessage('密码修改成功，请重新登录');
+      setOldPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+      setTimeout(() => {
+        useAuthStore.getState().logout();
+        window.location.href = '/';
+      }, 3000);
+    } catch (error: any) {
+      const msg = error.message || '修改失败';
+      setMessage(msg);
+    }
+    setTimeout(() => setMessage(''), 3000);
+  };
 
   const handleUpgradeToCreator = async () => {
     if (!confirm('确定要升级为创作者吗？\n\n升级后你将可以：\n• 上传视频\n• 开启直播\n• 查看数据分析\n\n确定要升级吗？')) {
@@ -68,7 +69,6 @@ const handleChangePassword = async () => {
       if (success) {
         setMessageType('success');
         setMessage('恭喜！已成功升级为创作者，刷新页面后即可看到新功能');
-        // 刷新用户信息
         await useAuthStore.getState().refreshMe();
       } else {
         setMessageType('error');
@@ -83,14 +83,10 @@ const handleChangePassword = async () => {
     }
   };
 
-    const [isUploading, setIsUploading] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
   const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
     
-    // 验证文件类型
     if (!file.type.startsWith('image/')) {
       setMessageType('error');
       setMessage('请选择图片文件');
@@ -98,7 +94,6 @@ const handleChangePassword = async () => {
       return;
     }
     
-    // 验证文件大小（限制2MB）
     if (file.size > 2 * 1024 * 1024) {
       setMessageType('error');
       setMessage('图片大小不能超过2MB');
@@ -156,11 +151,11 @@ const handleChangePassword = async () => {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
-      <div className="max-w-2xl mx-auto px-4">
+      <div className="max-w-7xl mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-8"
+          className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-8 w-full"
         >
           <h1 className="text-2xl font-bold mb-8">个人设置</h1>
 
@@ -262,7 +257,6 @@ const handleChangePassword = async () => {
                 <button
                   onClick={() => {
                     setIsEditing(false);
-                    // 恢复原值
                     setNickname(user?.nickname || '');
                     setBio(user?.bio || '');
                   }}
@@ -281,7 +275,7 @@ const handleChangePassword = async () => {
             )}
           </div>
 
-                    {/* 修改密码 - 可折叠 */}
+          {/* 修改密码 - 可折叠 */}
           <div className="border-t my-8" />
 
           <button
@@ -359,3 +353,5 @@ const handleChangePassword = async () => {
     </div>
   );
 };
+
+export default SettingsPage;
