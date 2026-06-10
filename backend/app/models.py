@@ -16,6 +16,7 @@ class User(Base):
     status = Column(SmallInteger, default=0)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    stream_key = Column(String(20), unique=True, nullable=True)
 
 class Category(Base):
     __tablename__ = 'categories'
@@ -80,6 +81,7 @@ class LiveRoom(Base):
     __tablename__ = 'live_rooms'
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     title = Column(String(120), nullable=False)
+    description = Column(Text, default='')  # 新增
     category_id = Column(Integer, ForeignKey('categories.id'))
     cover = Column(Text, default='')
     stream_key = Column(String(80), unique=True, nullable=False)

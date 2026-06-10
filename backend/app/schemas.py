@@ -18,6 +18,7 @@ class UserOut(BaseModel):
     bio: str
     userType: int
     status: int
+    streamKey: Optional[str] = None
 
 class ProfileUpdate(BaseModel):
     nickname: Optional[str] = None
@@ -94,10 +95,12 @@ class LiveRoomCreate(BaseModel):
     title: str
     categoryId: str
     cover: str = ''
+    description: Optional[str] = None
 
 class LiveRoomOut(BaseModel):
     id: str
     title: str
+    description: Optional[str] = None  # 添加这一行
     categoryId: str
     categoryName: str
     cover: str

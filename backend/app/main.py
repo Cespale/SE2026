@@ -149,7 +149,16 @@ def generate_video_cover(video_path: Path, cover_dir: Path) -> str:
     return f"/demo-covers/{cover_name}?v={version}"
 
 def user_out(u: User) -> UserOut:
-    return UserOut(id=str(u.id), account=u.account, nickname=u.nickname, avatar=u.avatar, bio=u.bio, userType=u.user_type, status=u.status)
+    return UserOut(
+        id=str(u.id), 
+        account=u.account, 
+        nickname=u.nickname, 
+        avatar=u.avatar, 
+        bio=u.bio, 
+        userType=u.user_type, 
+        status=u.status,
+        streamKey=u.stream_key
+    )
 
 def video_out(v: Video) -> VideoOut:
     return VideoOut(
@@ -183,12 +192,22 @@ def danmaku_out(d: Danmaku) -> DanmakuOut:
 
 def live_out(r: LiveRoom) -> LiveRoomOut:
     return LiveRoomOut(
-        id=str(r.id), title=r.title, categoryId=str(r.category_id), categoryName=r.category.name if r.category else '',
+        id=str(r.id),
+        title=r.title,
+        description=r.description or "",  # 添加这一行
+        categoryId=str(r.category_id),
+        categoryName=r.category.name if r.category else '',
         cover=r.cover or 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=640&h=360&fit=crop',
-        streamKey=r.stream_key, pushUrl=r.push_url, pullUrl=r.pull_url,
-        anchorId=str(r.anchor_id), anchorName=r.anchor.nickname if r.anchor else '主播',
-        anchorAvatar=r.anchor.avatar if r.anchor else '', onlineCount=r.online_count or 0,
-        startTime=r.start_time.isoformat() if r.start_time else '', endTime=r.end_time.isoformat() if r.end_time else '', status=r.status or 0
+        streamKey=r.stream_key,
+        pushUrl=r.push_url,
+        pullUrl=r.pull_url,
+        anchorId=str(r.anchor_id),
+        anchorName=r.anchor.nickname if r.anchor else '主播',
+        anchorAvatar=r.anchor.avatar if r.anchor else '',
+        onlineCount=r.online_count or 0,
+        startTime=r.start_time.isoformat() if r.start_time else '',
+        endTime=r.end_time.isoformat() if r.end_time else '',
+        status=r.status or 0
     )
 
 def seed_data(db: Session):
@@ -201,6 +220,10 @@ def seed_data(db: Session):
     4. 所有视频都使用浏览器可直接播放的 mp4 地址
     """
 
+    if db.query(User).count() > 0:
+        print("数据库已有数据，跳过初始化")
+        return
+    
     # 一、初始化用户：缺哪个补哪个
     demo_users = [
         {
@@ -233,11 +256,12 @@ def seed_data(db: Session):
         exists = db.query(User).filter(User.account == item["account"]).first()
 
         if exists:
-            # 如果用户已经存在，就同步一下昵称、头像、身份，避免旧数据不一致
+            # 强制同步所有字段
             exists.nickname = item["nickname"]
             exists.avatar = item["avatar"]
             exists.bio = item["bio"]
             exists.user_type = item["user_type"]
+            # 同时更新该用户所有视频的 uploader_name（通过关系动态获取，无需单独更新）
         else:
             db.add(User(
                 account=item["account"],
@@ -502,26 +526,7 @@ def seed_data(db: Session):
         db.add(live_category)
         db.commit()
 
-    sample_rooms = [
-        {
-            "title": "学习区直播：软件工程项目答疑",
-            "category_id": 10,
-            "cover": "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=900&auto=format&fit=crop",
-            "stream_key": "stream_demo_001",
-            "push_url": "rtmp://localhost/live/stream_demo_001",
-            "pull_url": "http://localhost:8080/live/stream_demo_001.flv",
-            "online_count": 128,
-        },
-        {
-            "title": "生活区直播：今晚一起剪视频",
-            "category_id": 10,
-            "cover": "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=900&auto=format&fit=crop",
-            "stream_key": "stream_demo_002",
-            "push_url": "rtmp://localhost/live/stream_demo_002",
-            "pull_url": "http://localhost:8080/live/stream_demo_002.flv",
-            "online_count": 86,
-        },
-    ]
+    sample_rooms = []
 
     for item in sample_rooms:
         exists_room = db.query(LiveRoom).filter(
@@ -719,8 +724,36 @@ def startup():
         apply_social_migration()
     except Exception as e:
         print("社区互动迁移失败：", e)
+    
     db = SessionLocal()
     try:
+        # 自动添加 live_rooms.description 字段
+        try:
+            from sqlalchemy import text
+            with engine.begin() as conn:
+                conn.execute(text("ALTER TABLE live_rooms ADD COLUMN IF NOT EXISTS description TEXT DEFAULT ''"))
+                print("live_rooms.description 字段已添加")
+        except Exception as e:
+            print(f"添加 description 字段失败: {e}")
+        
+        # 自动添加 users.stream_key 字段
+        try:
+            from sqlalchemy import text
+            with engine.begin() as conn:
+                conn.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS stream_key VARCHAR(20) UNIQUE"))
+                print("users.stream_key 字段已添加")
+        except Exception as e:
+            print(f"添加 stream_key 字段失败: {e}")
+        
+        # 为没有 stream_key 的创作者生成唯一密钥
+        import random
+        creators = db.query(User).filter(User.user_type >= 1, User.stream_key == None).all()
+        for creator in creators:
+            creator.stream_key = str(random.randint(100000, 999999))
+        db.commit()
+        if creators:
+            print(f"已为 {len(creators)} 位创作者生成 stream_key")
+        
         seed_data(db)
     except Exception as e:
         db.rollback()
@@ -748,12 +781,21 @@ def register(data: RegisterIn, db: Session = Depends(get_db)):
     db.add(user); db.commit(); db.refresh(user)
     return {'token': create_token(user), 'user': user_out(user)}
 
+@app.get('/api/auth/me')
+def get_me(user: User = Depends(get_current_user)):
+    """获取当前用户信息"""
+    return user_out(user)
+
 @app.patch('/api/auth/me')
 def update_me(data: ProfileUpdate, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
-    if data.nickname is not None: user.nickname = data.nickname
-    if data.bio is not None: user.bio = data.bio
-    if data.avatar is not None: user.avatar = data.avatar
-    db.commit(); db.refresh(user)
+    if data.nickname is not None:
+        user.nickname = data.nickname
+    if data.bio is not None:
+        user.bio = data.bio
+    if data.avatar is not None:
+        user.avatar = data.avatar
+    db.commit()
+    db.refresh(user)
     return user_out(user)
 
 @app.get('/api/categories')
@@ -1157,26 +1199,47 @@ def room_detail(room_id: UUID, db: Session = Depends(get_db)):
 
 @app.post('/api/live/rooms')
 def create_room(data: LiveRoomCreate, user: User = Depends(require_creator), db: Session = Depends(get_db)):
-    key = 'stream_' + secrets.token_hex(8)
-
+    # 检查是否已有正在直播的房间
+    existing_active = db.query(LiveRoom).filter(
+        LiveRoom.anchor_id == user.id,
+        LiveRoom.status == 1
+    ).first()
+    
+    if existing_active:
+        raise HTTPException(status_code=400, detail='你已有一个正在直播的房间，请先结束当前直播')
+    
+    # 删除该用户所有已结束的旧房间
+    db.query(LiveRoom).filter(
+        LiveRoom.anchor_id == user.id,
+        LiveRoom.status == 2
+    ).delete()
+    
+    # 确保用户有唯一的 stream_key
+    if not user.stream_key:
+        import random
+        user.stream_key = str(random.randint(100000, 999999))
+        db.commit()
+    
     category_id = int(data.categoryId or 10)
-
     exists_category = db.query(Category).filter(Category.id == category_id).first()
     if not exists_category:
         category_id = 10
-
         live_category = db.query(Category).filter(Category.id == 10).first()
         if not live_category:
             db.add(Category(id=10, name="直播", type=1, sort_order=10))
             db.commit()
 
+    # 使用用户上传的封面，如果没有则使用默认封面
+    cover_url = data.cover if data.cover else "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=900&auto=format&fit=crop"
+
     r = LiveRoom(
         title=data.title or "新的直播间",
+        description=data.description or "",
         category_id=category_id,
-        cover=data.cover or "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=900&auto=format&fit=crop",
-        stream_key=key,
-        push_url=f'rtmp://localhost/live/{key}',
-        pull_url=f'http://localhost:8080/live/{key}.flv',
+        cover=cover_url,
+        stream_key=user.stream_key,
+        push_url=f"rtmp://localhost:1935/live/{user.stream_key}",
+        pull_url=f"http://localhost:8080/live/{user.stream_key}.flv",
         anchor_id=user.id,
         online_count=0,
         status=1,
@@ -1185,7 +1248,7 @@ def create_room(data: LiveRoomCreate, user: User = Depends(require_creator), db:
     db.add(r)
     db.commit()
     db.refresh(r)
-
+    
     return live_out(r)
 
 @app.post('/api/live/rooms/{room_id}/end')
@@ -2302,3 +2365,89 @@ def delete_comment(
     db.commit()
     
     return {'code': 0, 'message': '删除成功'}
+
+# ======================================================================
+# 获取创作者当前直播中的房间
+# ======================================================================
+
+@app.get('/api/creator/active-room')
+def get_active_room(
+    user: User = Depends(require_creator),
+    db: Session = Depends(get_db)
+):
+    """获取创作者当前正在直播的房间"""
+    room = db.query(LiveRoom).filter(
+        LiveRoom.anchor_id == user.id,
+        LiveRoom.status == 1  # 直播中
+    ).first()
+    
+    if room:
+        return live_out(room)
+    return None
+
+
+# ======================================================================
+# 停止直播（关闭直播间）
+# ======================================================================
+
+@app.post('/api/live/rooms/{room_id}/stop')
+def stop_room(
+    room_id: UUID,
+    user: User = Depends(require_creator),
+    db: Session = Depends(get_db)
+):
+    """停止直播（删除直播间记录）"""
+    room = db.get(LiveRoom, room_id)
+    if not room:
+        raise HTTPException(status_code=404, detail='直播间不存在')
+    if room.anchor_id != user.id:
+        raise HTTPException(status_code=403, detail='只能结束自己的直播')
+    
+    # 直接删除记录，而不是更新状态
+    db.delete(room)
+    db.commit()
+    
+    return {'code': 0, 'message': '直播已结束'}
+
+# ======================================================================
+# 直播弹幕 HTTP 接口
+# ======================================================================
+
+@app.post('/api/live/{room_id}/danmaku')
+async def send_live_danmaku(
+    room_id: UUID,
+    data: DanmakuCreate,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """发送直播弹幕（HTTP 接口）"""
+    room = db.get(LiveRoom, room_id)
+    if not room:
+        raise HTTPException(status_code=404, detail='直播间不存在')
+    
+    # 保存弹幕到数据库
+    danmaku = Danmaku(
+        content=data.content,
+        color=data.color,
+        position=data.position,
+        video_time=data.videoTime,
+        target_id=room_id,
+        target_type=1,
+        user_id=user.id
+    )
+    db.add(danmaku)
+    db.commit()
+    
+    # 通过 WebSocket 广播
+    await live_hub.broadcast(str(room_id), {
+        'type': 'danmaku',
+        'id': str(danmaku.id),
+        'content': data.content,
+        'color': data.color,
+        'username': user.nickname,
+        'userAvatar': user.avatar,  # 添加头像
+        'userId': str(user.id),
+        'timestamp': datetime.now().isoformat()
+    })
+    
+    return {'code': 0, 'message': '发送成功'}

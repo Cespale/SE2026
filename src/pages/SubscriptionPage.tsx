@@ -7,13 +7,22 @@ import { Users, Loader2, Eye, Heart, MessageCircle, Calendar } from 'lucide-reac
 
 export function SubscriptionPage() {
   const navigate = useNavigate();
-  const { isLoggedIn } = useAuthStore();
+  const { isLoggedIn, user } = useAuthStore();
+  const [refreshing, setRefreshing] = useState(false);
   const {
     videos,
     isLoading,
     hasMore,
     fetchFeed,
   } = useVideoStore();
+
+  // 手动刷新
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await fetchFeed(1);
+    setPage(1);
+    setRefreshing(false);
+  };
 
   const [page, setPage] = useState(1);
 
@@ -78,17 +87,23 @@ export function SubscriptionPage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-6">
       <div className="max-w-7xl mx-auto px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-6"
-        >
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-            <Users className="w-6 h-6" />
-            动态
-          </h1>
-          <p className="text-gray-500 mt-1">关注创作者的最新作品</p>
-        </motion.div>
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+              <Users className="w-6 h-6" />
+              动态
+            </h1>
+            <p className="text-gray-500 mt-1">关注创作者的最新作品</p>
+          </div>
+          <button
+            onClick={handleRefresh}
+            disabled={refreshing}
+            className="flex items-center gap-2 px-3 py-1.5 text-sm bg-white dark:bg-gray-800 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+          >
+            <Loader2 className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+            刷新
+          </button>
+        </div>
 
         {/* 竖向列表 - 横向充满 */}
         {videos.length > 0 && (
