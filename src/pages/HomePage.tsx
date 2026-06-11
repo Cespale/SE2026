@@ -111,9 +111,6 @@ export function HomePage() {
           <div className="flex flex-col items-center justify-center py-24 text-gray-500">
             <Video className="w-16 h-16 mb-4 opacity-60" />
             <p className="text-lg font-medium">暂无视频内容</p>
-            <p className="text-sm mt-2">
-              可以切换分类，或者使用创作者账号上传视频后再查看。
-            </p>
           </div>
         )}
 

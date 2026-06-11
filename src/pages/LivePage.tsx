@@ -17,6 +17,8 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLiveStore } from '../stores/liveStore';
 import { useAuthStore } from '../stores/authStore';
+import { Flag } from 'lucide-react';
+import { ReportModal } from '../components/ReportModal';
 
 const DEFAULT_AVATAR =
   'https://api.dicebear.com/7.x/avataaars/svg?seed=creator';
@@ -37,6 +39,7 @@ export function LivePage() {
     { id: string; content: string; color: string; top: number }[]
   >([]);
   const [streamStatus, setStreamStatus] = useState<'loading' | 'live' | 'offline'>('loading');
+  const [showReportModal, setShowReportModal] = useState(false);
 
   const {
     currentRoom,
@@ -401,6 +404,21 @@ export function LivePage() {
                   >
                     <Share2 className="w-5 h-5 text-gray-600" />
                   </button>
+
+                  <button
+                    onClick={() => setShowReportModal(true)}
+                    className="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full hover:bg-red-50 hover:text-red-500 transition-colors"
+                  >
+                    <Flag size={20} />
+                    <span>举报</span>
+                  </button>
+
+                  <ReportModal
+                    isOpen={showReportModal}
+                    onClose={() => setShowReportModal(false)}
+                    targetType={2}
+                    targetId={roomId!}
+                  />
                 </div>
               </div>
             </div>

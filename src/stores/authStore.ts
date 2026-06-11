@@ -89,8 +89,15 @@ export const useAuthStore = create<AuthState>()(
           });
 
           return true;
-        } catch (error) {
+        } catch (error: any) {
           console.error('登录失败:', error);
+          
+          // 显示具体错误信息
+          if (error.message && error.message.includes('封禁')) {
+            alert(error.message);
+          } else {
+            alert('登录失败：账号或密码错误');
+          }
 
           set({
             token: null,

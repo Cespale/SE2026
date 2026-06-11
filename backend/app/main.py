@@ -17,7 +17,7 @@ import re
 from .database import Base, engine, get_db, SessionLocal
 from .models import (
     Category, Comment, CommentMention, Conversation, Danmaku, Follow,
-    LiveRoom, Message, Notification, User, Video, VideoLike,
+    LiveRoom, Message, Notification, User, Video, VideoLike, Report,
 )
 from .schemas import *
 from .security import create_token, get_current_user, hash_password, require_admin, require_creator, verify_password, parse_token
@@ -169,7 +169,8 @@ def video_out(v: Video) -> VideoOut:
         favoriteCount=v.favorite_count or 0, uploaderId=str(v.uploader_id),
         uploaderName=v.uploader.nickname if v.uploader else '未知用户',
         uploaderAvatar=v.uploader.avatar if v.uploader else '',
-        uploadTime=v.created_at.isoformat() if v.created_at else '', auditStatus=v.audit_status or 0
+        uploadTime=v.created_at.isoformat() if v.created_at else '', auditStatus=v.audit_status or 0,
+        rejectReason=v.reject_reason or ''
     )
 
 def comment_out(c: Comment, reply_count: int = 0) -> CommentOutV2:
@@ -745,6 +746,34 @@ def startup():
         except Exception as e:
             print(f"添加 stream_key 字段失败: {e}")
         
+        # 自动添加 videos.reject_reason 字段
+        try:
+            from sqlalchemy import text
+            with engine.begin() as conn:
+                conn.execute(text("ALTER TABLE videos ADD COLUMN IF NOT EXISTS reject_reason TEXT"))
+                print("videos.reject_reason 字段已添加")
+        except Exception as e:
+            print(f"添加 reject_reason 字段失败: {e}")
+        
+        # 自动创建 sensitive_words 表
+        try:
+            with engine.begin() as conn:
+                conn.execute(text("""
+                    CREATE TABLE IF NOT EXISTS sensitive_words (
+                        id SERIAL PRIMARY KEY,
+                        word VARCHAR(100) NOT NULL UNIQUE,
+                        created_at TIMESTAMP DEFAULT NOW()
+                    )
+                """))
+                print("sensitive_words 表已创建")
+        except Exception as e:
+            print(f"创建 sensitive_words 表失败: {e}")
+        
+        try:
+            cleanup_orphan_uploads(db)
+        except Exception as e:
+            print(f"清理残留文件失败: {e}")
+
         # 为没有 stream_key 的创作者生成唯一密钥
         import random
         creators = db.query(User).filter(User.user_type >= 1, User.stream_key == None).all()
@@ -771,6 +800,8 @@ def login(data: LoginIn, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.account == data.account).first()
     if not user or not verify_password(data.password, user.password_hash):
         raise HTTPException(status_code=400, detail='账号或密码错误')
+    if user.status == 1:
+        raise HTTPException(status_code=403, detail='账号已被封禁')
     return {'token': create_token(user), 'user': user_out(user)}
 
 @app.post('/api/auth/register')
@@ -940,11 +971,41 @@ def pending_videos(_: User = Depends(require_admin), db: Session = Depends(get_d
     return {'items': [video_out(v).dict() for v in rows]}
 
 @app.patch('/api/admin/videos/{video_id}/audit')
-def audit_video(video_id: UUID, data: AuditIn, _: User = Depends(require_admin), db: Session = Depends(get_db)):
+def audit_video(
+    video_id: UUID, 
+    data: AuditIn, 
+    _: User = Depends(require_admin), 
+    db: Session = Depends(get_db)
+):
     v = db.get(Video, video_id)
-    if not v: raise HTTPException(status_code=404, detail='视频不存在')
+    if not v:
+        raise HTTPException(status_code=404, detail='视频不存在')
+    
     v.audit_status = data.auditStatus
-    db.commit(); db.refresh(v)
+    if data.rejectReason:
+        v.reject_reason = data.rejectReason
+    
+    db.commit()
+    db.refresh(v)
+    
+    # 发送通知
+    if data.auditStatus == 1:
+        content = f'您的视频 "{v.title}" 已通过审核'
+    else:
+        reason = data.rejectReason or '未填写具体原因'
+        content = f'您的视频 "{v.title}" 未通过审核，理由：{reason}'
+    
+    create_notification(
+        db,
+        recipient_id=v.uploader_id,
+        sender_id=None,
+        notif_type=4,
+        target_type=0,
+        target_id=video_id,
+        content=content,
+        auto_commit=True
+    )
+    
     return video_out(v)
 
 """
@@ -1110,6 +1171,9 @@ def add_comment(
     v = db.get(Video, video_id)
     if not v:
         raise HTTPException(status_code=404, detail='视频不存在')
+    
+    # 敏感词过滤
+    filtered_content = filter_sensitive_words(data.content, db)
 
     parent_id = None if data.parentId == '0' else UUID(data.parentId)
     reply_to_user_id = UUID(data.replyToUserId) if data.replyToUserId else None
@@ -1127,7 +1191,7 @@ def add_comment(
             reply_to_user_id = parent_comment.user_id
 
     c = Comment(
-        content=data.content,
+        content=filtered_content,
         user_id=user.id,
         video_id=video_id,
         parent_id=parent_id,
@@ -1138,7 +1202,7 @@ def add_comment(
     db.flush()
 
     # 解析 @提及 → 写入 comment_mentions,并向被 @ 的人发通知
-    mentioned = parse_mentions(db, data.content)
+    mentioned = parse_mentions(db, filtered_content)
     notify_to = set()
     for u in mentioned:
         if str(u.id) == str(user.id):
@@ -1154,14 +1218,14 @@ def add_comment(
         create_notification(
             db, recipient_id=UUID(uid_str), sender_id=user.id,
             notif_type=3, target_type=0, target_id=video_id,
-            content=f'{user.nickname} 在评论里 @了你: {data.content[:60]}',
+            content=f'{user.nickname} 在评论里 @了你: {filtered_content[:60]}',
         )
     # 通知:被回复的人
     if reply_to_user_id and str(reply_to_user_id) not in notify_to:
         create_notification(
             db, recipient_id=reply_to_user_id, sender_id=user.id,
             notif_type=1, target_type=0, target_id=video_id,
-            content=f'{user.nickname} 回复了你: {data.content[:60]}',
+            content=f'{user.nickname} 回复了你: {filtered_content[:60]}',
         )
     # 通知:视频作者(顶层评论才通知,避免和回复通知重复)
     if not parent_id and v.uploader_id and str(v.uploader_id) != str(user.id) \
@@ -1169,7 +1233,7 @@ def add_comment(
         create_notification(
             db, recipient_id=v.uploader_id, sender_id=user.id,
             notif_type=1, target_type=0, target_id=video_id,
-            content=f'{user.nickname} 评论了你的视频: {data.content[:60]}',
+            content=f'{user.nickname} 评论了你的视频: {filtered_content[:60]}',
         )
 
     return comment_out(c).model_dump()
@@ -1181,8 +1245,21 @@ def get_danmaku(video_id: UUID, db: Session = Depends(get_db)):
 
 @app.post('/api/videos/{video_id}/danmaku')
 def add_danmaku(video_id: UUID, data: DanmakuCreate, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
-    d = Danmaku(content=data.content, color=data.color, position=data.position, video_time=data.videoTime, target_id=video_id, target_type=0, user_id=user.id)
-    db.add(d); db.commit(); db.refresh(d)
+    # 敏感词过滤
+    filtered_content = filter_sensitive_words(data.content, db)
+    
+    d = Danmaku(
+        content=filtered_content,
+        color=data.color,
+        position=data.position,
+        video_time=data.videoTime,
+        target_id=video_id,
+        target_type=0,
+        user_id=user.id
+    )
+    db.add(d)
+    db.commit()
+    db.refresh(d)
     return danmaku_out(d)
 
 @app.get('/api/live/rooms')
@@ -2285,15 +2362,19 @@ def delete_video(
     if not video:
         raise HTTPException(status_code=404, detail='视频不存在或无权限删除')
     
-    # 删除视频文件（可选）
-    if video.video_url and video.video_url.startswith('/uploads/'):
-        try:
-            file_path = Path(f"/app/public{video.video_url}")
-            if file_path.exists():
-                file_path.unlink()
-        except:
-            pass
+    # 先删除关联的评论
+    db.query(Comment).filter(Comment.video_id == video_id).delete()
     
+    # 删除关联的弹幕
+    db.query(Danmaku).filter(
+        Danmaku.target_id == video_id,
+        Danmaku.target_type == 0
+    ).delete()
+    
+    # 删除关联的点赞记录
+    db.query(VideoLike).filter(VideoLike.video_id == video_id).delete()
+    
+    # 最后删除视频
     db.delete(video)
     db.commit()
     
@@ -2420,14 +2501,15 @@ async def send_live_danmaku(
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    """发送直播弹幕（HTTP 接口）"""
     room = db.get(LiveRoom, room_id)
     if not room:
         raise HTTPException(status_code=404, detail='直播间不存在')
     
-    # 保存弹幕到数据库
+    # 敏感词过滤
+    filtered_content = filter_sensitive_words(data.content, db)
+    
     danmaku = Danmaku(
-        content=data.content,
+        content=filtered_content,
         color=data.color,
         position=data.position,
         video_time=data.videoTime,
@@ -2438,16 +2520,575 @@ async def send_live_danmaku(
     db.add(danmaku)
     db.commit()
     
-    # 通过 WebSocket 广播
     await live_hub.broadcast(str(room_id), {
         'type': 'danmaku',
         'id': str(danmaku.id),
-        'content': data.content,
+        'content': filtered_content,
         'color': data.color,
         'username': user.nickname,
-        'userAvatar': user.avatar,  # 添加头像
+        'userAvatar': user.avatar,
         'userId': str(user.id),
         'timestamp': datetime.now().isoformat()
     })
     
     return {'code': 0, 'message': '发送成功'}
+
+# ======================================================================
+# 用户管理（管理员）
+# ======================================================================
+
+@app.get('/api/admin/users')
+def admin_users(
+    page: int = 1,
+    limit: int = 20,
+    keyword: Optional[str] = None,
+    _: User = Depends(require_admin),
+    db: Session = Depends(get_db)
+):
+    """获取用户列表"""
+    q = db.query(User)
+    if keyword:
+        q = q.filter(or_(
+            User.account.ilike(f'%{keyword}%'),
+            User.nickname.ilike(f'%{keyword}%')
+        ))
+    total = q.count()
+    users = q.order_by(User.created_at.desc()).offset((page-1)*limit).limit(limit).all()
+    
+    return {
+        'items': [user_out(u).dict() for u in users],
+        'total': total,
+        'page': page,
+        'limit': limit
+    }
+
+
+@app.patch('/api/admin/users/{user_id}/type')
+def update_user_type(
+    user_id: UUID,
+    data: dict,
+    _: User = Depends(require_admin),
+    db: Session = Depends(get_db)
+):
+    """修改用户类型"""
+    user = db.get(User, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail='用户不存在')
+    if user.account == 'admin':
+        raise HTTPException(status_code=403, detail='不能修改管理员账户')
+    
+    user_type = data.get('userType')
+    if user_type is not None and user_type in [0, 1, 2]:
+        user.user_type = user_type
+        db.commit()
+        db.refresh(user)
+    
+    return user_out(user)
+
+
+@app.patch('/api/admin/users/{user_id}/ban')
+def ban_user(
+    user_id: UUID,
+    data: dict,
+    _: User = Depends(require_admin),
+    db: Session = Depends(get_db)
+):
+    """封禁/解封用户"""
+    user = db.get(User, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail='用户不存在')
+    if user.account == 'admin':
+        raise HTTPException(status_code=403, detail='不能封禁管理员账户')
+    
+    status = data.get('status', 0)
+    user.status = status
+    db.commit()
+    db.refresh(user)
+    
+    return user_out(user)
+
+# ======================================================================
+# 举报功能
+# ======================================================================
+
+class ReportCreate(BaseModel):
+    target_type: int  # 0视频 1评论 2直播
+    target_id: str
+    reason: str
+
+@app.post('/api/reports')
+def create_report(
+    data: ReportCreate,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """创建举报"""
+    report = Report(
+        reporter_id=user.id,
+        target_type=data.target_type,
+        target_id=UUID(data.target_id),
+        reason=data.reason,
+        status=0
+    )
+    db.add(report)
+    db.commit()
+    db.refresh(report)
+    return {'code': 0, 'message': '举报已提交'}
+
+
+@app.get('/api/admin/reports')
+def admin_reports(
+    status: Optional[int] = None,
+    page: int = 1,
+    limit: int = 20,
+    _: User = Depends(require_admin),
+    db: Session = Depends(get_db)
+):
+    """获取举报列表"""
+    q = db.query(Report)
+    if status is not None:
+        q = q.filter(Report.status == status)
+    q = q.order_by(Report.created_at.desc())
+    total = q.count()
+    items = q.offset((page-1)*limit).limit(limit).all()
+    
+    result = []
+    for r in items:
+        target_info = {}
+        video_id = None  # 用于评论跳转
+        
+        if r.target_type == 0:  # 视频
+            video = db.get(Video, r.target_id)
+            target_info = {'title': video.title if video else '已删除', 'type': 'video'}
+            target_url = f"/#/video/{r.target_id}"
+        elif r.target_type == 1:  # 评论
+            comment = db.get(Comment, r.target_id)
+            if comment:
+                video_id = str(comment.video_id)
+                target_info = {'content': comment.content[:50] if comment else '已删除', 'type': 'comment'}
+                target_url = f"/#/video/{comment.video_id}#comment-{r.target_id}"
+            else:
+                target_info = {'content': '已删除', 'type': 'comment'}
+                target_url = "#"
+        elif r.target_type == 2:  # 直播
+            room = db.get(LiveRoom, r.target_id)
+            target_info = {'title': room.title if room else '已删除', 'type': 'live'}
+            target_url = f"/#/live/{r.target_id}"
+        else:
+            target_url = "#"
+        
+        result.append({
+            'id': str(r.id),
+            'reporterId': str(r.reporter_id),
+            'reporterName': r.reporter.nickname,
+            'reporterAvatar': r.reporter.avatar,
+            'targetType': r.target_type,
+            'targetId': str(r.target_id),
+            'targetInfo': target_info,
+            'targetUrl': target_url,
+            'videoId': video_id,  # 添加视频ID
+            'reason': r.reason,
+            'status': r.status,
+            'handlerId': str(r.handler_id) if r.handler_id else None,
+            'handlerName': r.handler.nickname if r.handler else None,
+            'handledAt': r.handled_at.isoformat() if r.handled_at else None,
+            'createdAt': r.created_at.isoformat()
+        })
+    
+    return {'items': result, 'total': total, 'page': page, 'hasMore': page * limit < total}
+
+@app.patch('/api/admin/reports/{report_id}/handle')
+def handle_report(
+    report_id: UUID,
+    _: User = Depends(require_admin),
+    db: Session = Depends(get_db)
+):
+    """标记举报为已处理"""
+    report = db.get(Report, report_id)
+    if not report:
+        raise HTTPException(status_code=404, detail='举报不存在')
+    report.status = 1
+    db.commit()
+    return {'code': 0, 'message': '已标记为已处理'}
+
+
+@app.patch('/api/admin/reports/{report_id}/ignore')
+def ignore_report(
+    report_id: UUID,
+    _: User = Depends(require_admin),
+    db: Session = Depends(get_db)
+):
+    """标记举报为已忽略"""
+    report = db.get(Report, report_id)
+    if not report:
+        raise HTTPException(status_code=404, detail='举报不存在')
+    report.status = 2
+    db.commit()
+    return {'code': 0, 'message': '已忽略'}
+
+# ======================================================================
+# 敏感词管理
+# ======================================================================
+
+from .models import SensitiveWord
+
+# 敏感词缓存
+_sensitive_words_cache = []
+_cache_loaded = False
+
+def load_sensitive_words(db: Session):
+    """加载敏感词到缓存"""
+    global _sensitive_words_cache, _cache_loaded
+    words = db.query(SensitiveWord.word).all()
+    _sensitive_words_cache = [w[0] for w in words]
+    _cache_loaded = True
+    return _sensitive_words_cache
+
+def filter_sensitive_words(text: str, db: Session) -> str:
+    """过滤敏感词，替换为*"""
+    global _sensitive_words_cache, _cache_loaded
+    if not _cache_loaded:
+        load_sensitive_words(db)
+    
+    result = text
+    for word in _sensitive_words_cache:
+        if word in result:
+            result = result.replace(word, '*' * len(word))
+    return result
+
+@app.get('/api/admin/sensitive-words')
+def list_sensitive_words(
+    _: User = Depends(require_admin),
+    db: Session = Depends(get_db)
+):
+    """获取敏感词列表"""
+    words = db.query(SensitiveWord).order_by(SensitiveWord.created_at.desc()).all()
+    return {'items': [{'id': w.id, 'word': w.word} for w in words]}
+
+@app.post('/api/admin/sensitive-words')
+def add_sensitive_word(
+    data: dict,
+    _: User = Depends(require_admin),
+    db: Session = Depends(get_db)
+):
+    """添加敏感词"""
+    word = data.get('word', '').strip()
+    if not word:
+        raise HTTPException(status_code=400, detail='敏感词不能为空')
+    
+    exists = db.query(SensitiveWord).filter(SensitiveWord.word == word).first()
+    if exists:
+        raise HTTPException(status_code=400, detail='敏感词已存在')
+    
+    sw = SensitiveWord(word=word)
+    db.add(sw)
+    db.commit()
+    
+    # 重新加载缓存
+    load_sensitive_words(db)
+    
+    return {'code': 0, 'message': '添加成功', 'data': {'id': sw.id, 'word': sw.word}}
+
+@app.delete('/api/admin/sensitive-words/{word_id}')
+def delete_sensitive_word(
+    word_id: int,
+    _: User = Depends(require_admin),
+    db: Session = Depends(get_db)
+):
+    """删除敏感词"""
+    sw = db.get(SensitiveWord, word_id)
+    if not sw:
+        raise HTTPException(status_code=404, detail='敏感词不存在')
+    
+    db.delete(sw)
+    db.commit()
+    
+    # 重新加载缓存
+    load_sensitive_words(db)
+    
+    return {'code': 0, 'message': '删除成功'}
+
+# ======================================================================
+# 视频管理（管理员）
+# ======================================================================
+
+@app.get('/api/admin/videos')
+def admin_videos(
+    page: int = 1,
+    limit: int = 20,
+    keyword: Optional[str] = None,
+    audit_status: Optional[int] = None,
+    _: User = Depends(require_admin),
+    db: Session = Depends(get_db)
+):
+    """获取所有视频列表"""
+    q = db.query(Video).filter(Video.status == 0)
+    
+    if keyword:
+        q = q.filter(Video.title.ilike(f'%{keyword}%'))
+    if audit_status is not None:
+        q = q.filter(Video.audit_status == audit_status)
+    
+    total = q.count()
+    items = q.order_by(Video.created_at.desc()).offset((page-1)*limit).limit(limit).all()
+    
+    return {
+        'items': [video_out(v).dict() for v in items],
+        'total': total,
+        'page': page,
+        'hasMore': page * limit < total
+    }
+
+
+@app.post('/api/admin/videos/{video_id}/warn')
+def warn_video(
+    video_id: UUID,
+    data: dict,
+    _: User = Depends(require_admin),
+    db: Session = Depends(get_db)
+):
+    """警告视频创作者"""
+    video = db.get(Video, video_id)
+    if not video:
+        raise HTTPException(status_code=404, detail='视频不存在')
+    
+    reason = data.get('reason', '管理员警告')
+    
+    create_notification(
+        db,
+        recipient_id=video.uploader_id,
+        sender_id=None,
+        notif_type=4,
+        target_type=0,
+        target_id=video_id,
+        content=f'您的视频 "{video.title}" 收到管理员警告：{reason}',
+        auto_commit=True
+    )
+    
+    return {'code': 0, 'message': '警告已发送'}
+
+
+@app.post('/api/admin/videos/{video_id}/unapprove')
+def unapprove_video(
+    video_id: UUID,
+    data: dict,
+    _: User = Depends(require_admin),
+    db: Session = Depends(get_db)
+):
+    """视频审核不通过（设为待审核状态）"""
+    video = db.get(Video, video_id)
+    if not video:
+        raise HTTPException(status_code=404, detail='视频不存在')
+    
+    reason = data.get('reason', '管理员将视频设为待审核状态')
+    
+    video.audit_status = 0
+    video.reject_reason = reason
+    db.commit()
+    
+    create_notification(
+        db,
+        recipient_id=video.uploader_id,
+        sender_id=None,
+        notif_type=4,
+        target_type=0,
+        target_id=video_id,
+        content=f'您的视频 "{video.title}" 已被设为待审核，理由：{reason}',
+        auto_commit=True
+    )
+    
+    return {'code': 0, 'message': '已设为待审核'}
+
+
+# ======================================================================
+# 直播管理（管理员）
+# ======================================================================
+
+@app.get('/api/admin/live-rooms')
+def admin_live_rooms(
+    page: int = 1,
+    limit: int = 20,
+    keyword: Optional[str] = None,
+    status: Optional[int] = None,
+    _: User = Depends(require_admin),
+    db: Session = Depends(get_db)
+):
+    """获取所有直播间列表"""
+    q = db.query(LiveRoom)
+    
+    if keyword:
+        q = q.filter(LiveRoom.title.ilike(f'%{keyword}%'))
+    if status is not None:
+        q = q.filter(LiveRoom.status == status)
+    
+    total = q.count()
+    items = q.order_by(LiveRoom.created_at.desc()).offset((page-1)*limit).limit(limit).all()
+    
+    return {
+        'items': [live_out(r).dict() for r in items],
+        'total': total,
+        'page': page,
+        'hasMore': page * limit < total
+    }
+
+
+@app.post('/api/admin/live-rooms/{room_id}/warn')
+def warn_live_room(
+    room_id: UUID,
+    data: dict,
+    _: User = Depends(require_admin),
+    db: Session = Depends(get_db)
+):
+    """警告主播"""
+    room = db.get(LiveRoom, room_id)
+    if not room:
+        raise HTTPException(status_code=404, detail='直播间不存在')
+    
+    reason = data.get('reason', '管理员警告')
+    
+    create_notification(
+        db,
+        recipient_id=room.anchor_id,
+        sender_id=None,
+        notif_type=4,
+        target_type=2,
+        target_id=room_id,
+        content=f'您的直播间 "{room.title}" 收到管理员警告：{reason}',
+        auto_commit=True
+    )
+    
+    return {'code': 0, 'message': '警告已发送'}
+
+
+@app.post('/api/admin/live-rooms/{room_id}/close')
+def close_live_room(
+    room_id: UUID,
+    data: dict,
+    _: User = Depends(require_admin),
+    db: Session = Depends(get_db)
+):
+    """关闭直播间"""
+    room = db.get(LiveRoom, room_id)
+    if not room:
+        raise HTTPException(status_code=404, detail='直播间不存在')
+    
+    reason = data.get('reason', '管理员关闭')
+    
+    room.status = 2
+    room.end_time = datetime.now(timezone.utc)
+    db.commit()
+    
+    create_notification(
+        db,
+        recipient_id=room.anchor_id,
+        sender_id=None,
+        notif_type=4,
+        target_type=2,
+        target_id=room_id,
+        content=f'您的直播间 "{room.title}" 已被管理员关闭，理由：{reason}',
+        auto_commit=True
+    )
+    
+    return {'code': 0, 'message': '直播间已关闭'}
+
+# ======================================================================
+# 清理残留上传文件
+# ======================================================================
+
+@app.post('/api/admin/cleanup-uploads')
+def cleanup_uploads(
+    _: User = Depends(require_admin),
+    db: Session = Depends(get_db)
+):
+    """清理数据库中没有记录的视频文件"""
+    import os
+    
+    # 获取数据库中所有视频的 URL
+    db_videos = db.query(Video.video_url).filter(Video.video_url.like('/uploads/videos/%')).all()
+    db_urls = set([v[0] for v in db_videos])
+    
+    # 扫描 uploads 目录
+    video_dir = Path("/app/public/uploads/videos")
+    deleted = []
+    
+    if video_dir.exists():
+        for file in video_dir.iterdir():
+            if file.is_file():
+                # 构建对应的 URL
+                file_url = f"/uploads/videos/{file.name}"
+                if file_url not in db_urls:
+                    file.unlink()
+                    deleted.append(file.name)
+    
+    return {
+        'code': 0,
+        'message': f'已清理 {len(deleted)} 个残留文件',
+        'deleted': deleted
+    }
+
+def cleanup_orphan_uploads(db: Session):
+    """清理数据库中没有记录的上传文件"""
+    import os
+    from pathlib import Path
+    
+    # 获取数据库中所有视频的 URL
+    db_videos = db.query(Video.video_url).filter(Video.video_url.like('/uploads/videos/%')).all()
+    db_urls = set([v[0] for v in db_videos])
+    
+    # 扫描 uploads 目录
+    video_dir = Path("/app/public/uploads/videos")
+    deleted_count = 0
+    
+    if video_dir.exists():
+        for file in video_dir.iterdir():
+            if file.is_file():
+                file_url = f"/uploads/videos/{file.name}"
+                if file_url not in db_urls:
+                    try:
+                        file.unlink()
+                        deleted_count += 1
+                    except Exception as e:
+                        print(f"删除文件失败 {file.name}: {e}")
+    
+    if deleted_count > 0:
+        print(f"已清理 {deleted_count} 个残留上传文件")
+
+# ======================================================================
+# 删除评论（权限：评论作者、视频作者、管理员）
+# ======================================================================
+
+@app.delete('/api/comments/{comment_id}')
+def delete_comment(
+    comment_id: UUID,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """删除评论（评论作者、视频作者、管理员可删除）"""
+    comment = db.get(Comment, comment_id)
+    if not comment:
+        raise HTTPException(status_code=404, detail='评论不存在')
+    
+    # 获取视频信息
+    video = db.get(Video, comment.video_id)
+    
+    # 权限检查
+    is_author = str(comment.user_id) == str(user.id)
+    is_video_owner = video and str(video.uploader_id) == str(user.id)
+    is_admin = user.user_type == 2
+    
+    if not (is_author or is_video_owner or is_admin):
+        raise HTTPException(status_code=403, detail='无权删除此评论')
+    
+    # 删除评论的回复
+    db.query(Comment).filter(Comment.parent_id == comment_id).delete()
+    
+    # 删除评论
+    db.delete(comment)
+    
+    # 更新视频的评论数
+    if video:
+        video.comment_count = max((video.comment_count or 0) - 1, 0)
+    
+    db.commit()
+    
+    return {'code': 0, 'message': '删除成功'}

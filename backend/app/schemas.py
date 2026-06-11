@@ -58,6 +58,7 @@ class VideoOut(BaseModel):
     uploaderAvatar: str
     uploadTime: str
     auditStatus: int
+    rejectReason: Optional[str] = None
 
 class CommentCreate(BaseModel):
     content: str = Field(min_length=1, max_length=500)
@@ -117,6 +118,7 @@ class LiveRoomOut(BaseModel):
 
 class AuditIn(BaseModel):
     auditStatus: int
+    rejectReason: Optional[str] = None
 
 
 # ---------- 社区互动:关注 / 粉丝 ----------

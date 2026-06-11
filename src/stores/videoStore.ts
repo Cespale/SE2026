@@ -57,6 +57,7 @@ function normalizeVideo(v: any): Video {
       new Date().toISOString(),
 
     auditStatus: Number(v.auditStatus ?? v.audit_status ?? 1),
+    rejectReason: v.rejectReason || v.reject_reason || '',
   };
 }
 
@@ -148,6 +149,7 @@ export interface Video {
   uploaderAvatar: string;
   uploadTime: string;
   auditStatus: number;
+  rejectReason?: string;
 }
 
 export interface Comment {
@@ -217,7 +219,7 @@ interface VideoStore {
   ) => Promise<void>;
   uploadVideo: (videoData: any) => Promise<boolean>;
   fetchPendingVideos: () => Promise<Video[]>;
-  auditVideo: (videoId: string, auditStatus: number) => Promise<void>;
+  auditVideo: (videoId: string, auditStatus: number, rejectReason?: string) => Promise<void>;
   fetchCreatorVideos: () => Promise<Video[]>;
   loadMore: (categoryId?: string) => Promise<void>;
   fetchRecommendedVideos: (page?: number) => Promise<void>;
@@ -750,11 +752,11 @@ export const useVideoStore = create<VideoStore>((set, get) => ({  videos: [],
   }
 },
 
-  auditVideo: async (videoId: string, auditStatus: number) => {
+  auditVideo: async (videoId: string, auditStatus: number, rejectReason?: string) => {
   try {
     await apiRequest(`/api/admin/videos/${videoId}/audit`, {
       method: 'PATCH',
-      body: JSON.stringify({ auditStatus }),
+      body: JSON.stringify({ auditStatus, rejectReason }),
     });
   } catch (error) {
     console.error('审核视频失败:', error);
@@ -841,3 +843,26 @@ fetchFeed: async (page: number = 1) => {
   }
 },
 }));
+
+// 获取用户列表
+export const getUsers = async (page: number = 1, keyword?: string) => {
+  let url = `/api/admin/users?page=${page}&limit=20`;
+  if (keyword) url += `&keyword=${encodeURIComponent(keyword)}`;
+  return apiRequest(url);
+};
+
+// 修改用户类型
+export const updateUserType = async (userId: string, userType: number) => {
+  return apiRequest(`/api/admin/users/${userId}/type`, {
+    method: 'PATCH',
+    body: JSON.stringify({ userType })
+  });
+};
+
+// 封禁/解封用户
+export const banUser = async (userId: string, status: number) => {
+  return apiRequest(`/api/admin/users/${userId}/ban`, {
+    method: 'PATCH',
+    body: JSON.stringify({ status })
+  });
+};
