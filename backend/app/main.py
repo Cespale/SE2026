@@ -894,18 +894,44 @@ def recommended_videos(
     page_size: int = 20,
     db: Session = Depends(get_db)
 ):
-    """获取推荐视频（按播放量排序的热门视频）"""
-    q = db.query(Video).filter(
+    """获取推荐视频（优先随机和新视频）"""
+    from datetime import datetime, timedelta
+    import random
+    
+    all_videos = db.query(Video).filter(
         Video.status == 0,
         Video.audit_status == 1
-    ).order_by(Video.view_count.desc())
+    ).all()
     
-    items = q.offset((page - 1) * page_size).limit(page_size).all()
-    total = q.count()
+    if not all_videos:
+        return {'items': [], 'hasMore': False}
+    
+    now = datetime.now()
+    
+    # 方案：直接打乱顺序，然后让新视频有更高概率出现在前面
+    shuffled = all_videos.copy()
+    random.shuffle(shuffled)
+    
+    # 根据发布时间重新排序：新视频优先
+    def get_score(v):
+        if not v.created_at:
+            return 0
+        created_naive = v.created_at.replace(tzinfo=None)
+        days_ago = (now - created_naive).days
+        # 天數越少分数越高，加上随机因素
+        return (10000 - days_ago * 100) + random.randint(0, 5000)
+    
+    # 按新视频分数排序（新视频在前）
+    shuffled.sort(key=get_score, reverse=True)
+    
+    # 分页
+    start = (page - 1) * page_size
+    end = start + page_size
+    page_items = shuffled[start:end]
     
     return {
-        'items': [video_out(v).dict() for v in items],
-        'hasMore': page * page_size < total
+        'items': [video_out(v).dict() for v in page_items],
+        'hasMore': end < len(shuffled)
     }
 
 @app.get('/api/videos/{video_id}')
@@ -918,21 +944,51 @@ def get_video(video_id: UUID, db: Session = Depends(get_db)):
 @app.get('/api/videos/{video_id}/related')
 def related(video_id: UUID, db: Session = Depends(get_db)):
     v = db.get(Video, video_id)
-
     if not v:
         return {'items': []}
-
-    items = db.query(Video).filter(
+    
+    # 查询所有其他已审核通过的视频
+    all_other = db.query(Video).filter(
         Video.id != video_id,
-        Video.category_id == v.category_id,
         Video.status == 0,
-        Video.audit_status == 1,
-        Video.video_url.like('/demo-videos/%')
-    ).order_by(func.random()).limit(5).all()
-
+        Video.audit_status == 1
+    ).all()
+    
+    if not all_other:
+        return {'items': []}
+    
+    # 分离同类视频和其他视频
+    same_category = [x for x in all_other if x.category_id == v.category_id]
+    other_videos = [x for x in all_other if x.category_id != v.category_id]
+    
+    # 同类视频按热度排序（播放量 + 喜欢数 * 2）
+    def hot_score(video):
+        return (video.view_count or 0) + (video.like_count or 0) * 2
+    
+    same_category.sort(key=hot_score, reverse=True)
+    
+    # 其他视频随机打乱顺序
+    import random
+    random.shuffle(other_videos)
+    
+    result = []
+    
+    # 同类视频足够5个：取热度最高的5个同类
+    if len(same_category) >= 5:
+        result = same_category[:5]
+    else:
+        # 先取所有同类
+        result = same_category.copy()
+        # 计算还需要多少个
+        need = 5 - len(result)
+        # 从其他视频中随机取来补充
+        if other_videos and need > 0:
+            result.extend(other_videos[:need])
+    
     return {
-        'items': [video_out(x).dict() for x in items]
+        'items': [video_out(x).dict() for x in result]
     }
+
 @app.post('/api/videos')
 def create_video(data: VideoCreate, user: User = Depends(require_creator), db: Session = Depends(get_db)):
     default_video_url = "/demo-videos/video1.mp4"
