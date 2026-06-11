@@ -633,14 +633,11 @@ export function VideoPage() {
               </span>
 
               <div className="flex flex-wrap gap-2">
-                {currentVideo.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded-full text-xs"
-                  >
-                    {tag}
+                {currentVideo.categoryName && (
+                  <span className="px-2 py-1 bg-blue-100 dark:bg-blue-800 text-blue-700 dark:text-blue-200 rounded-full text-xs">
+                    {currentVideo.categoryName}
                   </span>
-                ))}
+                )}
               </div>
             </div>
 
@@ -817,10 +814,7 @@ export function VideoPage() {
                             {new Date(comment.createTime).toLocaleDateString()}
                           </span>
 
-                          <button className="flex items-center gap-1 hover:text-blue-500">
-                            <Heart size={14} />
-                            {comment.likeCount}
-                          </button>
+                          
 
                           <button
                             onClick={() => startReply(comment.id, comment.userId, comment.username)}

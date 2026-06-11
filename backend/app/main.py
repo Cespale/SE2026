@@ -23,6 +23,16 @@ from .schemas import *
 from .security import create_token, get_current_user, hash_password, require_admin, require_creator, verify_password, parse_token
 from sqlalchemy import func
 app = FastAPI(title='StreamHub API', description='在线视频与直播网站 Python 后端', version='1.0.0')
+
+from fastapi.staticfiles import StaticFiles
+
+# 确保 uploads 目录存在
+UPLOADS_DIR = Path("/app/public/uploads")
+UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
+
+# 挂载静态文件目录
+app.mount("/uploads", StaticFiles(directory=str(UPLOADS_DIR)), name="uploads")
+
 origins = os.getenv('CORS_ORIGINS', 'http://localhost:3000,http://localhost:5173,http://localhost:8080').split(',')
 app.add_middleware(
     CORSMiddleware,

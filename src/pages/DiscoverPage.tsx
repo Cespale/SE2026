@@ -54,7 +54,6 @@ export const DiscoverPage: React.FC = () => {
           <div className="flex flex-col items-center justify-center py-24 text-gray-500">
             <Radio className="w-16 h-16 mb-4 opacity-60" />
             <p className="text-lg font-medium">暂无正在直播的房间</p>
-            <p className="text-sm mt-2">创作者可以点击“开始直播”创建直播间。</p>
           </div>
         )}
 
