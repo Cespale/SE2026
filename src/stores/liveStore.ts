@@ -18,6 +18,7 @@ export interface LiveRoom {
   startTime: string;
   endTime: string;
   status: number;
+  description?: string;
 }
 
 export interface ChatMessage {
@@ -27,6 +28,7 @@ export interface ChatMessage {
   color?: string;
   position?: number;
   username?: string;
+  userAvatar?: string;
   userId?: string;
   count?: number;
   timestamp: string;
@@ -42,7 +44,7 @@ interface LiveState {
   isLoading: boolean;
   fetchRooms: (categoryId?: string) => Promise<void>;
   fetchRoomDetail: (roomId: string) => Promise<void>;
-  createRoom: (title: string, categoryId: string, cover: string) => Promise<LiveRoom | null>;
+  createRoom: (title: string, categoryId: string, cover: string, description?: string) => Promise<LiveRoom | null>;
   endRoom: (roomId: string) => Promise<void>;
   connectWebSocket: (roomId: string) => void;
   disconnectWebSocket: () => void;
@@ -82,11 +84,11 @@ export const useLiveStore = create<LiveState>((set, get) => ({
     }
   },
 
-  createRoom: async (title: string, categoryId: string, cover: string) => {
+  createRoom: async (title: string, categoryId: string, cover: string, description?: string) => {
     try {
       const room = await apiRequest<LiveRoom>('/api/live/rooms', {
         method: 'POST',
-        body: JSON.stringify({ title, categoryId, cover })
+        body: JSON.stringify({ title, categoryId, cover, description })
       });
       set(state => ({ rooms: [room, ...state.rooms], currentRoom: room }));
       return room;
@@ -98,58 +100,71 @@ export const useLiveStore = create<LiveState>((set, get) => ({
 
   endRoom: async (roomId: string) => {
     try {
-      await apiRequest(`/api/live/rooms/${roomId}/end`, { method: 'POST' });
+      await apiRequest(`/api/live/rooms/${roomId}/stop`, { method: 'POST' });
       set(state => ({
-        rooms: state.rooms.map(r => r.id === roomId ? { ...r, status: 2, endTime: new Date().toISOString() } : r),
+        rooms: state.rooms.map(r => r.id === roomId ? { ...r, status: 2 } : r),
         currentRoom: null
       }));
     } catch (error) {
       console.error('结束直播失败', error);
+      throw error;
     }
   },
 
   connectWebSocket: (roomId: string) => {
     const token = useAuthStore.getState().token || '';
-    const wsBase = API_BASE.replace(/^http/, 'ws');
-    const ws = new WebSocket(`${wsBase}/ws/live/${roomId}?token=${encodeURIComponent(token)}`);
-
+    const wsUrl = `ws://${window.location.hostname}:8000/ws/live/${roomId}?token=${encodeURIComponent(token)}`;
+    
+    const ws = new WebSocket(wsUrl);
+    let joined = false;  // 添加标志位
+    
     ws.onopen = () => {
+      console.log('WebSocket 已连接');
       set({ isConnected: true });
-      ws.send(JSON.stringify({ type: 'join' }));
-      const heartbeat = setInterval(() => {
-        if (ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify({ type: 'heartbeat' }));
-      }, 30000);
-      (ws as any).heartbeatInterval = heartbeat;
-    };
-
-    ws.onmessage = (event) => {
-      const msg = JSON.parse(event.data);
-      if (msg.type === 'online') set({ onlineCount: msg.count });
-      if (msg.type === 'join_ack') set({ onlineCount: msg.onlineCount });
-      if (['danmaku', 'system'].includes(msg.type)) {
-        set(state => ({
-          messages: [...state.messages, {
-            id: msg.id || Date.now().toString(),
-            type: msg.type,
-            content: msg.content,
-            color: msg.color,
-            position: msg.position,
-            username: msg.username,
-            userId: msg.userId,
-            timestamp: msg.timestamp || new Date().toISOString()
-          }]
-        }));
+      // 只发送一次 join
+      if (!joined) {
+        joined = true;
+        ws.send(JSON.stringify({ type: 'join' }));
       }
     };
-
-    ws.onclose = () => {
-      const interval = (ws as any).heartbeatInterval;
-      if (interval) clearInterval(interval);
-      set({ isConnected: false, ws: null });
-    };
-
-    set({ ws, messages: [] });
-  },
+    
+    ws.onmessage = (event) => {
+    const msg = JSON.parse(event.data);
+    console.log('收到 WebSocket 消息:', msg);
+    
+    if (msg.type === 'online') {
+      set({ onlineCount: msg.count });
+    }
+    if (msg.type === 'join_ack') {
+      set({ onlineCount: msg.onlineCount });
+    }
+    if (msg.type === 'danmaku' || msg.type === 'system') {
+      set(state => ({
+        messages: [...state.messages, {
+          id: msg.id || Date.now().toString(),
+          type: msg.type,
+          content: msg.content,
+          color: msg.color,
+          username: msg.username,
+          userAvatar: msg.userAvatar,  // 添加
+          userId: msg.userId,
+          timestamp: msg.timestamp || new Date().toISOString()
+        }]
+      }));
+    }
+  };
+  
+  ws.onclose = () => {
+    console.log('WebSocket 已断开');
+    set({ isConnected: false, ws: null });
+  };
+  
+  ws.onerror = (err) => {
+    console.error('WebSocket 错误:', err);
+  };
+  
+  set({ ws, messages: [] });
+},
 
   disconnectWebSocket: () => {
     const { ws } = get();

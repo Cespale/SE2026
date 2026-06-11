@@ -57,6 +57,7 @@ function normalizeVideo(v: any): Video {
       new Date().toISOString(),
 
     auditStatus: Number(v.auditStatus ?? v.audit_status ?? 1),
+    rejectReason: v.rejectReason || v.reject_reason || '',
   };
 }
 
@@ -148,6 +149,7 @@ export interface Video {
   uploaderAvatar: string;
   uploadTime: string;
   auditStatus: number;
+  rejectReason?: string;
 }
 
 export interface Comment {
@@ -217,9 +219,11 @@ interface VideoStore {
   ) => Promise<void>;
   uploadVideo: (videoData: any) => Promise<boolean>;
   fetchPendingVideos: () => Promise<Video[]>;
-  auditVideo: (videoId: string, auditStatus: number) => Promise<void>;
+  auditVideo: (videoId: string, auditStatus: number, rejectReason?: string) => Promise<void>;
   fetchCreatorVideos: () => Promise<Video[]>;
-  loadMore: () => Promise<void>;
+  loadMore: (categoryId?: string) => Promise<void>;
+  fetchRecommendedVideos: (page?: number) => Promise<void>;
+  fetchFeed: (page?: number) => Promise<void>;
 }
 const fallbackCategories: Category[] = [
   { id: '0', name: '推荐', type: 0 },
@@ -273,12 +277,28 @@ export const useVideoStore = create<VideoStore>((set, get) => ({  videos: [],
 
     const data: any = await apiRequest(url);
     const list = getListFromResponse(data);
+    const newVideos = list.map(normalizeVideo);
 
-    set({
-      videos: list.map(normalizeVideo),
-      hasMore: Boolean(data?.hasMore ?? data?.has_more ?? false),
-      isLoading: false,
-    });
+    // 关键修改：判断是否应该替换列表
+    // 1. 如果是第1页
+    // 2. 或者传入了 reset 标志
+    // 3. 或者 categoryId 发生了变化（通过比较当前选中的分类）
+    const shouldReplace = !params?.page || params.page === 1;
+    
+    if (shouldReplace) {
+      set({
+        videos: newVideos,
+        hasMore: Boolean(data?.hasMore ?? data?.has_more ?? false),
+        isLoading: false,
+        page: params?.page || 1,
+      });
+    } else {
+      set((state) => ({
+        videos: [...state.videos, ...newVideos],
+        hasMore: Boolean(data?.hasMore ?? data?.has_more ?? false),
+        isLoading: false,
+      }));
+    }
   } catch (error) {
     console.error('获取视频列表失败:', error);
 
@@ -732,11 +752,11 @@ export const useVideoStore = create<VideoStore>((set, get) => ({  videos: [],
   }
 },
 
-  auditVideo: async (videoId: string, auditStatus: number) => {
+  auditVideo: async (videoId: string, auditStatus: number, rejectReason?: string) => {
   try {
     await apiRequest(`/api/admin/videos/${videoId}/audit`, {
       method: 'PATCH',
-      body: JSON.stringify({ auditStatus }),
+      body: JSON.stringify({ auditStatus, rejectReason }),
     });
   } catch (error) {
     console.error('审核视频失败:', error);
@@ -756,13 +776,93 @@ export const useVideoStore = create<VideoStore>((set, get) => ({  videos: [],
   }
 },
 
-loadMore: async () => {
+loadMore: async (categoryId?: string) => {
+  // 推荐分类使用独立的加载逻辑
+  if (categoryId === 'recommended') return;
+  
   const { page, hasMore, isLoading } = get();
-
   if (!hasMore || isLoading) return;
+  const nextPage = page + 1;
+  await get().fetchVideos({ categoryId: categoryId || '0', page: nextPage });
+  set({ page: nextPage });
+},
 
-  await get().fetchVideos({ page: page + 1 });
+fetchRecommendedVideos: async (page: number = 1) => {
+  set({ isLoading: true });
+  
+  try {
+    const data: any = await apiRequest(`/api/videos/recommended?page=${page}`);
+    const list = getListFromResponse(data);
+    const newVideos = list.map(normalizeVideo);
+    
+    if (page === 1) {
+      set({
+        videos: newVideos,
+        hasMore: data.hasMore ?? false,
+        isLoading: false,
+        page: 1,
+      });
+    } else {
+      set((state) => ({
+        videos: [...state.videos, ...newVideos],
+        hasMore: data.hasMore ?? false,
+        isLoading: false,
+      }));
+    }
+  } catch (error) {
+    console.error('获取推荐视频失败:', error);
+    set({ isLoading: false, videos: [] });
+  }
+},
 
-  set({ page: page + 1 });
+fetchFeed: async (page: number = 1) => {
+  set({ isLoading: true });
+  
+  try {
+    const data: any = await apiRequest(`/api/feed?page=${page}`);
+    const list = getListFromResponse(data);
+    const newVideos = list.map(normalizeVideo);
+    
+    if (page === 1) {
+      set({
+        videos: newVideos,
+        hasMore: data.hasMore ?? false,
+        isLoading: false,
+        page: 1,
+      });
+    } else {
+      set((state) => ({
+        videos: [...state.videos, ...newVideos],
+        hasMore: data.hasMore ?? false,
+        isLoading: false,
+      }));
+    }
+  } catch (error) {
+    console.error('获取动态失败:', error);
+    set({ isLoading: false, videos: [] });
+  }
 },
 }));
+
+// 获取用户列表
+export const getUsers = async (page: number = 1, keyword?: string) => {
+  let url = `/api/admin/users?page=${page}&limit=20`;
+  if (keyword) url += `&keyword=${encodeURIComponent(keyword)}`;
+  return apiRequest(url);
+};
+
+// 修改用户类型
+export const updateUserType = async (userId: string, userType: number) => {
+  return apiRequest(`/api/admin/users/${userId}/type`, {
+    method: 'PATCH',
+    body: JSON.stringify({ userType })
+  });
+};
+
+// 封禁/解封用户
+export const banUser = async (userId: string, status: number) => {
+  return apiRequest(`/api/admin/users/${userId}/ban`, {
+    method: 'PATCH',
+    body: JSON.stringify({ status })
+  });
+};

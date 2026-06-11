@@ -13,6 +13,7 @@ export interface User {
   bio: string;
   userType: number; // 0普通用户，1创作者，2管理员
   status: number;
+  streamKey?: string;
 }
 
 interface AuthState {
@@ -37,6 +38,7 @@ interface AuthState {
 
   updateUser: (user: Partial<User>) => Promise<void>;
   refreshMe: () => Promise<void>;
+  upgradeToCreator: () => Promise<boolean>;
 }
 
 function normalizeUser(user: any): User {
@@ -48,6 +50,7 @@ function normalizeUser(user: any): User {
     bio: user?.bio || '',
     userType: Number(user?.userType ?? user?.user_type ?? 0),
     status: Number(user?.status ?? 0),
+    streamKey: user?.streamKey || user?.stream_key,
   };
 }
 
@@ -86,8 +89,15 @@ export const useAuthStore = create<AuthState>()(
           });
 
           return true;
-        } catch (error) {
+        } catch (error: any) {
           console.error('登录失败:', error);
+          
+          // 显示具体错误信息
+          if (error.message && error.message.includes('封禁')) {
+            alert(error.message);
+          } else {
+            alert('登录失败：账号或密码错误');
+          }
 
           set({
             token: null,
@@ -181,9 +191,7 @@ export const useAuthStore = create<AuthState>()(
 
       updateUser: async (userData: Partial<User>) => {
         const currentUser = get().user;
-
         if (!currentUser) return;
-
         try {
           const data: any = await apiRequest('/api/auth/me', {
             method: 'PATCH',
@@ -193,21 +201,13 @@ export const useAuthStore = create<AuthState>()(
               avatar: userData.avatar,
             }),
           });
-
           const user = normalizeUser(data);
-
-          set({
-            user,
-            isLoggedIn: true,
-          });
+          set({ user, isLoggedIn: true });
         } catch (error) {
           console.error('更新资料失败:', error);
-
+          // 乐观更新
           set({
-            user: normalizeUser({
-              ...currentUser,
-              ...userData,
-            }),
+            user: normalizeUser({ ...currentUser, ...userData }),
           });
         }
       },
@@ -239,6 +239,31 @@ export const useAuthStore = create<AuthState>()(
             user: null,
             isLoggedIn: false,
           });
+        }
+      },
+
+        upgradeToCreator: async () => {
+        try {
+          const data: any = await apiRequest('/api/auth/upgrade-to-creator', {
+            method: 'POST',
+          });
+          
+          // 更新本地用户信息
+          const currentUser = get().user;
+          if (currentUser) {
+            const updatedUser = {
+              ...currentUser,
+              userType: data.data?.userType ?? 1,
+            };
+            set({ user: updatedUser });
+          }
+          
+          return true;
+        } catch (error: any) {
+          console.error('升级失败:', error);
+          const message = error.message || '升级失败';
+          alert(message);
+          return false;
         }
       },
     }),

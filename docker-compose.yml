@@ -36,6 +36,8 @@ services:
     volumes:
       - ./public:/app/public
       - ./backend/app:/app/backend/app
+      - ./public/avatars:/app/public/avatars
+      - ./public/uploads:/app/public/uploads
     command: python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload --reload-dir /app/backend/app
 
   frontend:
@@ -57,5 +59,14 @@ services:
       - ./webpack.config.js:/app/webpack.config.js
       - ./tsconfig.json:/app/tsconfig.json
 
+  srs:
+    image: ossrs/srs:5
+    container_name: streamhub-srs
+    ports:
+      - "1935:1935"   # RTMP 推流端口
+      - "8080:8080"   # HTTP-FLV 播放端口
+    restart: unless-stopped
+    networks:
+      - default
 volumes:
   streamhub_pgdata:

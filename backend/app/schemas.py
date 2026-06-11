@@ -18,6 +18,7 @@ class UserOut(BaseModel):
     bio: str
     userType: int
     status: int
+    streamKey: Optional[str] = None
 
 class ProfileUpdate(BaseModel):
     nickname: Optional[str] = None
@@ -57,6 +58,7 @@ class VideoOut(BaseModel):
     uploaderAvatar: str
     uploadTime: str
     auditStatus: int
+    rejectReason: Optional[str] = None
 
 class CommentCreate(BaseModel):
     content: str = Field(min_length=1, max_length=500)
@@ -94,10 +96,12 @@ class LiveRoomCreate(BaseModel):
     title: str
     categoryId: str
     cover: str = ''
+    description: Optional[str] = None
 
 class LiveRoomOut(BaseModel):
     id: str
     title: str
+    description: Optional[str] = None  # 添加这一行
     categoryId: str
     categoryName: str
     cover: str
@@ -114,6 +118,7 @@ class LiveRoomOut(BaseModel):
 
 class AuditIn(BaseModel):
     auditStatus: int
+    rejectReason: Optional[str] = None
 
 
 # ---------- 社区互动:关注 / 粉丝 ----------

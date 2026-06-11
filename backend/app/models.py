@@ -16,6 +16,7 @@ class User(Base):
     status = Column(SmallInteger, default=0)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    stream_key = Column(String(20), unique=True, nullable=True)
 
 class Category(Base):
     __tablename__ = 'categories'
@@ -43,6 +44,7 @@ class Video(Base):
     status = Column(SmallInteger, default=0)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    reject_reason = Column(Text, nullable=True)
 
     uploader = relationship('User')
     category = relationship('Category')
@@ -80,6 +82,7 @@ class LiveRoom(Base):
     __tablename__ = 'live_rooms'
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     title = Column(String(120), nullable=False)
+    description = Column(Text, default='')  # 新增
     category_id = Column(Integer, ForeignKey('categories.id'))
     cover = Column(Text, default='')
     stream_key = Column(String(80), unique=True, nullable=False)
@@ -188,3 +191,43 @@ class CommentMention(Base):
         UniqueConstraint('comment_id', 'mentioned_user_id', name='uq_comment_mention'),
         Index('ix_mention_user', 'mentioned_user_id'),
     )
+
+class VideoLike(Base):
+    __tablename__ = 'video_likes'
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(UUID(as_uuid=True), ForeignKey('users.id'), nullable=False)
+    video_id = Column(UUID(as_uuid=True), ForeignKey('videos.id'), nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    # 联合唯一索引，防止重复点赞
+    __table_args__ = (
+        UniqueConstraint('user_id', 'video_id', name='uq_user_video_like'),
+        Index('ix_video_likes_user', 'user_id'),
+        Index('ix_video_likes_video', 'video_id'),
+    )
+
+class Report(Base):
+    __tablename__ = 'reports'
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    reporter_id = Column(UUID(as_uuid=True), ForeignKey('users.id'), nullable=False)
+    target_type = Column(SmallInteger, nullable=False)  # 0视频 1评论 2直播
+    target_id = Column(UUID(as_uuid=True), nullable=False)
+    reason = Column(Text, nullable=False)
+    status = Column(SmallInteger, default=0)  # 0待处理 1已处理 2已忽略
+    handler_id = Column(UUID(as_uuid=True), ForeignKey('users.id'), nullable=True)
+    handled_at = Column(DateTime(timezone=True), nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    reporter = relationship('User', foreign_keys=[reporter_id])
+    handler = relationship('User', foreign_keys=[handler_id])
+
+    __table_args__ = (
+        Index('ix_reports_target', 'target_type', 'target_id'),
+        Index('ix_reports_status', 'status'),
+    )
+
+class SensitiveWord(Base):
+    __tablename__ = 'sensitive_words'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    word = Column(String(100), nullable=False, unique=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())

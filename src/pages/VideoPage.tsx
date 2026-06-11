@@ -8,15 +8,18 @@ import {
   VolumeX,
   Maximize,
   Heart,
-  Bookmark,
   Share2,
   MessageCircle,
   Send,
   Loader2,
+  Flag,
+  Trash2,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useVideoStore, Danmaku } from '../stores/videoStore';
 import { useAuthStore } from '../stores/authStore';
+import { ReportModal } from '../components/ReportModal';
+import { apiRequest } from '../api';
 
 const DEFAULT_VIDEO_URL = '/demo-videos/This-is-beihang.mp4';
 const BACKUP_VIDEO_URL = '/demo-videos/beihang2025.mp4';
@@ -29,8 +32,12 @@ function getPlayableVideoUrl(url?: string) {
   const cleanUrl = String(url).trim();
   if (!cleanUrl) return DEFAULT_VIDEO_URL;
 
-  const lower = cleanUrl.toLowerCase();
+  // 如果是上传的视频，添加后端地址前缀
+  if (cleanUrl.startsWith('/uploads/')) {
+    return `http://localhost:8000${cleanUrl}`;
+  }
 
+  const lower = cleanUrl.toLowerCase();
   if (
     lower.endsWith('.mp4') ||
     lower.endsWith('.webm') ||
@@ -78,6 +85,16 @@ export function VideoPage() {
   const [activeDanmaku, setActiveDanmaku] = useState<Danmaku[]>([]);
   const [videoErrorText, setVideoErrorText] = useState('');
 
+  const [isLiked, setIsLiked] = useState(false);
+  const [localLikeCount, setLocalLikeCount] = useState(0);
+  const [isLikeLoading, setIsLikeLoading] = useState(false);
+  const [rejectReason, setRejectReason] = useState('');
+
+  // 举报相关状态
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [showCommentReportModal, setShowCommentReportModal] = useState(false);
+  const [reportCommentId, setReportCommentId] = useState<string | null>(null);
+
   const {
     currentVideo,
     comments,
@@ -88,13 +105,67 @@ export function VideoPage() {
     fetchComments,
     fetchDanmaku,
     fetchRelatedVideos,
-    likeVideo,
-    favoriteVideo,
     addComment,
     sendDanmaku,
   } = useVideoStore();
 
   const { isLoggedIn, user, openLoginModal } = useAuthStore();
+
+  // 点赞/取消点赞处理函数
+  const handleLike = async () => {
+    if (!isLoggedIn) {
+      openLoginModal();
+      return;
+    }
+    
+    if (isLikeLoading) return;
+    setIsLikeLoading(true);
+    
+    try {
+      const token = localStorage.getItem('auth-storage') 
+        ? JSON.parse(localStorage.getItem('auth-storage')!).state?.token 
+        : '';
+      
+      if (isLiked) {
+        const response = await fetch(`http://localhost:8000/api/videos/${id}/like`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        const data = await response.json();
+        if (response.ok) {
+          setIsLiked(false);
+          setLocalLikeCount(data.data.likeCount);
+        } else {
+          console.error('取消点赞失败:', data);
+        }
+      } else {
+        const response = await fetch(`http://localhost:8000/api/videos/${id}/like`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        const data = await response.json();
+        if (response.ok) {
+          setIsLiked(true);
+          setLocalLikeCount(data.data.likeCount);
+        } else if (response.status === 400 && data.detail === '已经点过赞了') {
+          setIsLiked(true);
+          await fetchLikeStatus();
+        } else {
+          console.error('点赞失败:', data);
+        }
+      }
+    } catch (error) {
+      console.error('点赞请求失败:', error);
+    } finally {
+      setIsLikeLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (!id) return;
@@ -103,110 +174,70 @@ export function VideoPage() {
     fetchComments(id);
     fetchDanmaku(id);
     fetchRelatedVideos(id);
+    fetchLikeStatus();
 
     setCurrentTime(0);
     setDuration(0);
     setIsPlaying(false);
     setActiveDanmaku([]);
     setVideoErrorText('');
-  }, [id, fetchVideoDetail, fetchComments, fetchDanmaku, fetchRelatedVideos]);
+  }, [id]);
+
+  useEffect(() => {
+    if (currentVideo) {
+      setLocalLikeCount(currentVideo.likeCount);
+      if (currentVideo.auditStatus === 2) {
+        setRejectReason(currentVideo.rejectReason || '未填写具体原因');
+      }
+    }
+  }, [currentVideo]);
+
+  const fetchLikeStatus = async () => {
+    if (!id || !isLoggedIn) return;
+    
+    try {
+      const response = await fetch(`http://localhost:8000/api/videos/${id}/like-status`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('auth-storage') ? JSON.parse(localStorage.getItem('auth-storage')!).state?.token : ''}`
+        }
+      });
+      const data = await response.json();
+      setIsLiked(data.isLiked);
+    } catch (error) {
+      console.error('获取点赞状态失败:', error);
+    }
+  };
 
   const safeVideoUrl = getPlayableVideoUrl(currentVideo?.videoUrl);
   const safePosterUrl = currentVideo?.coverUrl || DEFAULT_COVER_URL;
 
-  const visibleComments =
-    comments && comments.length > 0
-      ? comments
-      : [
-          {
-            id: 'mock-comment-1',
-            content: '这个视频可以正常播放，评论区也有内容显示。',
-            userId: '1',
-            username: 'xuyue',
-            userAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user',
-            videoId: id || '1',
-            parentId: '0',
-            likeCount: 18,
-            isTop: false,
-            createTime: new Date().toISOString(),
-          },
-          {
-            id: 'mock-comment-2',
-            content: '这是固定模拟评论，用于作业展示。',
-            userId: '2',
-            username: '创作者小明',
-            userAvatar:
-              'https://api.dicebear.com/7.x/avataaars/svg?seed=creator',
-            videoId: id || '1',
-            parentId: '0',
-            likeCount: 9,
-            isTop: false,
-            createTime: new Date().toISOString(),
-          },
-        ];
+  const visibleComments = comments || [];
 
-  const visibleDanmaku =
-    danmakuList && danmakuList.length > 0
-      ? danmakuList
-      : [
-          {
-            id: 'mock-danmaku-1',
-            content: '来了来了！',
-            color: '#ffffff',
-            position: 0,
-            userId: '1',
-            username: 'xuyue',
-            videoTime: 2,
-            sendTime: new Date().toISOString(),
-          },
-          {
-            id: 'mock-danmaku-2',
-            content: '这个视频终于能播放了',
-            color: '#ff4d4f',
-            position: 0,
-            userId: '1',
-            username: 'xuyue',
-            videoTime: 5,
-            sendTime: new Date().toISOString(),
-          },
-          {
-            id: 'mock-danmaku-3',
-            content: '作业展示效果不错',
-            color: '#00d4ff',
-            position: 0,
-            userId: '2',
-            username: '创作者小明',
-            videoTime: 8,
-            sendTime: new Date().toISOString(),
-          },
-        ];
+  const visibleDanmaku = danmakuList && danmakuList.length > 0 ? danmakuList : [];
 
   useEffect(() => {
-    const current = Math.floor(currentTime);
-
+    const current = currentTime;
+    
     const newDanmaku = visibleDanmaku.filter((item) => {
-      const itemTime = Math.floor(item.videoTime || 0);
+      const itemTime = item.videoTime || 0;
       const alreadyActive = activeDanmaku.some(
         (active) => active.id === item.id
       );
-
-      return itemTime === current && !alreadyActive;
+      return Math.abs(itemTime - current) < 0.3 && !alreadyActive;
     });
 
     if (newDanmaku.length === 0) return;
 
     setActiveDanmaku((prev) => [...prev, ...newDanmaku]);
 
-    const timer = window.setTimeout(() => {
+    const timer = setTimeout(() => {
       setActiveDanmaku((prev) =>
-        prev.filter(
-          (item) => !newDanmaku.some((newItem) => newItem.id === item.id)
-        )
+        prev.filter((item) => !newDanmaku.some((newItem) => newItem.id === item.id))
       );
-    }, 8000);
+    }, Math.max(...newDanmaku.map(item => item.content.length / 10 + 2.5)) * 1000 + 500);
 
-    return () => window.clearTimeout(timer);
-  }, [currentTime, visibleDanmaku, activeDanmaku]);
+    return () => clearTimeout(timer);
+  }, [currentTime, visibleDanmaku]);
 
   const togglePlay = async () => {
     const video = videoRef.current;
@@ -272,6 +303,7 @@ export function VideoPage() {
     );
 
     await sendDanmaku(id, danmakuInput.trim(), danmakuColor, videoTime);
+    await fetchDanmaku(id);
 
     setDanmakuInput('');
   };
@@ -303,7 +335,6 @@ export function VideoPage() {
       return;
     }
     setReplyTo({ parentId, replyToUserId: userId, replyToUsername: username });
-    // 滚到评论输入框附近
     setTimeout(() => {
       document.getElementById('comment-input-anchor')?.scrollIntoView({ behavior: 'smooth' });
     }, 50);
@@ -320,7 +351,6 @@ export function VideoPage() {
     setExpandedReplies((s) => ({ ...s, [commentId]: !isOpen }));
   };
 
-  /** 把 @nickname 渲染成蓝色高亮 */
   const renderContent = (text: string) => {
     const parts = text.split(/(@[\w一-龥]+)/g);
     return parts.map((p, i) =>
@@ -372,6 +402,35 @@ export function VideoPage() {
     }
 
     setVideoErrorText('视频加载失败，请检查 public/demo-videos 里的文件是否存在。');
+  };
+
+  const showComments = currentVideo?.auditStatus === 1;
+  const isPending = currentVideo?.auditStatus === 0;
+  const isRejected = currentVideo?.auditStatus === 2;
+
+  // 判断当前用户是否有权限删除评论
+  const canDeleteComment = (commentUserId: string) => {
+    if (!isLoggedIn) return false;
+    // 管理员可以删除任何评论
+    if (user?.userType === 2) return true;
+    // 评论作者可以删除自己的评论
+    if (user?.id === commentUserId) return true;
+    // 视频创作者可以删除自己视频下的评论
+    if (currentVideo?.uploaderId === user?.id) return true;
+    return false;
+  };
+
+  // 删除评论
+  const handleDeleteComment = async (commentId: string) => {
+    if (!confirm('确定要删除这条评论吗？')) return;
+    try {
+      await apiRequest(`/api/comments/${commentId}`, { method: 'DELETE' });
+      // 刷新评论列表
+      await fetchComments(id!);
+    } catch (error) {
+      console.error('删除评论失败:', error);
+      alert('删除失败');
+    }
   };
 
   if (isLoading && !currentVideo) {
@@ -442,42 +501,28 @@ export function VideoPage() {
             )}
 
             {showDanmaku && (
-              <div
-                ref={danmakuRef}
-                className="absolute inset-0 pointer-events-none overflow-hidden"
-              >
-                {activeDanmaku.map((item, index) => (
-                  <motion.div
-                    key={item.id}
-                    initial={{ x: '100%' }}
-                    animate={{ x: '-100%' }}
-                    transition={{ duration: 8, ease: 'linear' }}
-                    className="absolute text-base md:text-lg font-medium whitespace-nowrap"
-                    style={{
-                      color: item.color || '#ffffff',
-                      top: `${(index % 10) * 9 + 5}%`,
-                      textShadow: '1px 1px 2px rgba(0,0,0,0.85)',
-                    }}
-                  >
-                    {item.content}
-                  </motion.div>
-                ))}
-
-                {activeDanmaku.length === 0 &&
-                  visibleDanmaku.slice(0, 3).map((item, index) => (
-                    <div
-                      key={`static-${item.id}`}
+              <div ref={danmakuRef} className="absolute inset-0 pointer-events-none overflow-hidden">
+                {activeDanmaku.map((item, index) => {
+                  const topPosition = 10 + (index % 7) * 10;
+                  const duration = Math.max(3, Math.min(6, item.content.length / 10 + 2.5));
+                  
+                  return (
+                    <motion.div
+                      key={item.id}
+                      initial={{ x: '100vw' }}
+                      animate={{ x: '-100%' }}
+                      transition={{ duration, ease: 'linear' }}
                       className="absolute text-base md:text-lg font-medium whitespace-nowrap"
                       style={{
                         color: item.color || '#ffffff',
-                        top: `${index * 12 + 8}%`,
-                        left: `${12 + index * 18}%`,
+                        top: `${topPosition}%`,
                         textShadow: '1px 1px 2px rgba(0,0,0,0.85)',
                       }}
                     >
                       {item.content}
-                    </div>
-                  ))}
+                    </motion.div>
+                  );
+                })}
               </div>
             )}
 
@@ -588,14 +633,11 @@ export function VideoPage() {
               </span>
 
               <div className="flex flex-wrap gap-2">
-                {currentVideo.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded-full text-xs"
-                  >
-                    {tag}
+                {currentVideo.categoryName && (
+                  <span className="px-2 py-1 bg-blue-100 dark:bg-blue-800 text-blue-700 dark:text-blue-200 rounded-full text-xs">
+                    {currentVideo.categoryName}
                   </span>
-                ))}
+                )}
               </div>
             </div>
 
@@ -605,19 +647,16 @@ export function VideoPage() {
 
             <div className="flex flex-wrap items-center gap-4 mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
               <button
-                onClick={() => likeVideo(currentVideo.id)}
-                className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-full hover:bg-red-50 hover:text-red-500 transition-colors"
+                onClick={handleLike}
+                disabled={isLikeLoading}
+                className={`flex items-center gap-2 px-4 py-2 rounded-full transition-colors ${
+                  isLiked
+                    ? 'bg-red-500 text-white hover:bg-red-600'
+                    : 'bg-gray-100 dark:bg-gray-700 hover:bg-red-50 hover:text-red-500'
+                }`}
               >
-                <Heart size={20} />
-                <span>{currentVideo.likeCount.toLocaleString()}</span>
-              </button>
-
-              <button
-                onClick={() => favoriteVideo(currentVideo.id)}
-                className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-full hover:bg-yellow-50 hover:text-yellow-500 transition-colors"
-              >
-                <Bookmark size={20} />
-                <span>{currentVideo.favoriteCount.toLocaleString()}</span>
+                <Heart size={20} fill={isLiked ? 'currentColor' : 'none'} />
+                <span>{(localLikeCount || currentVideo.likeCount).toLocaleString()}</span>
               </button>
 
               <button
@@ -626,6 +665,14 @@ export function VideoPage() {
               >
                 <Share2 size={20} />
                 <span>分享</span>
+              </button>
+
+              <button
+                onClick={() => setShowReportModal(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-full hover:bg-red-50 hover:text-red-500 transition-colors"
+              >
+                <Flag size={20} />
+                <span>举报</span>
               </button>
             </div>
           </div>
@@ -660,153 +707,193 @@ export function VideoPage() {
               评论 ({visibleComments.length})
             </h3>
 
-            {isLoggedIn ? (
-              <div id="comment-input-anchor" className="flex flex-col gap-2 mb-6">
-                {replyTo && (
-                  <div className="flex items-center justify-between bg-blue-50 dark:bg-blue-900/30 text-sm px-3 py-2 rounded-lg">
-                    <span className="text-blue-600 dark:text-blue-400">
-                      回复 <strong>@{replyTo.replyToUsername}</strong>
-                    </span>
-                    <button onClick={() => setReplyTo(null)} className="text-gray-500 hover:text-red-500">取消</button>
-                  </div>
-                )}
-              <div className="flex gap-3">
-                <img
-                  src={
-                    user?.avatar ||
-                    'https://api.dicebear.com/7.x/avataaars/svg?seed=user'
-                  }
-                  alt={user?.nickname || '用户'}
-                  className="w-10 h-10 rounded-full"
-                />
-
-                <div className="flex-1 flex gap-2">
-                  <input
-                    type="text"
-                    value={commentInput}
-                    onChange={(e) => setCommentInput(e.target.value)}
-                    placeholder={replyTo ? `回复 @${replyTo.replyToUsername}...` : '写下你的评论(支持 @用户名)...'}
-                    className="flex-1 px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg border-0 focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white"
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        handleSendComment();
-                      }
-                    }}
-                  />
-
-                  <button
-                    onClick={handleSendComment}
-                    className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-                  >
-                    <Send size={18} />
-                  </button>
-                </div>
-              </div>
-              </div>
-            ) : (
-              <div className="mb-6 p-4 rounded-lg bg-gray-100 dark:bg-gray-700 text-sm text-gray-500 flex items-center justify-between">
-                <span>登录后可以发表评论。</span>
-                <button
-                  onClick={openLoginModal}
-                  className="px-3 py-1.5 bg-blue-500 text-white rounded-lg"
-                >
-                  去登录
-                </button>
+            {isPending && (
+              <div className="text-center py-8 text-gray-500">
+                <p>视频审核中，暂不开放评论</p>
               </div>
             )}
 
-            <div className="space-y-4">
-              {visibleComments.map((comment) => (
-                <div key={comment.id} className="flex gap-3">
-                  <img
-                    src={comment.userAvatar}
-                    alt={comment.username}
-                    className="w-10 h-10 rounded-full"
-                  />
+            {isRejected && (
+              <div>
+                <div className="bg-red-50 dark:bg-red-900/20 rounded-lg p-4 mb-4">
+                  <p className="text-red-600 text-sm font-medium mb-1">审核未通过</p>
+                  <p className="text-red-700 dark:text-red-300 text-sm">
+                    理由：{rejectReason}
+                  </p>
+                </div>
+                <div className="text-center py-8 text-gray-500">
+                  <p>视频未通过审核，暂不开放评论</p>
+                </div>
+              </div>
+            )}
 
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-gray-900 dark:text-white">
-                        {comment.username}
-                      </span>
-                      {comment.isTop && (
-                        <span className="px-2 py-0.5 bg-red-100 text-red-600 text-xs rounded">
-                          置顶
+            {showComments && (
+              <>
+                {isLoggedIn ? (
+                  <div id="comment-input-anchor" className="flex flex-col gap-2 mb-6">
+                    {replyTo && (
+                      <div className="flex items-center justify-between bg-blue-50 dark:bg-blue-900/30 text-sm px-3 py-2 rounded-lg">
+                        <span className="text-blue-600 dark:text-blue-400">
+                          回复 <strong>@{replyTo.replyToUsername}</strong>
                         </span>
-                      )}
-                    </div>
-
-                    <p className="text-gray-700 dark:text-gray-300 mt-1">
-                      {renderContent(comment.content)}
-                    </p>
-
-                    <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
-                      <span>
-                        {new Date(comment.createTime).toLocaleDateString()}
-                      </span>
-
-                      <button className="flex items-center gap-1 hover:text-blue-500">
-                        <Heart size={14} />
-                        {comment.likeCount}
-                      </button>
-
-                      <button
-                        onClick={() => startReply(comment.id, comment.userId, comment.username)}
-                        className="hover:text-blue-500"
-                      >
-                        回复
-                      </button>
-
-                      {(comment.replyCount || 0) > 0 && (
-                        <button
-                          onClick={() => toggleReplies(comment.id)}
-                          className="hover:text-blue-500"
-                        >
-                          {expandedReplies[comment.id] ? '收起回复' : `查看 ${comment.replyCount} 条回复`}
-                        </button>
-                      )}
-                    </div>
-
-                    {expandedReplies[comment.id] && comment.replies && comment.replies.length > 0 && (
-                      <div className="mt-3 pl-4 border-l-2 border-gray-200 dark:border-gray-700 space-y-3">
-                        {comment.replies.map((reply) => (
-                          <div key={reply.id} className="flex gap-2">
-                            <img
-                              src={reply.userAvatar}
-                              alt={reply.username}
-                              className="w-8 h-8 rounded-full"
-                            />
-
-                            <div className="flex-1">
-                              <div className="text-sm">
-                                <span className="font-medium text-gray-900 dark:text-white">
-                                  {reply.username}
-                                </span>
-                                {reply.replyToUsername && (
-                                  <span className="text-gray-500">
-                                    {' '}回复{' '}
-                                    <span className="text-blue-500">@{reply.replyToUsername}</span>
-                                  </span>
-                                )}
-                              </div>
-                              <p className="text-gray-700 dark:text-gray-300 text-sm">
-                                {renderContent(reply.content)}
-                              </p>
-                              <button
-                                onClick={() => startReply(comment.id, reply.userId, reply.username)}
-                                className="text-xs text-gray-500 hover:text-blue-500 mt-1"
-                              >
-                                回复
-                              </button>
-                            </div>
-                          </div>
-                        ))}
+                        <button onClick={() => setReplyTo(null)} className="text-gray-500 hover:text-red-500">取消</button>
                       </div>
                     )}
+                    <div className="flex gap-3">
+                      <img
+                        src={
+                          user?.avatar ||
+                          'https://api.dicebear.com/7.x/avataaars/svg?seed=user'
+                        }
+                        alt={user?.nickname || '用户'}
+                        className="w-10 h-10 rounded-full"
+                      />
+
+                      <div className="flex-1 flex gap-2">
+                        <input
+                          type="text"
+                          value={commentInput}
+                          onChange={(e) => setCommentInput(e.target.value)}
+                          placeholder={replyTo ? `回复 @${replyTo.replyToUsername}...` : '写下你的评论(支持 @用户名)...'}
+                          className="flex-1 px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg border-0 focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white"
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              handleSendComment();
+                            }
+                          }}
+                        />
+
+                        <button
+                          onClick={handleSendComment}
+                          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                        >
+                          <Send size={18} />
+                        </button>
+                      </div>
+                    </div>
                   </div>
+                ) : (
+                  <div className="mb-6 p-4 rounded-lg bg-gray-100 dark:bg-gray-700 text-sm text-gray-500 flex items-center justify-between">
+                    <span>登录后可以发表评论。</span>
+                    <button
+                      onClick={openLoginModal}
+                      className="px-3 py-1.5 bg-blue-500 text-white rounded-lg"
+                    >
+                      去登录
+                    </button>
+                  </div>
+                )}
+
+                <div className="space-y-4">
+                  {visibleComments.map((comment) => (
+                    <div key={comment.id} className="flex gap-3">
+                      <img
+                        src={comment.userAvatar}
+                        alt={comment.username}
+                        className="w-10 h-10 rounded-full"
+                      />
+
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium text-gray-900 dark:text-white">
+                            {comment.username}
+                          </span>
+                          {comment.isTop && (
+                            <span className="px-2 py-0.5 bg-red-100 text-red-600 text-xs rounded">
+                              置顶
+                            </span>
+                          )}
+                        </div>
+
+                        <p className="text-gray-700 dark:text-gray-300 mt-1">
+                          {renderContent(comment.content)}
+                        </p>
+
+                        <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
+                          <span>
+                            {new Date(comment.createTime).toLocaleDateString()}
+                          </span>
+
+                          
+
+                          <button
+                            onClick={() => startReply(comment.id, comment.userId, comment.username)}
+                            className="hover:text-blue-500"
+                          >
+                            回复
+                          </button>
+
+                          <button
+                            onClick={() => {
+                              setReportCommentId(comment.id);
+                              setShowCommentReportModal(true);
+                            }}
+                            className="hover:text-red-500"
+                          >
+                            <Flag size={14} />
+                          </button>
+
+                          {canDeleteComment(comment.userId) && (
+                            <button
+                              onClick={() => handleDeleteComment(comment.id)}
+                              className="hover:text-red-500"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          )}
+
+                          {(comment.replyCount || 0) > 0 && (
+                            <button
+                              onClick={() => toggleReplies(comment.id)}
+                              className="hover:text-blue-500"
+                            >
+                              {expandedReplies[comment.id] ? '收起回复' : `查看 ${comment.replyCount} 条回复`}
+                            </button>
+                          )}
+                        </div>
+
+                        {expandedReplies[comment.id] && comment.replies && comment.replies.length > 0 && (
+                          <div className="mt-3 pl-4 border-l-2 border-gray-200 dark:border-gray-700 space-y-3">
+                            {comment.replies.map((reply) => (
+                              <div key={reply.id} className="flex gap-2">
+                                <img
+                                  src={reply.userAvatar}
+                                  alt={reply.username}
+                                  className="w-8 h-8 rounded-full"
+                                />
+
+                                <div className="flex-1">
+                                  <div className="text-sm">
+                                    <span className="font-medium text-gray-900 dark:text-white">
+                                      {reply.username}
+                                    </span>
+                                    {reply.replyToUsername && (
+                                      <span className="text-gray-500">
+                                        {' '}回复{' '}
+                                        <span className="text-blue-500">@{reply.replyToUsername}</span>
+                                      </span>
+                                    )}
+                                  </div>
+                                  <p className="text-gray-700 dark:text-gray-300 text-sm">
+                                    {renderContent(reply.content)}
+                                  </p>
+                                  <button
+                                    onClick={() => startReply(comment.id, reply.userId, reply.username)}
+                                    className="text-xs text-gray-500 hover:text-blue-500 mt-1"
+                                  >
+                                    回复
+                                  </button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </>
+            )}
           </div>
         </div>
 
@@ -858,6 +945,23 @@ export function VideoPage() {
           ))}
         </div>
       </div>
+
+      {/* 举报弹窗 */}
+      <ReportModal
+        isOpen={showReportModal}
+        onClose={() => setShowReportModal(false)}
+        targetType={0}
+        targetId={id!}
+      />
+      <ReportModal
+        isOpen={showCommentReportModal}
+        onClose={() => {
+          setShowCommentReportModal(false);
+          setReportCommentId(null);
+        }}
+        targetType={1}
+        targetId={reportCommentId || ''}
+      />
     </div>
   );
 }

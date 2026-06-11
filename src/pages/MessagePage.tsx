@@ -71,9 +71,9 @@ export function MessagePage() {
 
   return (
     <div className="min-h-[calc(100vh-4rem)] bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-6xl mx-auto h-[calc(100vh-4rem)] flex">
+      <div className="max-w-7xl mx-auto h-[calc(100vh-4rem)] flex px-4">
         {/* 左侧:会话列表 */}
-        <aside className="w-72 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col">
+        <aside className="w-72 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col rounded-l-xl overflow-hidden">
           <div className="p-4 border-b border-gray-200 dark:border-gray-700">
             <h2 className="font-bold text-gray-900 dark:text-white flex items-center gap-2">
               <MessageCircle className="w-5 h-5" />
@@ -128,7 +128,7 @@ export function MessagePage() {
         </aside>
 
         {/* 右侧:聊天窗口 */}
-        <section className="flex-1 flex flex-col bg-white dark:bg-gray-800">
+        <section className="flex-1 flex flex-col bg-white dark:bg-gray-800 rounded-r-xl overflow-hidden">
           {!activeConv ? (
             <div className="flex-1 flex items-center justify-center text-gray-400">
               <div className="text-center">
