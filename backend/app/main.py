@@ -2,7 +2,7 @@ import os, secrets, json
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
 from uuid import UUID
-from fastapi import Depends, FastAPI, HTTPException, Query, WebSocket, WebSocketDisconnect
+from fastapi import Depends, FastAPI, HTTPException, Query, WebSocket, WebSocketDisconnect, Header
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import or_, desc
 from sqlalchemy.orm import Session
@@ -892,11 +892,23 @@ def list_videos(
 def recommended_videos(
     page: int = 1,
     page_size: int = 20,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    authorization: str = Header(None)
 ):
-    """获取推荐视频（优先随机和新视频）"""
+    """获取推荐视频（已登录用户自动使用个性化推荐）"""
     from datetime import datetime, timedelta
     import random
+    from sqlalchemy import func
+    from .security import parse_token
+    
+    # 尝试获取登录用户
+    user = None
+    if authorization and authorization.startswith('Bearer '):
+        try:
+            user_id = parse_token(authorization.replace('Bearer ', '', 1))
+            user = db.get(User, user_id)
+        except:
+            pass
     
     all_videos = db.query(Video).filter(
         Video.status == 0,
@@ -906,32 +918,51 @@ def recommended_videos(
     if not all_videos:
         return {'items': [], 'hasMore': False}
     
+    # 获取用户偏好分类（仅登录用户）
+    pref_categories = []
+    if user:
+        result = db.query(
+            Video.category_id
+        ).join(
+            VideoLike, VideoLike.video_id == Video.id
+        ).filter(
+            VideoLike.user_id == user.id,
+            Video.category_id != None
+        ).group_by(Video.category_id).order_by(
+            func.count(VideoLike.id).desc()
+        ).limit(3).all()
+        pref_categories = [row[0] for row in result if row[0]]
+    
     now = datetime.now()
     
-    # 方案：直接打乱顺序，然后让新视频有更高概率出现在前面
-    shuffled = all_videos.copy()
-    random.shuffle(shuffled)
+    scored_videos = []
+    for v in all_videos:
+        # 热度分
+        hot_score = (v.view_count or 0) + (v.like_count or 0) * 2
+        
+        # 随机扰动（范围增大，让顺序更多变）
+        random_noise = random.randint(0, 50000)
+        
+        # 用户偏好加成
+        preference_bonus = 0
+        if pref_categories and v.category_id in pref_categories:
+            position = pref_categories.index(v.category_id)
+            preference_bonus = (3 - position) * 1000
+        
+        final_score = hot_score + random_noise + preference_bonus
+        scored_videos.append((v, final_score))
     
-    # 根据发布时间重新排序：新视频优先
-    def get_score(v):
-        if not v.created_at:
-            return 0
-        created_naive = v.created_at.replace(tzinfo=None)
-        days_ago = (now - created_naive).days
-        # 天數越少分数越高，加上随机因素
-        return (10000 - days_ago * 100) + random.randint(0, 5000)
-    
-    # 按新视频分数排序（新视频在前）
-    shuffled.sort(key=get_score, reverse=True)
+    # 按分数降序排序
+    scored_videos.sort(key=lambda x: x[1], reverse=True)
     
     # 分页
     start = (page - 1) * page_size
     end = start + page_size
-    page_items = shuffled[start:end]
+    page_items = scored_videos[start:end]
     
     return {
-        'items': [video_out(v).dict() for v in page_items],
-        'hasMore': end < len(shuffled)
+        'items': [video_out(v[0]).dict() for v in page_items],
+        'hasMore': end < len(scored_videos)
     }
 
 @app.get('/api/videos/{video_id}')
@@ -3158,3 +3189,24 @@ def delete_comment(
     db.commit()
     
     return {'code': 0, 'message': '删除成功'}
+
+# ======================================================================
+# 用户偏好分类获取
+# ======================================================================
+
+def get_user_preference_categories(user_id: str, db: Session, limit: int = 3):
+    """获取用户偏好的分类（按点赞次数排序）"""
+    from sqlalchemy import func
+    
+    result = db.query(
+        Video.category_id
+    ).join(
+        VideoLike, VideoLike.video_id == Video.id
+    ).filter(
+        VideoLike.user_id == user_id,
+        Video.category_id != None
+    ).group_by(Video.category_id).order_by(
+        func.count(VideoLike.id).desc()
+    ).limit(limit).all()
+    
+    return [row[0] for row in result if row[0]]

@@ -19,6 +19,7 @@ import { useLiveStore } from '../stores/liveStore';
 import { useAuthStore } from '../stores/authStore';
 import { Flag } from 'lucide-react';
 import { ReportModal } from '../components/ReportModal';
+import { FollowButton } from '../components/social/FollowButton';
 
 const DEFAULT_AVATAR =
   'https://api.dicebear.com/7.x/avataaars/svg?seed=creator';
@@ -393,10 +394,7 @@ export function LivePage() {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <button className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors">
-                    <Heart className="w-4 h-4" />
-                    关注
-                  </button>
+                  <FollowButton userId={currentRoom.anchorId} />
 
                   <button
                     onClick={handleShare}

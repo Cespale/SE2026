@@ -55,3 +55,18 @@ def require_admin(user: User = Depends(get_current_user)) -> User:
     if user.user_type < 2:
         raise HTTPException(status_code=403, detail='需要管理员权限')
     return user
+
+from typing import Optional
+
+def get_current_user_optional(authorization: str = Header(None), db: Session = Depends(get_db)) -> Optional[User]:
+    """获取当前用户，未登录时返回 None"""
+    if not authorization or not authorization.startswith('Bearer '):
+        return None
+    try:
+        user_id = parse_token(authorization.replace('Bearer ', '', 1))
+        user = db.get(User, user_id)
+        if user and user.status == 0:
+            return user
+        return None
+    except Exception:
+        return None
