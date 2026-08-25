@@ -4,26 +4,28 @@
   "scripts": {
     "dev": "webpack serve",
     "build": "webpack --mode production",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.98.0",
+    "date-fns": "^2.30.0",
+    "flv.js": "^1.6.2",
+    "framer-motion": "^11.16.1",
+    "hls.js": "^1.4.12",
+    "lucide-react": "^0.294.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.8.0",
     "recharts": "^2.10.0",
-    "date-fns": "^2.30.0",
-    "framer-motion": "^11.16.1",
-    "lucide-react": "^0.294.0",
-    "@supabase/supabase-js": "^2.98.0",
-    "zustand": "^4.4.7",
-    "flv.js": "^1.6.2",
-    "hls.js": "^1.4.12"
+    "zustand": "^4.4.7"
   },
   "devDependencies": {
     "@babel/core": "^7.23.5",
     "@babel/preset-env": "^7.23.5",
     "@babel/preset-react": "^7.23.5",
     "@babel/preset-typescript": "^7.23.5",
+    "@playwright/test": "^1.62.1",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
     "autoprefixer": "^10.4.16",
