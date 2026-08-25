@@ -1,5 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const webpack = require('webpack');
 
 module.exports = (env, argv) => {
   const isDev = argv.mode !== 'production';
@@ -101,6 +102,11 @@ module.exports = (env, argv) => {
       },
     },
     plugins: [
+      new webpack.DefinePlugin({
+        'process.env.REACT_APP_API_BASE_URL': JSON.stringify(
+          process.env.REACT_APP_API_BASE_URL || ''
+        )
+      }),
       new HtmlWebpackPlugin({
         template: './index.html',
         inject: 'body'

@@ -1,0 +1,89 @@
+name: StreamHub CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ── 1 · 后端单元 + API 集成测试 ──────────────────────────────
+  test-backend:
+    name: 1 · 后端单元/集成测试
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: streamhub
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d streamhub"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: 安装后端依赖
+        run: pip install -r backend/requirements.txt pytest httpx
+      - name: 运行后端测试
+        env:
+          DATABASE_URL: postgresql+psycopg2://postgres:postgres@localhost:5432/streamhub
+        run: |
+          cd backend
+          pytest -q
+
+  # ── 2 · 前端类型检查 + 编译 + 测试 ──────────────────────────
+  test-frontend:
+    name: 2 · 前端类型检查 + 编译 + 测试
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: 安装前端依赖
+        run: npm ci
+      - name: 类型检查
+        run: npm run typecheck
+      - name: 编译
+        run: npm run build
+      - name: 前端测试
+        run: npm test
+
+  # ── 3 · 制作镜像（带版本号）→ 部署 K8s → 健康检查 ──────────
+  # needs 保证：只要 1、2 任一步失败，本 job 不会执行，即「测试失败停流水线」。
+  build-deploy:
+    name: 3 · 制作镜像 + 部署 K8s + 健康检查
+    needs: [test-backend, test-frontend]
+    runs-on: ubuntu-latest
+    env:
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 创建 Kind 集群
+        uses: helm/kind-action@v1.10.0
+
+      - name: 制作镜像（带版本号，禁止 latest）
+        run: |
+          VERSION=${GITHUB_SHA:0:8}
+          docker build -f backend/Dockerfile -t streamhub-backend:${VERSION} .
+          docker build -f Dockerfile.frontend -t streamhub-frontend:${VERSION} .
+          kind load docker-image streamhub-backend:${VERSION}
+          kind load docker-image streamhub-frontend:${VERSION}
+
+      - name: 部署到 Kubernetes
+        run: |
+          export VERSION=${GITHUB_SHA:0:8}
+          bash scripts/deploy.sh
+
+      - name: 健康检查
+        run: bash scripts/health-check.sh

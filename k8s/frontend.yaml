@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: streamhub-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: streamhub-frontend
+  template:
+    metadata:
+      labels:
+        app: streamhub-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: streamhub-frontend:VERSION_PLACEHOLDER
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3266
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3266
+            initialDelaySeconds: 15
+            periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: streamhub-frontend
+spec:
+  type: NodePort
+  selector:
+    app: streamhub-frontend
+  ports:
+    - port: 3266
+      targetPort: 3266
+      nodePort: 30000

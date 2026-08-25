@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: streamhub-postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: streamhub-postgres
+  template:
+    metadata:
+      labels:
+        app: streamhub-postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: streamhub-secrets
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_DB
+              value: streamhub
+          volumeMounts:
+            - name: db-init
+              mountPath: /docker-entrypoint-initdb.d
+          readinessProbe:
+            exec:
+              command: ["pg_isready", "-U", "postgres", "-d", "streamhub"]
+            initialDelaySeconds: 5
+            periodSeconds: 5
+      volumes:
+        - name: db-init
+          configMap:
+            name: streamhub-db-init
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: streamhub-postgres
+spec:
+  selector:
+    app: streamhub-postgres
+  ports:
+    - port: 5432
+      targetPort: 5432

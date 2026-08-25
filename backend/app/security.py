@@ -6,7 +6,9 @@ from passlib.context import CryptContext
 from .database import get_db
 from .models import User
 
-SECRET_KEY = os.getenv('SECRET_KEY', 'streamhub-coursework-secret')
+SECRET_KEY = os.getenv('SECRET_KEY')
+if not SECRET_KEY:
+    raise RuntimeError('SECRET_KEY 未设置：请在 .env 或 docker-compose 中配置')
 pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 
 def hash_password(password: str) -> str:

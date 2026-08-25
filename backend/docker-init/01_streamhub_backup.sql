@@ -2,7 +2,6 @@
 -- PostgreSQL database dump
 --
 
-\restrict MBYrqjcjn18f9Hvh11xYW7s6bCOI3zRQFncFotau3HnkaYnnasZQppToYPAJ2cT
 
 -- Dumped from database version 16.14 (Debian 16.14-1.pgdg13+1)
 -- Dumped by pg_dump version 16.14 (Debian 16.14-1.pgdg13+1)
@@ -425,5 +424,4 @@ ALTER TABLE ONLY public.videos
 -- PostgreSQL database dump complete
 --
 
-\unrestrict MBYrqjcjn18f9Hvh11xYW7s6bCOI3zRQFncFotau3HnkaYnnasZQppToYPAJ2cT
 
