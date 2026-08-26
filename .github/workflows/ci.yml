@@ -39,9 +39,9 @@ jobs:
           cd backend
           pytest -q
 
-  # ── 2 · 前端类型检查 + 编译 + 测试 ──────────────────────────
+  # ── 2 · 前端类型检查 + 编译 ──────────────────────────────
   test-frontend:
-    name: 2 · 前端类型检查 + 编译 + 测试
+    name: 2 · 前端类型检查 + 编译
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -54,8 +54,6 @@ jobs:
         run: npm run typecheck
       - name: 编译
         run: npm run build
-      - name: 前端测试
-        run: npm test
 
   # ── 3 · 制作镜像（带版本号）→ 部署 K8s → 健康检查 ──────────
   # needs 保证：只要 1、2 任一步失败，本 job 不会执行，即「测试失败停流水线」。

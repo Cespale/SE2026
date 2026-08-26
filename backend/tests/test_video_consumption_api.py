@@ -14,9 +14,15 @@ def first_video(client):
     response = client.get("/api/videos")
 
     assert response.status_code == 200
-    assert len(response.json()["items"]) > 0
+    items = response.json()["items"]
+    assert len(items) > 0
 
-    return response.json()["items"][0]
+    # /api/videos 默认随机排序，items[0] 可能是外网种子视频；这里固定取本地可播放视频，
+    # 保证后续 detail 断言里 videoUrl 以 /demo-videos/ 开头，避免随机排序导致的 flaky。
+    local = next((v for v in items if v["videoUrl"].startswith("/demo-videos/")), None)
+    assert local is not None, "缺少本地 /demo-videos/ 视频"
+
+    return local
 
 
 def test_user_can_search_get_detail_and_playable_video_data(client):

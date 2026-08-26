@@ -5,6 +5,7 @@ import { useAuthStore } from './authStore';
 export interface LiveRoom {
   id: string;
   title: string;
+  description?: string;
   categoryId: string;
   categoryName: string;
   cover: string;
@@ -27,6 +28,7 @@ export interface ChatMessage {
   color?: string;
   position?: number;
   username?: string;
+  userAvatar?: string;
   userId?: string;
   count?: number;
   timestamp: string;
@@ -42,7 +44,7 @@ interface LiveState {
   isLoading: boolean;
   fetchRooms: (categoryId?: string) => Promise<void>;
   fetchRoomDetail: (roomId: string) => Promise<void>;
-  createRoom: (title: string, categoryId: string, cover: string) => Promise<LiveRoom | null>;
+  createRoom: (title: string, categoryId: string, cover: string, description?: string) => Promise<LiveRoom | null>;
   endRoom: (roomId: string) => Promise<void>;
   connectWebSocket: (roomId: string) => void;
   disconnectWebSocket: () => void;
@@ -82,11 +84,11 @@ export const useLiveStore = create<LiveState>((set, get) => ({
     }
   },
 
-  createRoom: async (title: string, categoryId: string, cover: string) => {
+  createRoom: async (title: string, categoryId: string, cover: string, description: string = '') => {
     try {
       const room = await apiRequest<LiveRoom>('/api/live/rooms', {
         method: 'POST',
-        body: JSON.stringify({ title, categoryId, cover })
+        body: JSON.stringify({ title, categoryId, cover, description })
       });
       set(state => ({ rooms: [room, ...state.rooms], currentRoom: room }));
       return room;
