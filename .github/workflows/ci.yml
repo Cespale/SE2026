@@ -64,6 +64,9 @@ jobs:
   build-deploy:
     name: 3 · 制作镜像 + 部署 K8s + 健康检查
     needs: [test-backend, test-frontend]
+    # 只在 push（推 fork / 合并进 main）时部署。PR 事件——尤其 fork PR——拿不到
+    # secrets，部署 job 会因 POSTGRES_PASSWORD/SECRET_KEY 为空而失败，故 PR 上跳过。
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     env:
       POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
