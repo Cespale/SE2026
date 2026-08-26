@@ -32,6 +32,10 @@ jobs:
           python-version: '3.11'
       - name: 安装后端依赖
         run: pip install -r backend/requirements.txt pytest httpx
+      - name: 预建应用上传目录（main.py 用绝对路径 /app/...）
+        run: |
+          sudo mkdir -p /app/public/uploads/videos /app/public/uploads/covers /app/public/avatars
+          sudo chmod -R 777 /app
       - name: 运行后端测试
         env:
           DATABASE_URL: postgresql+psycopg2://postgres:postgres@localhost:5432/streamhub
