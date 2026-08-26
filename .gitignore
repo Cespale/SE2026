@@ -8,16 +8,14 @@ backend/.env
 __pycache__/
 *.pyc
 *.pyo
+backend/.pytest_cache/
+
+# 自动生成的测试运行产物；正式测试材料保存在 0826测试报告/。
+reports/
+test-results/
+playwright-report/
 
 .DS_Store
 
 # Docker 数据卷不要提交
 pgdata/
-
-# 演示视频太大,不放进仓库;运行项目时把 mp4 放进此目录即可
-public/demo-videos/*.mp4
-public/demo-videos/*.MP4
-
-# IDE
-.vscode/
-.idea/

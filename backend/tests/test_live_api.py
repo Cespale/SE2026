@@ -1,3 +1,8 @@
+import asyncio
+
+from app.main import live_hub, live_ws
+
+
 def login_headers(client, account, password):
     response = client.post(
         "/api/auth/login",
@@ -118,3 +123,19 @@ def test_user_can_send_live_websocket_message(client):
 
         assert message["type"] == "danmaku"
         assert message["content"] == "pytest 直播消息"
+
+
+def test_live_websocket_disconnect_during_join_is_not_unhandled():
+    class ClosingWebSocket:
+        async def accept(self):
+            return None
+
+        async def send_json(self, _payload):
+            raise RuntimeError('Cannot call "send" once a close message has been sent.')
+
+    room_id = "closing-websocket-test"
+    live_hub.rooms.pop(room_id, None)
+
+    asyncio.run(live_ws(ClosingWebSocket(), room_id))
+
+    assert room_id not in live_hub.rooms or not live_hub.rooms[room_id]

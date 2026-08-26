@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="0" skipped="0" tests="1" time="0.297" timestamp="2026-08-26T09:41:01.436931+08:00" hostname="xuyue"><testcase classname="tests.test_audit_rules_unit" name="test_audit_status_allows_final_decisions_only" time="0.004" /></testsuite></testsuites>

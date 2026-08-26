@@ -1,0 +1,6 @@
+<testsuites id="" name="" tests="1" failures="0" skipped="0" errors="0" time="24.737889">
+<testsuite name="streamhub.spec.ts" timestamp="2026-08-26T06:01:33.200Z" hostname="" tests="1" failures="0" skipped="0" time="3.175" errors="0">
+<testcase name="E2E-TC01-02：用户搜索、播放视频并发表评论和弹幕" classname="streamhub.spec.ts" time="3.175">
+</testcase>
+</testsuite>
+</testsuites>

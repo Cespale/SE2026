@@ -1,0 +1,46 @@
+F                                                                        [100%]
+================================== FAILURES ===================================
+_____________ test_admin_cannot_return_submitted_video_to_pending _____________
+
+client = <starlette.testclient.TestClient object at 0x000002360230E810>
+
+    def test_admin_cannot_return_submitted_video_to_pending(client):
+        creator_headers = login_headers(client, "creator", "creator123")
+        admin_headers = login_headers(client, "admin", "admin123")
+        create_response = client.post(
+            "/api/videos",
+            headers=creator_headers,
+            json={"title": "pytest \u975e\u6cd5\u5ba1\u6838\u72b6\u6001", "categoryId": "1"},
+        )
+    
+        assert create_response.status_code == 200
+        video_id = create_response.json()["id"]
+    
+        response = client.patch(
+            f"/api/admin/videos/{video_id}/audit",
+            headers=admin_headers,
+            json={"auditStatus": 0},
+        )
+    
+>       assert response.status_code == 422
+E       assert 200 == 422
+E        +  where 200 = <Response [200 OK]>.status_code
+
+tests\test_video_flow_api.py:155: AssertionError
+---------------------------- Captured stdout setup ----------------------------
+\u672c\u5730\u89c6\u9891\u540c\u6b65\u5b8c\u6210\uff1a\u65b0\u589e 9 \u4e2a\uff0c\u66f4\u65b0 0 \u4e2a\uff1b\u5df2\u9690\u85cf\u6240\u6709\u975e\u672c\u5730\u89c6\u9891\u3002\u76ee\u5f55\uff1aC:\\Users\\lausu\\Desktop\\\u5927\u4e09\u4e0a\u5b66\u671f\\\u5927\u4e8c\u5c0f\u5b66\u671f\\StreamHub\\public\\demo-videos
+============================== warnings summary ===============================
+app\main.py:691
+  C:\\Users\\lausu\\Desktop\\\u5927\u4e09\u4e0a\u5b66\u671f\\\u5927\u4e8c\u5c0f\u5b66\u671f\\StreamHub\\backend\\app\\main.py:691: DeprecationWarning: \n          on_event is deprecated, use lifespan event handlers instead.\n  \n          Read more about it in the\n          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).\n          \n    @app.on_event('startup')
+
+.venv\Lib\site-packages\fastapi\applications.py:4495
+  C:\\Users\\lausu\\Desktop\\\u5927\u4e09\u4e0a\u5b66\u671f\\\u5927\u4e8c\u5c0f\u5b66\u671f\\StreamHub\\backend\\.venv\\Lib\\site-packages\\fastapi\\applications.py:4495: DeprecationWarning: \n          on_event is deprecated, use lifespan event handlers instead.\n  \n          Read more about it in the\n          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).\n          \n    return self.router.on_event(event_type)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_video_flow_api.py::test_admin_cannot_return_submitted_video_to_pending
+1 failed, 2 warnings in 6.09s
+API_TEST=FAILED
+PUBLISH_IMAGE=SKIPPED
+DEPLOY=SKIPPED
+GATE_EXIT_CODE=1

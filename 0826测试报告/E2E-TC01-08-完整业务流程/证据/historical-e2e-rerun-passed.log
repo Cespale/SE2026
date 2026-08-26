@@ -1,0 +1,12 @@
+
+> meoo-app-name@1.0.0 test:e2e
+> playwright test
+
+
+Running 3 tests using 1 worker
+
+  ok 1 e2e\streamhub.spec.ts:24:5 › E2E-TC01-02：用户搜索、播放视频并发表评论和弹幕 (6.5s)
+  ok 2 e2e\streamhub.spec.ts:71:5 › E2E-TC03-05：创作者投稿，管理员审核，创作者查看结果 (11.6s)
+  ok 3 e2e\streamhub.spec.ts:120:5 › E2E-TC06-08：创建直播、观众发弹幕、接口结束直播 (11.3s)
+
+  3 passed (31.3s)
