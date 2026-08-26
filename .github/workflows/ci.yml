@@ -73,14 +73,18 @@ jobs:
 
       - name: 创建 Kind 集群
         uses: helm/kind-action@v1.10.0
+        with:
+          # 默认集群名是 chart-testing，这里显式改成 kind，
+          # 否则后续 `kind load docker-image` 会报 no nodes found for cluster "kind"
+          cluster_name: kind
 
       - name: 制作镜像（带版本号，禁止 latest）
         run: |
           VERSION=${GITHUB_SHA:0:8}
           docker build -f backend/Dockerfile -t streamhub-backend:${VERSION} .
           docker build -f Dockerfile.frontend -t streamhub-frontend:${VERSION} .
-          kind load docker-image streamhub-backend:${VERSION}
-          kind load docker-image streamhub-frontend:${VERSION}
+          kind load docker-image --name kind streamhub-backend:${VERSION}
+          kind load docker-image --name kind streamhub-frontend:${VERSION}
 
       - name: 部署到 Kubernetes
         run: |
