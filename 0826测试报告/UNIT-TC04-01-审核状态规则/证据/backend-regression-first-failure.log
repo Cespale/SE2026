@@ -1,0 +1,531 @@
+.EE............                                                          [100%]
+=================================== ERRORS ====================================
+___________ ERROR at setup of test_creator_create_then_end_own_room ___________
+
+self = <sqlalchemy.engine.base.Connection object at 0x000002D4AD45CDD0>
+dialect = <sqlalchemy.dialects.postgresql.psycopg2.PGDialect_psycopg2 object at 0x000002D496937750>
+context = <sqlalchemy.dialects.postgresql.psycopg2.PGExecutionContext_psycopg2 object at 0x000002D4AD45E650>
+statement = <sqlalchemy.dialects.postgresql.base.PGCompiler object at 0x000002D4AD1F0B90>
+parameters = [{'id_1': 1, 'param_1': 1}]
+
+    def _exec_single_context(
+        self,
+        dialect: Dialect,
+        context: ExecutionContext,
+        statement: Union[str, Compiled],
+        parameters: Optional[_AnyMultiExecuteParams],
+    ) -> CursorResult[Any]:
+        """continue the _execute_context() method for a single DBAPI
+        cursor.execute() or cursor.executemany() call.
+    
+        """
+        if dialect.bind_typing is BindTyping.SETINPUTSIZES:
+            generic_setinputsizes = context._prepare_set_input_sizes()
+    
+            if generic_setinputsizes:
+                try:
+                    dialect.do_set_input_sizes(
+                        context.cursor, generic_setinputsizes, context
+                    )
+                except BaseException as e:
+                    self._handle_dbapi_exception(
+                        e, str(statement), parameters, None, context
+                    )
+    
+        cursor, str_statement, parameters = (
+            context.cursor,
+            context.statement,
+            context.parameters,
+        )
+    
+        effective_parameters: Optional[_AnyExecuteParams]
+    
+        if not context.executemany:
+            effective_parameters = parameters[0]
+        else:
+            effective_parameters = parameters
+    
+        if self._has_events or self.engine._has_events:
+            for fn in self.dispatch.before_cursor_execute:
+                str_statement, effective_parameters = fn(
+                    self,
+                    cursor,
+                    str_statement,
+                    effective_parameters,
+                    context,
+                    context.executemany,
+                )
+    
+        if self._echo:
+            self._log_info(str_statement)
+    
+            stats = context._get_cache_stats()
+    
+            if not self.engine.hide_parameters:
+                self._log_info(
+                    "[%s] %r",
+                    stats,
+                    sql_util._repr_params(
+                        effective_parameters,
+                        batches=10,
+                        ismulti=context.executemany,
+                    ),
+                )
+            else:
+                self._log_info(
+                    "[%s] [SQL parameters hidden due to hide_parameters=True]",
+                    stats,
+                )
+    
+        evt_handled: bool = False
+        try:
+            if context.execute_style is ExecuteStyle.EXECUTEMANY:
+                effective_parameters = cast(
+                    "_CoreMultiExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_executemany:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_executemany(
+                        cursor,
+                        str_statement,
+                        effective_parameters,
+                        context,
+                    )
+            elif not effective_parameters and context.no_parameters:
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute_no_params:
+                        if fn(cursor, str_statement, context):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_execute_no_params(
+                        cursor, str_statement, context
+                    )
+            else:
+                effective_parameters = cast(
+                    "_CoreSingleExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+>                   self.dialect.do_execute(
+                        cursor, str_statement, effective_parameters, context
+                    )
+
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:1967: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <sqlalchemy.dialects.postgresql.psycopg2.PGDialect_psycopg2 object at 0x000002D496937750>
+cursor = <cursor object at 0x000002D4AD4467A0; closed: -1>
+statement = 'SELECT categories.id AS categories_id, categories.name AS categories_name, categories.type AS categories_type, categories.sort_order AS categories_sort_order \nFROM categories \nWHERE categories.id = %(id_1)s \n LIMIT %(param_1)s'
+parameters = {'id_1': 1, 'param_1': 1}
+context = <sqlalchemy.dialects.postgresql.psycopg2.PGExecutionContext_psycopg2 object at 0x000002D4AD45E650>
+
+    def do_execute(self, cursor, statement, parameters, context=None):
+>       cursor.execute(statement, parameters)
+E       psycopg2.errors.UndefinedTable: relation "categories" does not exist
+E       LINE 2: FROM categories 
+E                    ^
+
+.venv\Lib\site-packages\sqlalchemy\engine\default.py:941: UndefinedTable
+
+The above exception was the direct cause of the following exception:
+
+>   ???
+
+C:\\Users\\lausu\\Desktop\\\u5927\u4e09\u4e0a\u5b66\u671f\\\u5927\u4f5c\u4e1a\\StreamHub\\backend\\tests\\conftest.py:32: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\starlette\testclient.py:739: in __enter__
+    portal.call(self.wait_startup)
+C:\\Users\\lausu\\Desktop\\\u5927\u4e09\u4e0a\u5b66\u671f\\\u5927\u4f5c\u4e1a\\StreamHub\\backend\\.venv\\Lib\\site-packages\\anyio\\from_thread.py:334: in call
+    ???
+C:\Users\lausu\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\_base.py:456: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+C:\Users\lausu\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\_base.py:401: in __get_result
+    raise self._exception
+C:\\Users\\lausu\\Desktop\\\u5927\u4e09\u4e0a\u5b66\u671f\\\u5927\u4f5c\u4e1a\\StreamHub\\backend\\.venv\\Lib\\site-packages\\anyio\\from_thread.py:259: in _call_func
+    ???
+.venv\Lib\site-packages\starlette\testclient.py:774: in wait_startup
+    await receive()
+.venv\Lib\site-packages\starlette\testclient.py:765: in receive
+    self.task.result()
+C:\Users\lausu\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\_base.py:449: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+C:\Users\lausu\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\_base.py:401: in __get_result
+    raise self._exception
+C:\\Users\\lausu\\Desktop\\\u5927\u4e09\u4e0a\u5b66\u671f\\\u5927\u4f5c\u4e1a\\StreamHub\\backend\\.venv\\Lib\\site-packages\\anyio\\from_thread.py:259: in _call_func
+    ???
+.venv\Lib\site-packages\starlette\testclient.py:755: in lifespan
+    await self.app(scope, self.stream_receive.receive, self.stream_send.send)
+.venv\Lib\site-packages\fastapi\applications.py:1054: in __call__
+    await super().__call__(scope, receive, send)
+.venv\Lib\site-packages\starlette\applications.py:113: in __call__
+    await self.middleware_stack(scope, receive, send)
+.venv\Lib\site-packages\starlette\middleware\errors.py:152: in __call__
+    await self.app(scope, receive, send)
+.venv\Lib\site-packages\starlette\middleware\cors.py:77: in __call__
+    await self.app(scope, receive, send)
+.venv\Lib\site-packages\starlette\middleware\exceptions.py:48: in __call__
+    await self.app(scope, receive, send)
+.venv\Lib\site-packages\starlette\routing.py:715: in __call__
+    await self.middleware_stack(scope, receive, send)
+.venv\Lib\site-packages\starlette\routing.py:724: in app
+    await self.lifespan(scope, receive, send)
+.venv\Lib\site-packages\starlette\routing.py:693: in lifespan
+    async with self.lifespan_context(app) as maybe_state:
+.venv\Lib\site-packages\starlette\routing.py:569: in __aenter__
+    await self._router.startup()
+.venv\Lib\site-packages\starlette\routing.py:672: in startup
+    handler()
+app\main.py:700: in startup
+    raise e
+app\main.py:696: in startup
+    seed_data(db)
+app\main.py:256: in seed_data
+    exists = db.query(Category).filter(Category.id == item["id"]).first()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\orm\query.py:2728: in first
+    return self.limit(1)._iter().first()  # type: ignore
+           ^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\orm\query.py:2827: in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+.venv\Lib\site-packages\sqlalchemy\orm\session.py:2362: in execute
+    return self._execute_internal(
+.venv\Lib\site-packages\sqlalchemy\orm\session.py:2247: in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+.venv\Lib\site-packages\sqlalchemy\orm\context.py:305: in orm_execute_statement
+    result = conn.execute(
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:1418: in execute
+    return meth(
+.venv\Lib\site-packages\sqlalchemy\sql\elements.py:515: in _execute_on_connection
+    return connection._execute_clauseelement(
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:1640: in _execute_clauseelement
+    ret = self._execute_context(
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:1846: in _execute_context
+    return self._exec_single_context(
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:1986: in _exec_single_context
+    self._handle_dbapi_exception(
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:2355: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <sqlalchemy.dialects.postgresql.psycopg2.PGDialect_psycopg2 object at 0x000002D496937750>
+cursor = <cursor object at 0x000002D4AD4467A0; closed: -1>
+statement = 'SELECT categories.id AS categories_id, categories.name AS categories_name, categories.type AS categories_type, categories.sort_order AS categories_sort_order \nFROM categories \nWHERE categories.id = %(id_1)s \n LIMIT %(param_1)s'
+parameters = {'id_1': 1, 'param_1': 1}
+context = <sqlalchemy.dialects.postgresql.psycopg2.PGExecutionContext_psycopg2 object at 0x000002D4AD45E650>
+
+    def do_execute(self, cursor, statement, parameters, context=None):
+>       cursor.execute(statement, parameters)
+E       sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedTable) relation "categories" does not exist
+E       LINE 2: FROM categories 
+E                    ^
+E       
+E       [SQL: SELECT categories.id AS categories_id, categories.name AS categories_name, categories.type AS categories_type, categories.sort_order AS categories_sort_order 
+E       FROM categories 
+E       WHERE categories.id = %(id_1)s 
+E        LIMIT %(param_1)s]
+E       [parameters: {'id_1': 1, 'param_1': 1}]
+E       (Background on this error at: https://sqlalche.me/e/20/f405)
+
+.venv\Lib\site-packages\sqlalchemy\engine\default.py:941: ProgrammingError
+---------------------------- Captured stdout setup ----------------------------
+\u521d\u59cb\u5316\u6f14\u793a\u6570\u636e\u5931\u8d25\uff1a (psycopg2.errors.UndefinedTable) relation "categories" does not exist\nLINE 2: FROM categories \n             ^\n\n[SQL: SELECT categories.id AS categories_id, categories.name AS categories_name, categories.type AS categories_type, categories.sort_order AS categories_sort_order \nFROM categories \nWHERE categories.id = %(id_1)s \n LIMIT %(param_1)s]\n[parameters: {'id_1': 1, 'param_1': 1}]\n(Background on this error at: https://sqlalche.me/e/20/f405)
+___________ ERROR at setup of test_normal_user_cannot_end_live_room ___________
+
+self = <sqlalchemy.engine.base.Connection object at 0x000002D4AEE9B150>
+dialect = <sqlalchemy.dialects.postgresql.psycopg2.PGDialect_psycopg2 object at 0x000002D496937750>
+context = <sqlalchemy.dialects.postgresql.psycopg2.PGExecutionContext_psycopg2 object at 0x000002D4AEE9AFD0>
+statement = <sqlalchemy.dialects.postgresql.base.PGCompiler object at 0x000002D4AD1F0B90>
+parameters = [{'id_1': 1, 'param_1': 1}]
+
+    def _exec_single_context(
+        self,
+        dialect: Dialect,
+        context: ExecutionContext,
+        statement: Union[str, Compiled],
+        parameters: Optional[_AnyMultiExecuteParams],
+    ) -> CursorResult[Any]:
+        """continue the _execute_context() method for a single DBAPI
+        cursor.execute() or cursor.executemany() call.
+    
+        """
+        if dialect.bind_typing is BindTyping.SETINPUTSIZES:
+            generic_setinputsizes = context._prepare_set_input_sizes()
+    
+            if generic_setinputsizes:
+                try:
+                    dialect.do_set_input_sizes(
+                        context.cursor, generic_setinputsizes, context
+                    )
+                except BaseException as e:
+                    self._handle_dbapi_exception(
+                        e, str(statement), parameters, None, context
+                    )
+    
+        cursor, str_statement, parameters = (
+            context.cursor,
+            context.statement,
+            context.parameters,
+        )
+    
+        effective_parameters: Optional[_AnyExecuteParams]
+    
+        if not context.executemany:
+            effective_parameters = parameters[0]
+        else:
+            effective_parameters = parameters
+    
+        if self._has_events or self.engine._has_events:
+            for fn in self.dispatch.before_cursor_execute:
+                str_statement, effective_parameters = fn(
+                    self,
+                    cursor,
+                    str_statement,
+                    effective_parameters,
+                    context,
+                    context.executemany,
+                )
+    
+        if self._echo:
+            self._log_info(str_statement)
+    
+            stats = context._get_cache_stats()
+    
+            if not self.engine.hide_parameters:
+                self._log_info(
+                    "[%s] %r",
+                    stats,
+                    sql_util._repr_params(
+                        effective_parameters,
+                        batches=10,
+                        ismulti=context.executemany,
+                    ),
+                )
+            else:
+                self._log_info(
+                    "[%s] [SQL parameters hidden due to hide_parameters=True]",
+                    stats,
+                )
+    
+        evt_handled: bool = False
+        try:
+            if context.execute_style is ExecuteStyle.EXECUTEMANY:
+                effective_parameters = cast(
+                    "_CoreMultiExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_executemany:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_executemany(
+                        cursor,
+                        str_statement,
+                        effective_parameters,
+                        context,
+                    )
+            elif not effective_parameters and context.no_parameters:
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute_no_params:
+                        if fn(cursor, str_statement, context):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_execute_no_params(
+                        cursor, str_statement, context
+                    )
+            else:
+                effective_parameters = cast(
+                    "_CoreSingleExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+>                   self.dialect.do_execute(
+                        cursor, str_statement, effective_parameters, context
+                    )
+
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:1967: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <sqlalchemy.dialects.postgresql.psycopg2.PGDialect_psycopg2 object at 0x000002D496937750>
+cursor = <cursor object at 0x000002D4AD4BFA00; closed: -1>
+statement = 'SELECT categories.id AS categories_id, categories.name AS categories_name, categories.type AS categories_type, categories.sort_order AS categories_sort_order \nFROM categories \nWHERE categories.id = %(id_1)s \n LIMIT %(param_1)s'
+parameters = {'id_1': 1, 'param_1': 1}
+context = <sqlalchemy.dialects.postgresql.psycopg2.PGExecutionContext_psycopg2 object at 0x000002D4AEE9AFD0>
+
+    def do_execute(self, cursor, statement, parameters, context=None):
+>       cursor.execute(statement, parameters)
+E       psycopg2.errors.UndefinedTable: relation "categories" does not exist
+E       LINE 2: FROM categories 
+E                    ^
+
+.venv\Lib\site-packages\sqlalchemy\engine\default.py:941: UndefinedTable
+
+The above exception was the direct cause of the following exception:
+
+>   ???
+
+C:\\Users\\lausu\\Desktop\\\u5927\u4e09\u4e0a\u5b66\u671f\\\u5927\u4f5c\u4e1a\\StreamHub\\backend\\tests\\conftest.py:32: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\starlette\testclient.py:739: in __enter__
+    portal.call(self.wait_startup)
+C:\\Users\\lausu\\Desktop\\\u5927\u4e09\u4e0a\u5b66\u671f\\\u5927\u4f5c\u4e1a\\StreamHub\\backend\\.venv\\Lib\\site-packages\\anyio\\from_thread.py:334: in call
+    ???
+C:\Users\lausu\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\_base.py:456: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+C:\Users\lausu\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\_base.py:401: in __get_result
+    raise self._exception
+C:\\Users\\lausu\\Desktop\\\u5927\u4e09\u4e0a\u5b66\u671f\\\u5927\u4f5c\u4e1a\\StreamHub\\backend\\.venv\\Lib\\site-packages\\anyio\\from_thread.py:259: in _call_func
+    ???
+.venv\Lib\site-packages\starlette\testclient.py:774: in wait_startup
+    await receive()
+.venv\Lib\site-packages\starlette\testclient.py:765: in receive
+    self.task.result()
+C:\Users\lausu\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\_base.py:449: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+C:\Users\lausu\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\_base.py:401: in __get_result
+    raise self._exception
+C:\\Users\\lausu\\Desktop\\\u5927\u4e09\u4e0a\u5b66\u671f\\\u5927\u4f5c\u4e1a\\StreamHub\\backend\\.venv\\Lib\\site-packages\\anyio\\from_thread.py:259: in _call_func
+    ???
+.venv\Lib\site-packages\starlette\testclient.py:755: in lifespan
+    await self.app(scope, self.stream_receive.receive, self.stream_send.send)
+.venv\Lib\site-packages\fastapi\applications.py:1054: in __call__
+    await super().__call__(scope, receive, send)
+.venv\Lib\site-packages\starlette\applications.py:113: in __call__
+    await self.middleware_stack(scope, receive, send)
+.venv\Lib\site-packages\starlette\middleware\errors.py:152: in __call__
+    await self.app(scope, receive, send)
+.venv\Lib\site-packages\starlette\middleware\cors.py:77: in __call__
+    await self.app(scope, receive, send)
+.venv\Lib\site-packages\starlette\middleware\exceptions.py:48: in __call__
+    await self.app(scope, receive, send)
+.venv\Lib\site-packages\starlette\routing.py:715: in __call__
+    await self.middleware_stack(scope, receive, send)
+.venv\Lib\site-packages\starlette\routing.py:724: in app
+    await self.lifespan(scope, receive, send)
+.venv\Lib\site-packages\starlette\routing.py:693: in lifespan
+    async with self.lifespan_context(app) as maybe_state:
+.venv\Lib\site-packages\starlette\routing.py:569: in __aenter__
+    await self._router.startup()
+.venv\Lib\site-packages\starlette\routing.py:672: in startup
+    handler()
+app\main.py:700: in startup
+    raise e
+app\main.py:696: in startup
+    seed_data(db)
+app\main.py:256: in seed_data
+    exists = db.query(Category).filter(Category.id == item["id"]).first()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\orm\query.py:2728: in first
+    return self.limit(1)._iter().first()  # type: ignore
+           ^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\sqlalchemy\orm\query.py:2827: in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+.venv\Lib\site-packages\sqlalchemy\orm\session.py:2362: in execute
+    return self._execute_internal(
+.venv\Lib\site-packages\sqlalchemy\orm\session.py:2247: in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+.venv\Lib\site-packages\sqlalchemy\orm\context.py:305: in orm_execute_statement
+    result = conn.execute(
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:1418: in execute
+    return meth(
+.venv\Lib\site-packages\sqlalchemy\sql\elements.py:515: in _execute_on_connection
+    return connection._execute_clauseelement(
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:1640: in _execute_clauseelement
+    ret = self._execute_context(
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:1846: in _execute_context
+    return self._exec_single_context(
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:1986: in _exec_single_context
+    self._handle_dbapi_exception(
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:2355: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+.venv\Lib\site-packages\sqlalchemy\engine\base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <sqlalchemy.dialects.postgresql.psycopg2.PGDialect_psycopg2 object at 0x000002D496937750>
+cursor = <cursor object at 0x000002D4AD4BFA00; closed: -1>
+statement = 'SELECT categories.id AS categories_id, categories.name AS categories_name, categories.type AS categories_type, categories.sort_order AS categories_sort_order \nFROM categories \nWHERE categories.id = %(id_1)s \n LIMIT %(param_1)s'
+parameters = {'id_1': 1, 'param_1': 1}
+context = <sqlalchemy.dialects.postgresql.psycopg2.PGExecutionContext_psycopg2 object at 0x000002D4AEE9AFD0>
+
+    def do_execute(self, cursor, statement, parameters, context=None):
+>       cursor.execute(statement, parameters)
+E       sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedTable) relation "categories" does not exist
+E       LINE 2: FROM categories 
+E                    ^
+E       
+E       [SQL: SELECT categories.id AS categories_id, categories.name AS categories_name, categories.type AS categories_type, categories.sort_order AS categories_sort_order 
+E       FROM categories 
+E       WHERE categories.id = %(id_1)s 
+E        LIMIT %(param_1)s]
+E       [parameters: {'id_1': 1, 'param_1': 1}]
+E       (Background on this error at: https://sqlalche.me/e/20/f405)
+
+.venv\Lib\site-packages\sqlalchemy\engine\default.py:941: ProgrammingError
+---------------------------- Captured stdout setup ----------------------------
+\u521d\u59cb\u5316\u6f14\u793a\u6570\u636e\u5931\u8d25\uff1a (psycopg2.errors.UndefinedTable) relation "categories" does not exist\nLINE 2: FROM categories \n             ^\n\n[SQL: SELECT categories.id AS categories_id, categories.name AS categories_name, categories.type AS categories_type, categories.sort_order AS categories_sort_order \nFROM categories \nWHERE categories.id = %(id_1)s \n LIMIT %(param_1)s]\n[parameters: {'id_1': 1, 'param_1': 1}]\n(Background on this error at: https://sqlalche.me/e/20/f405)
+============================== warnings summary ===============================
+app\main.py:691
+  C:\\Users\\lausu\\Desktop\\\u5927\u4e09\u4e0a\u5b66\u671f\\\u5927\u4e8c\u5c0f\u5b66\u671f\\StreamHub\\backend\\app\\main.py:691: DeprecationWarning: \n          on_event is deprecated, use lifespan event handlers instead.\n  \n          Read more about it in the\n          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).\n          \n    @app.on_event('startup')
+
+.venv\Lib\site-packages\fastapi\applications.py:4495
+  C:\\Users\\lausu\\Desktop\\\u5927\u4e09\u4e0a\u5b66\u671f\\\u5927\u4e8c\u5c0f\u5b66\u671f\\StreamHub\\backend\\.venv\\Lib\\site-packages\\fastapi\\applications.py:4495: DeprecationWarning: \n          on_event is deprecated, use lifespan event handlers instead.\n  \n          Read more about it in the\n          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).\n          \n    return self.router.on_event(event_type)
+
+tests/test_video_consumption_api.py: 18 warnings
+  C:\\Users\\lausu\\Desktop\\\u5927\u4e09\u4e0a\u5b66\u671f\\\u5927\u4e8c\u5c0f\u5b66\u671f\\StreamHub\\backend\\app\\main.py:773: PydanticDeprecatedSince20: The `dict` method is deprecated; use `model_dump` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.10/migration/\n    'items': [video_out(v).dict() for v in items],
+
+tests/test_video_consumption_api.py::test_user_can_like_favorite_comment_and_send_danmaku
+  C:\\Users\\lausu\\Desktop\\\u5927\u4e09\u4e0a\u5b66\u671f\\\u5927\u4e8c\u5c0f\u5b66\u671f\\StreamHub\\backend\\app\\main.py:873: PydanticDeprecatedSince20: The `dict` method is deprecated; use `model_dump` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.10/migration/\n    return [comment_out(c).dict() for c in rows]
+
+tests/test_video_consumption_api.py: 15 warnings
+tests/test_video_flow_api.py: 16 warnings
+  C:\\Users\\lausu\\Desktop\\\u5927\u4e09\u4e0a\u5b66\u671f\\\u5927\u4e8c\u5c0f\u5b66\u671f\\StreamHub\\backend\\app\\main.py:841: PydanticDeprecatedSince20: The `dict` method is deprecated; use `model_dump` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.10/migration/\n    return {'items': [video_out(v).dict() for v in rows]}
+
+tests/test_video_flow_api.py::test_creator_submit_then_admin_approve_video
+  C:\\Users\\lausu\\Desktop\\\u5927\u4e09\u4e0a\u5b66\u671f\\\u5927\u4e8c\u5c0f\u5b66\u671f\\StreamHub\\backend\\app\\main.py:846: PydanticDeprecatedSince20: The `dict` method is deprecated; use `model_dump` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.10/migration/\n    return {'items': [video_out(v).dict() for v in rows]}
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+ERROR tests/test_live_api.py::test_creator_create_then_end_own_room - sqlalch...
+ERROR tests/test_live_api.py::test_normal_user_cannot_end_live_room - sqlalch...
+13 passed, 53 warnings, 2 errors in 49.88s

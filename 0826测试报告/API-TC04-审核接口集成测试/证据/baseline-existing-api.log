@@ -1,0 +1,16 @@
+....                                                                     [100%]
+============================== warnings summary ===============================
+app\main.py:691
+  C:\\Users\\lausu\\Desktop\\\u5927\u4e09\u4e0a\u5b66\u671f\\\u5927\u4e8c\u5c0f\u5b66\u671f\\StreamHub\\backend\\app\\main.py:691: DeprecationWarning: \n          on_event is deprecated, use lifespan event handlers instead.\n  \n          Read more about it in the\n          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).\n          \n    @app.on_event('startup')
+
+.venv\Lib\site-packages\fastapi\applications.py:4495
+  C:\\Users\\lausu\\Desktop\\\u5927\u4e09\u4e0a\u5b66\u671f\\\u5927\u4e8c\u5c0f\u5b66\u671f\\StreamHub\\backend\\.venv\\Lib\\site-packages\\fastapi\\applications.py:4495: DeprecationWarning: \n          on_event is deprecated, use lifespan event handlers instead.\n  \n          Read more about it in the\n          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).\n          \n    return self.router.on_event(event_type)
+
+tests/test_video_flow_api.py::test_creator_submit_then_admin_approve_video
+  C:\\Users\\lausu\\Desktop\\\u5927\u4e09\u4e0a\u5b66\u671f\\\u5927\u4e8c\u5c0f\u5b66\u671f\\StreamHub\\backend\\app\\main.py:846: PydanticDeprecatedSince20: The `dict` method is deprecated; use `model_dump` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.10/migration/\n    return {'items': [video_out(v).dict() for v in rows]}
+
+tests/test_video_flow_api.py: 16 warnings
+  C:\\Users\\lausu\\Desktop\\\u5927\u4e09\u4e0a\u5b66\u671f\\\u5927\u4e8c\u5c0f\u5b66\u671f\\StreamHub\\backend\\app\\main.py:841: PydanticDeprecatedSince20: The `dict` method is deprecated; use `model_dump` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.10/migration/\n    return {'items': [video_out(v).dict() for v in rows]}
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+4 passed, 19 warnings in 23.14s

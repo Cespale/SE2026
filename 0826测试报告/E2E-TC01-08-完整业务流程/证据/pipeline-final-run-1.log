@@ -1,0 +1,29 @@
+**********************
+PowerShell transcript start
+Start time: 20260826102850
+Username: XUYUE\lausu
+RunAs User: XUYUE\lausu
+Configuration Name: 
+Machine: XUYUE (Microsoft Windows NT 10.0.26200.0)
+Host Application: C:\Users\lausu\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+$runRoot = 'C:\Users\lausu\Desktop\大三上学期\大二小学期\0826测试报告\E2E-TC01-08-完整业务流程'; $transcript = "$runRoot\证据\pipeline-final-run-1.log"; Set-Location 'C:\Users\lausu\Desktop\大三上学期\大二小学期\StreamHub'; Start-Transcript -LiteralPath $transcript -Force | Out-Null; & "$runRoot\run-e2e-tc01-08-gate.ps1" -ArtifactDir "$runRoot\证据\final-run-1-artifacts" -JunitOutput "$runRoot\证据\e2e-final-run-1.xml"; $exitCode = $LASTEXITCODE; "GATE_EXIT_CODE=$exitCode"; Stop-Transcript | Out-Null; exit $exitCode
+Process ID: 35868
+PSVersion: 7.6.4
+PSEdition: Core
+GitCommitId: 7.6.4
+OS: Microsoft Windows 10.0.26200
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+
+E2E_TEST=PASSED
+PUBLISH_IMAGE=NOT_RUN
+DEPLOY=NOT_RUN
+GATE_EXIT_CODE=0
+**********************
+PowerShell transcript end
+End time: 20260826102935
+**********************

@@ -1,5 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
+const e2eBackendUrl = process.env.E2E_BACKEND_URL || 'http://127.0.0.1:8001';
+
 async function login(page: Page, account: string, password: string) {
   await page.goto('/#/');
 
@@ -167,7 +169,7 @@ await expect(
   });
 
   const endResponse = await creator.request.post(
-    `http://127.0.0.1:8000/api/live/rooms/${roomId}/end`,
+    `${e2eBackendUrl}/api/live/rooms/${roomId}/end`,
     { headers: { Authorization: `Bearer ${token}` } }
   );
 

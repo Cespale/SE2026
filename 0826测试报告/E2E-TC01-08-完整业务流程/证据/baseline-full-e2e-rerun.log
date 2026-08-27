@@ -1,0 +1,150 @@
+
+> meoo-app-name@1.0.0 test:e2e
+> playwright test
+
+
+Running 3 tests using 1 worker
+
+(node:16748) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 e2e\streamhub.spec.ts:24:5 › E2E-TC01-02：用户搜索、播放视频并发表评论和弹幕 (12.3s)
+(node:34156) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  2 e2e\streamhub.spec.ts:71:5 › E2E-TC03-05：创作者投稿，管理员审核，创作者查看结果 (11.9s)
+(node:42680) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  3 e2e\streamhub.spec.ts:120:5 › E2E-TC06-08：创建直播、观众发弹幕、接口结束直播 (12.1s)
+
+
+  1) e2e\streamhub.spec.ts:24:5 › E2E-TC01-02：用户搜索、播放视频并发表评论和弹幕 ────────────────────────────────────
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  getByPlaceholder('请输入账号')
+    Expected: 0
+    Received: 1
+    Timeout:  10000ms
+
+    Call log:
+      - Expect "toHaveCount" with timeout 10000ms
+      - waiting for getByPlaceholder('请输入账号')
+        23 × locator resolved to 1 element
+           - unexpected value "1"
+
+
+       9 |   await page.getByPlaceholder('请输入密码').press('Enter');
+      10 |
+    > 11 |   await expect(page.getByPlaceholder('请输入账号')).toHaveCount(0);
+         |                                                ^
+      12 | }
+      13 |
+      14 | async function clearLogin(page: Page) {
+        at login (C:\Users\lausu\Desktop\大三上学期\大二小学期\StreamHub\e2e\streamhub.spec.ts:11:48)
+        at C:\Users\lausu\Desktop\大三上学期\大二小学期\StreamHub\e2e\streamhub.spec.ts:25:3
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\streamhub-E2E-TC01-02：用户搜索、播放视频并发表评论和弹幕\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\streamhub-E2E-TC01-02：用户搜索、播放视频并发表评论和弹幕\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\streamhub-E2E-TC01-02：用户搜索、播放视频并发表评论和弹幕\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\streamhub-E2E-TC01-02：用户搜索、播放视频并发表评论和弹幕\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\streamhub-E2E-TC01-02：用户搜索、播放视频并发表评论和弹幕\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) e2e\streamhub.spec.ts:71:5 › E2E-TC03-05：创作者投稿，管理员审核，创作者查看结果 ──────────────────────────────────
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  getByPlaceholder('请输入账号')
+    Expected: 0
+    Received: 1
+    Timeout:  10000ms
+
+    Call log:
+      - Expect "toHaveCount" with timeout 10000ms
+      - waiting for getByPlaceholder('请输入账号')
+        23 × locator resolved to 1 element
+           - unexpected value "1"
+
+
+       9 |   await page.getByPlaceholder('请输入密码').press('Enter');
+      10 |
+    > 11 |   await expect(page.getByPlaceholder('请输入账号')).toHaveCount(0);
+         |                                                ^
+      12 | }
+      13 |
+      14 | async function clearLogin(page: Page) {
+        at login (C:\Users\lausu\Desktop\大三上学期\大二小学期\StreamHub\e2e\streamhub.spec.ts:11:48)
+        at C:\Users\lausu\Desktop\大三上学期\大二小学期\StreamHub\e2e\streamhub.spec.ts:74:3
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\streamhub-E2E-TC03-05：创作者投稿，管理员审核，创作者查看结果\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\streamhub-E2E-TC03-05：创作者投稿，管理员审核，创作者查看结果\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\streamhub-E2E-TC03-05：创作者投稿，管理员审核，创作者查看结果\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\streamhub-E2E-TC03-05：创作者投稿，管理员审核，创作者查看结果\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\streamhub-E2E-TC03-05：创作者投稿，管理员审核，创作者查看结果\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) e2e\streamhub.spec.ts:120:5 › E2E-TC06-08：创建直播、观众发弹幕、接口结束直播 ───────────────────────────────────
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  getByPlaceholder('请输入账号')
+    Expected: 0
+    Received: 1
+    Timeout:  10000ms
+
+    Call log:
+      - Expect "toHaveCount" with timeout 10000ms
+      - waiting for getByPlaceholder('请输入账号')
+        23 × locator resolved to 1 element
+           - unexpected value "1"
+
+
+       9 |   await page.getByPlaceholder('请输入密码').press('Enter');
+      10 |
+    > 11 |   await expect(page.getByPlaceholder('请输入账号')).toHaveCount(0);
+         |                                                ^
+      12 | }
+      13 |
+      14 | async function clearLogin(page: Page) {
+        at login (C:\Users\lausu\Desktop\大三上学期\大二小学期\StreamHub\e2e\streamhub.spec.ts:11:48)
+        at C:\Users\lausu\Desktop\大三上学期\大二小学期\StreamHub\e2e\streamhub.spec.ts:125:3
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\streamhub-E2E-TC06-08：创建直播、观众发弹幕、接口结束直播\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\streamhub-E2E-TC06-08：创建直播、观众发弹幕、接口结束直播\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\streamhub-E2E-TC06-08：创建直播、观众发弹幕、接口结束直播\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\streamhub-E2E-TC06-08：创建直播、观众发弹幕、接口结束直播\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3 failed
+    e2e\streamhub.spec.ts:24:5 › E2E-TC01-02：用户搜索、播放视频并发表评论和弹幕 ─────────────────────────────────────
+    e2e\streamhub.spec.ts:71:5 › E2E-TC03-05：创作者投稿，管理员审核，创作者查看结果 ───────────────────────────────────
+    e2e\streamhub.spec.ts:120:5 › E2E-TC06-08：创建直播、观众发弹幕、接口结束直播 ────────────────────────────────────

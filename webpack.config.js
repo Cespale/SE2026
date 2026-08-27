@@ -1,6 +1,6 @@
 const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = (env, argv) => {
   const isDev = argv.mode !== 'production';
@@ -79,11 +79,11 @@ module.exports = (env, argv) => {
       allowedHosts: 'all',
 
       hot: false,
-      liveReload: true,
+      liveReload: false,
 
       client: {
         overlay: false,
-        reconnect: true,
+        reconnect: false,
         webSocketURL: {
           hostname: 'localhost',
           port: 5173,
@@ -96,16 +96,15 @@ module.exports = (env, argv) => {
         paths: ['src/**/*'],
         options: {
           ignored: ['**/public/**', '**/node_modules/**'],
-          usePolling: true,
-          interval: 1000,
+          usePolling: false,
         },
       },
     },
     plugins: [
       new webpack.DefinePlugin({
-        'process.env.REACT_APP_API_BASE_URL': JSON.stringify(
+        __STREAMHUB_API_BASE_URL__: JSON.stringify(
           process.env.REACT_APP_API_BASE_URL || ''
-        )
+        ),
       }),
       new HtmlWebpackPlugin({
         template: './index.html',

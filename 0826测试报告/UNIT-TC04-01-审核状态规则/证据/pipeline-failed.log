@@ -1,0 +1,19 @@
+F                                                                        [100%]
+================================== FAILURES ===================================
+________________ test_audit_status_allows_final_decisions_only ________________
+
+    def test_audit_status_allows_final_decisions_only():
+        assert AuditIn(auditStatus=1).auditStatus == 1
+        assert AuditIn(auditStatus=2).auditStatus == 2
+    
+        for invalid_status in (0, 3, -1):
+>           with pytest.raises(ValidationError) as error:
+E           Failed: DID NOT RAISE ValidationError
+
+tests\test_audit_rules_unit.py:12: Failed
+=========================== short test summary info ===========================
+FAILED tests/test_audit_rules_unit.py::test_audit_status_allows_final_decisions_only
+1 failed in 0.20s
+UNIT_TEST=FAILED
+PUBLISH_IMAGE=SKIPPED
+DEPLOY=SKIPPED

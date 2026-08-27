@@ -1,9 +1,8 @@
-declare const process: {
-  env: Record<string, string | undefined>;
-};
+declare const __STREAMHUB_API_BASE_URL__: string;
 
 const API_BASE = (
-  process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:8000'
+  __STREAMHUB_API_BASE_URL__ ||
+  'http://127.0.0.1:8000'
 ).replace(/\/$/, '');
 
 function getToken(): string | null {

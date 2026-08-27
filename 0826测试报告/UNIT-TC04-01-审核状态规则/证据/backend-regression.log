@@ -1,0 +1,30 @@
+...............                                                          [100%]
+============================== warnings summary ===============================
+app\main.py:691
+  C:\\Users\\lausu\\Desktop\\\u5927\u4e09\u4e0a\u5b66\u671f\\\u5927\u4e8c\u5c0f\u5b66\u671f\\StreamHub\\backend\\app\\main.py:691: DeprecationWarning: \n          on_event is deprecated, use lifespan event handlers instead.\n  \n          Read more about it in the\n          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).\n          \n    @app.on_event('startup')
+
+.venv\Lib\site-packages\fastapi\applications.py:4495
+  C:\\Users\\lausu\\Desktop\\\u5927\u4e09\u4e0a\u5b66\u671f\\\u5927\u4e8c\u5c0f\u5b66\u671f\\StreamHub\\backend\\.venv\\Lib\\site-packages\\fastapi\\applications.py:4495: DeprecationWarning: \n          on_event is deprecated, use lifespan event handlers instead.\n  \n          Read more about it in the\n          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).\n          \n    return self.router.on_event(event_type)
+
+tests/test_live_api.py::test_creator_create_then_end_own_room
+tests/test_live_api.py::test_creator_create_then_end_own_room
+tests/test_live_api.py::test_creator_create_then_end_own_room
+tests/test_live_api.py::test_creator_create_then_end_own_room
+tests/test_live_api.py::test_creator_create_then_end_own_room
+  C:\\Users\\lausu\\Desktop\\\u5927\u4e09\u4e0a\u5b66\u671f\\\u5927\u4e8c\u5c0f\u5b66\u671f\\StreamHub\\backend\\app\\main.py:900: PydanticDeprecatedSince20: The `dict` method is deprecated; use `model_dump` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.10/migration/\n    return {'items': [live_out(r).dict() for r in q.order_by(desc(LiveRoom.start_time)).all()]}
+
+tests/test_video_consumption_api.py: 18 warnings
+  C:\\Users\\lausu\\Desktop\\\u5927\u4e09\u4e0a\u5b66\u671f\\\u5927\u4e8c\u5c0f\u5b66\u671f\\StreamHub\\backend\\app\\main.py:773: PydanticDeprecatedSince20: The `dict` method is deprecated; use `model_dump` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.10/migration/\n    'items': [video_out(v).dict() for v in items],
+
+tests/test_video_consumption_api.py::test_user_can_like_favorite_comment_and_send_danmaku
+  C:\\Users\\lausu\\Desktop\\\u5927\u4e09\u4e0a\u5b66\u671f\\\u5927\u4e8c\u5c0f\u5b66\u671f\\StreamHub\\backend\\app\\main.py:873: PydanticDeprecatedSince20: The `dict` method is deprecated; use `model_dump` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.10/migration/\n    return [comment_out(c).dict() for c in rows]
+
+tests/test_video_consumption_api.py: 15 warnings
+tests/test_video_flow_api.py: 16 warnings
+  C:\\Users\\lausu\\Desktop\\\u5927\u4e09\u4e0a\u5b66\u671f\\\u5927\u4e8c\u5c0f\u5b66\u671f\\StreamHub\\backend\\app\\main.py:841: PydanticDeprecatedSince20: The `dict` method is deprecated; use `model_dump` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.10/migration/\n    return {'items': [video_out(v).dict() for v in rows]}
+
+tests/test_video_flow_api.py::test_creator_submit_then_admin_approve_video
+  C:\\Users\\lausu\\Desktop\\\u5927\u4e09\u4e0a\u5b66\u671f\\\u5927\u4e8c\u5c0f\u5b66\u671f\\StreamHub\\backend\\app\\main.py:846: PydanticDeprecatedSince20: The `dict` method is deprecated; use `model_dump` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.10/migration/\n    return {'items': [video_out(v).dict() for v in rows]}
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+15 passed, 58 warnings in 52.28s

@@ -1,0 +1,37 @@
+[WebServer] INFO:     Started server process [31236]
+[WebServer] INFO:     Waiting for application startup.
+[WebServer] ERROR:    Traceback (most recent call last):
+[WebServer]   File "C:\Users\lausu\Desktop\\u5927\u4e09\u4e0a\u5b66\u671f\\u5927\u4e8c\u5c0f\u5b66\u671f\StreamHub\backend\app\main.py", line 696, in startup
+[WebServer]     seed_data(db)
+[WebServer]   File "C:\Users\lausu\Desktop\\u5927\u4e09\u4e0a\u5b66\u671f\\u5927\u4e8c\u5c0f\u5b66\u671f\StreamHub\backend\app\main.py", line 542, in seed_data
+[WebServer]     sync_local_videos(db)
+[WebServer]   File "C:\Users\lausu\Desktop\\u5927\u4e09\u4e0a\u5b66\u671f\\u5927\u4e8c\u5c0f\u5b66\u671f\StreamHub\backend\app\main.py", line 675, in sync_local_videos
+[WebServer]     print(
+[WebServer]   File "C:\Users\lausu\AppData\Local\Programs\Python\Python311\Lib\encodings\cp1252.py", line 19, in encode
+[WebServer]     return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+[WebServer]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[WebServer] UnicodeEncodeError: 'charmap' codec can't encode characters in position 0-10: character maps to <undefined>
+[WebServer] 
+[WebServer] During handling of the above exception, another exception occurred:
+[WebServer] 
+[WebServer] Traceback (most recent call last):
+[WebServer]   File "C:\Users\lausu\Desktop\\u5927\u4e09\u4e0a\u5b66\u671f\\u5927\u4e8c\u5c0f\u5b66\u671f\StreamHub\backend\.venv\Lib\site-packages\starlette\routing.py", line 693, in lifespan
+[WebServer]     async with self.lifespan_context(app) as maybe_state:
+[WebServer]   File "C:\Users\lausu\Desktop\\u5927\u4e09\u4e0a\u5b66\u671f\\u5927\u4e8c\u5c0f\u5b66\u671f\StreamHub\backend\.venv\Lib\site-packages\starlette\routing.py", line 569, in __aenter__
+[WebServer]     await self._router.startup()
+[WebServer]   File "C:\Users\lausu\Desktop\\u5927\u4e09\u4e0a\u5b66\u671f\\u5927\u4e8c\u5c0f\u5b66\u671f\StreamHub\backend\.venv\Lib\site-packages\starlette\routing.py", line 672, in startup
+[WebServer]     handler()
+[WebServer]   File "C:\Users\lausu\Desktop\\u5927\u4e09\u4e0a\u5b66\u671f\\u5927\u4e8c\u5c0f\u5b66\u671f\StreamHub\backend\app\main.py", line 699, in startup
+[WebServer]     print("\u521d\u59cb\u5316\u6f14\u793a\u6570\u636e\u5931\u8d25\uff1a", e)
+[WebServer]   File "C:\Users\lausu\AppData\Local\Programs\Python\Python311\Lib\encodings\cp1252.py", line 19, in encode
+[WebServer]     return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+[WebServer]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[WebServer] UnicodeEncodeError: 'charmap' codec can't encode characters in position 0-9: character maps to <undefined>
+[WebServer] 
+[WebServer] ERROR:    Application startup failed. Exiting.
+Error: Process from config.webServer was not able to start. Exit code: 3
+
+E2E_TEST=FAILED
+PUBLISH_IMAGE=SKIPPED
+DEPLOY=SKIPPED
+GATE_EXIT_CODE=1

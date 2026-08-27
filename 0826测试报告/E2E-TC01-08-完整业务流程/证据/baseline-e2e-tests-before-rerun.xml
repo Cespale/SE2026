@@ -1,0 +1,54 @@
+<testsuites id="" name="" tests="3" failures="0" skipped="0" errors="1" time="58.018952">
+<testsuite name="streamhub.spec.ts" timestamp="2026-08-25T07:24:26.853Z" hostname="" tests="3" failures="0" skipped="0" time="54.496" errors="1">
+<testcase name="E2E-TC01-02：用户搜索、播放视频并发表评论和弹幕" classname="streamhub.spec.ts" time="6.992">
+</testcase>
+<testcase name="E2E-TC03-05：创作者投稿，管理员审核，创作者查看结果" classname="streamhub.spec.ts" time="12.483">
+</testcase>
+<testcase name="E2E-TC06-08：创建直播、观众发弹幕、接口结束直播" classname="streamhub.spec.ts" time="35.021">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\test-results\streamhub-E2E-TC06-08：创建直播、观众发弹幕、接口结束直播\test-failed-1.png]]
+
+[[ATTACHMENT|..\test-results\streamhub-E2E-TC06-08：创建直播、观众发弹幕、接口结束直播\error-context.md]]
+
+[[ATTACHMENT|..\test-results\streamhub-E2E-TC06-08：创建直播、观众发弹幕、接口结束直播\trace.zip]]
+]]>
+</system-out>
+<error message="Test timeout of 30000ms exceeded." type="Error">
+<![CDATA[  streamhub.spec.ts:120:5 › E2E-TC06-08：创建直播、观众发弹幕、接口结束直播 ──────────────────────────────────────────
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.goto: Test ended.
+    Call log:
+      - navigating to "http://127.0.0.1:3266/#/", waiting until "load"
+
+
+      2 |
+      3 | async function login(page: Page, account: string, password: string) {
+    > 4 |   await page.goto('/#/');
+        |              ^
+      5 |
+      6 |   await page.getByRole('button', { name: '登录', exact: true }).click();
+      7 |   await page.getByPlaceholder('请输入账号').fill(account);
+        at login (C:\Users\lausu\Desktop\大三上学期\大作业\StreamHub\e2e\streamhub.spec.ts:4:14)
+        at C:\Users\lausu\Desktop\大三上学期\大作业\StreamHub\e2e\streamhub.spec.ts:144:9
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\streamhub-E2E-TC06-08：创建直播、观众发弹幕、接口结束直播\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\streamhub-E2E-TC06-08：创建直播、观众发弹幕、接口结束直播\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\streamhub-E2E-TC06-08：创建直播、观众发弹幕、接口结束直播\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\streamhub-E2E-TC06-08：创建直播、观众发弹幕、接口结束直播\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+</testsuite>
+</testsuites>
