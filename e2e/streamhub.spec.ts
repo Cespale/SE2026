@@ -3,7 +3,7 @@ import { expect, test, type Page } from '@playwright/test';
 const e2eBackendUrl = process.env.E2E_BACKEND_URL || 'http://127.0.0.1:8001';
 
 async function login(page: Page, account: string, password: string) {
-  await page.goto('/#/');
+  await page.goto('/#/', { waitUntil: 'domcontentloaded' });
 
   await page.getByRole('button', { name: '登录', exact: true }).click();
   await page.getByPlaceholder('请输入账号').fill(account);
@@ -15,12 +15,47 @@ async function login(page: Page, account: string, password: string) {
 
 async function clearLogin(page: Page) {
   await page.evaluate(() => localStorage.removeItem('auth-storage'));
-  await page.goto('/#/');
-  await page.reload();
+  await page.goto('/#/', { waitUntil: 'domcontentloaded' });
+  await page.reload({ waitUntil: 'domcontentloaded' });
 
   await expect(
     page.getByRole('button', { name: '登录', exact: true })
   ).toBeVisible();
+}
+
+async function closeActiveCreatorRooms(page: Page) {
+  const token = await page.evaluate(() => {
+    const raw = localStorage.getItem('auth-storage');
+    return raw ? JSON.parse(raw).state.token : '';
+  });
+
+  const headers = { Authorization: `Bearer ${token}` };
+  const meResponse = await page.request.get(`${e2eBackendUrl}/api/auth/me`, { headers });
+  if (!meResponse.ok()) {
+    throw new Error('无法获取创作者身份，不能清理残留直播间');
+  }
+
+  const roomsResponse = await page.request.get(`${e2eBackendUrl}/api/live/rooms`);
+  if (!roomsResponse.ok()) {
+    throw new Error('无法查询直播间，不能清理残留直播间');
+  }
+
+  const me = await meResponse.json();
+  const rooms = await roomsResponse.json();
+  const activeRooms = (rooms.items || []).filter(
+    (room: { anchorId: string; id: string; status: number }) =>
+      room.anchorId === me.id && room.status === 1
+  );
+
+  for (const room of activeRooms) {
+    const closeResponse = await page.request.post(
+      `${e2eBackendUrl}/api/live/rooms/${room.id}/end`,
+      { headers }
+    );
+    if (!closeResponse.ok()) {
+      throw new Error(`无法结束残留直播间：${room.id}`);
+    }
+  }
 }
 
 test('E2E-TC01-02：用户搜索、播放视频并发表评论和弹幕', async ({ page }) => {
@@ -74,13 +109,16 @@ test('E2E-TC03-05：创作者投稿，管理员审核，创作者查看结果', 
   const title = `E2E-投稿-${Date.now()}`;
 
   await login(page, 'creator', 'creator123');
-  await page.goto('/#/upload');
+  await page.goto('/#/upload', { waitUntil: 'domcontentloaded' });
 
-  await page.getByRole('button', { name: '不选择文件，直接使用演示视频' }).click();
-  await page.getByPlaceholder('2-100字').fill(title);
-  await page.getByRole('button', { name: '发布并等待审核' }).click();
+  await page
+    .locator('input[type="file"][accept="video/*"]')
+    .setInputFiles('public/demo-videos/video1.mp4');
+  await expect(page.getByText('视频已上传', { exact: true })).toBeVisible();
+  await page.getByPlaceholder('输入标题').fill(title);
+  await page.getByRole('button', { name: '发布视频', exact: true }).click();
 
-  await expect(page.getByText('投稿成功，等待管理员审核')).toBeVisible();
+  await expect(page.getByRole('heading', { name: '发布成功！', exact: true })).toBeVisible();
 
   await page.getByRole('button', { name: '去创作者中心' }).click();
   await page.getByRole('button', { name: '内容管理', exact: true }).click();
@@ -95,7 +133,7 @@ await expect(
 
   await clearLogin(page);
   await login(page, 'admin', 'admin123');
-  await page.goto('/#/admin');
+  await page.goto('/#/admin', { waitUntil: 'domcontentloaded' });
 
   await expect(page.getByText(title, { exact: true })).toBeVisible();
 
@@ -109,7 +147,7 @@ await expect(
 
   await clearLogin(page);
   await login(page, 'creator', 'creator123');
-await page.goto('/#/creator');
+await page.goto('/#/creator', { waitUntil: 'domcontentloaded' });
 await page.getByRole('button', { name: '内容管理', exact: true }).click();
 
 const creatorRow = page
@@ -120,64 +158,73 @@ const creatorRow = page
 });
 
 test('E2E-TC06-08：创建直播、观众发弹幕、接口结束直播', async ({ browser }) => {
+  // 此流程包含双用户登录、WebSocket 通信和结束后的清理，30 秒在 Windows 上无稳定余量。
+  test.setTimeout(60_000);
   const creatorContext = await browser.newContext();
   const creator = await creatorContext.newPage();
-  const title = `E2E-直播-${Date.now()}`;
-
-  await login(creator, 'creator', 'creator123');
-  await creator.goto('/#/live/start');
-
-  await creator
-    .getByPlaceholder('例如：软件工程项目答疑直播')
-    .fill(title);
-
-  await creator.getByRole('button', { name: '确认开播' }).click();
-
-  await expect(creator).toHaveURL(/#\/live\//);
-  await expect(creator.getByText(title, { exact: true })).toBeVisible();
-
-  const liveUrl = creator.url();
-  const roomId = liveUrl.match(/#\/live\/([^?]+)/)?.[1];
-  expect(roomId).toBeTruthy();
-
   const viewerContext = await browser.newContext();
   const viewer = await viewerContext.newPage();
+  const title = `E2E-直播-${Date.now()}`;
 
-  await login(viewer, 'user', 'user123');
-  await viewer.goto(liveUrl);
+  try {
+    await login(creator, 'creator', 'creator123');
+    await closeActiveCreatorRooms(creator);
+    await creator.goto('/#/live/start', { waitUntil: 'domcontentloaded' });
 
-  await expect(viewer.getByText('直播间聊天', { exact: true })).toBeVisible();
-  await expect(viewer.getByText('聊天已连接', { exact: true })).toBeVisible();
+    await creator
+      .getByPlaceholder('直播间的标题...')
+      .fill(title);
 
-  const message = `E2E-直播弹幕-${Date.now()}`;
-  const chatInput = viewer.getByPlaceholder('发弹幕...');
+    await creator.getByRole('button', { name: '开始直播', exact: true }).click();
 
-  await chatInput.fill(message);
-  await chatInput.press('Enter');
+    await expect(creator).toHaveURL(/#\/live\//);
+    await expect(creator.getByText(title, { exact: true })).toBeVisible();
 
-  const chatPanel = viewer
-  .getByRole('heading', { name: '直播间聊天', exact: true })
-  .locator('xpath=../..');
+    const liveUrl = creator.url();
+    const roomId = liveUrl.match(/#\/live\/([^?]+)/)?.[1];
+    expect(roomId).toBeTruthy();
 
-await expect(
-  chatPanel.getByText(message, { exact: true })
-).toBeVisible();
+    await login(viewer, 'user', 'user123');
+    await viewer.goto(liveUrl, { waitUntil: 'domcontentloaded' });
 
-  const token = await creator.evaluate(() => {
-    const raw = localStorage.getItem('auth-storage');
-    return raw ? JSON.parse(raw).state.token : '';
-  });
+    await expect(viewer.getByText('直播间聊天', { exact: true })).toBeVisible();
+    await expect(viewer.getByText('聊天已连接', { exact: true })).toBeVisible();
 
-  const endResponse = await creator.request.post(
-    `${e2eBackendUrl}/api/live/rooms/${roomId}/end`,
-    { headers: { Authorization: `Bearer ${token}` } }
-  );
+    const message = `E2E-直播弹幕-${Date.now()}`;
+    const chatInput = viewer.getByPlaceholder('说点什么...');
 
-  expect(endResponse.ok()).toBeTruthy();
+    await chatInput.fill(message);
+    await chatInput.press('Enter');
 
-  await viewer.reload();
-  await expect(viewer.getByText('已结束', { exact: true })).toBeVisible();
+    const chatPanel = viewer
+      .getByRole('heading', { name: '直播间聊天', exact: true })
+      .locator('xpath=../..');
 
-  await viewerContext.close();
-  await creatorContext.close();
+    await expect(
+      chatPanel.getByText(message, { exact: true })
+    ).toBeVisible();
+
+    const token = await creator.evaluate(() => {
+      const raw = localStorage.getItem('auth-storage');
+      return raw ? JSON.parse(raw).state.token : '';
+    });
+
+    const endResponse = await creator.request.post(
+      `${e2eBackendUrl}/api/live/rooms/${roomId}/end`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    expect(endResponse.ok()).toBeTruthy();
+
+    await viewer.reload({ waitUntil: 'domcontentloaded' });
+    await expect(viewer.getByText('已结束', { exact: true })).toBeVisible();
+  } finally {
+    try {
+      await closeActiveCreatorRooms(creator);
+    } catch {
+      // 保留原测试错误；清理失败将在下一次测试开始时被显式报告。
+    }
+    await viewerContext.close();
+    await creatorContext.close();
+  }
 });

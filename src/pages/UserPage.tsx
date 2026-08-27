@@ -7,6 +7,7 @@ import { useAuthStore } from '../stores/authStore';
 import { User, Heart, Video, Users } from 'lucide-react';
 import { FollowButton } from '../components/social/FollowButton';
 import { getUserProfile, getRelation, Relation } from '../api/social';
+import { API_BASE } from '../api';
 import { MessageCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -50,7 +51,7 @@ export function UserPage() {
     if (!id) return;
     try {
       // 调用获取用户视频的接口（需要后端支持）
-      const response = await fetch(`http://localhost:8000/api/users/${id}/videos`);
+      const response = await fetch(`${API_BASE}/api/users/${id}/videos`);
       const data = await response.json();
       setWorks(data.items || []);
     } catch (error) {
@@ -63,7 +64,7 @@ export function UserPage() {
   const fetchUserLikes = async () => {
     if (!id) return;
     try {
-      const response = await fetch(`http://localhost:8000/api/users/${id}/likes`, {
+      const response = await fetch(`${API_BASE}/api/users/${id}/likes`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('auth-storage') ? JSON.parse(localStorage.getItem('auth-storage')!).state?.token : ''}`
         }
@@ -81,7 +82,7 @@ export function UserPage() {
   const fetchUserStats = async () => {
     if (!id) return;
     try {
-      const response = await fetch(`http://localhost:8000/api/users/${id}/stats`);
+      const response = await fetch(`${API_BASE}/api/users/${id}/stats`);
       const data = await response.json();
       setStats({
         followerCount: data.followerCount || 0,

@@ -36,7 +36,7 @@ app.mount("/uploads", StaticFiles(directory=str(UPLOADS_DIR)), name="uploads")
 origins = os.getenv('CORS_ORIGINS', 'http://localhost:3000,http://localhost:5173,http://localhost:8080').split(',')
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:3000", "http://127.0.0.1:5173"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -784,7 +784,9 @@ def startup():
         except Exception as e:
             print(f"清理残留文件失败: {e}")
 
-        # 为没有 stream_key 的创作者生成唯一密钥
+        seed_data(db)
+
+        # 种子数据也会创建创作者，因此必须在 seed_data 之后补齐直播密钥。
         import random
         creators = db.query(User).filter(User.user_type >= 1, User.stream_key == None).all()
         for creator in creators:
@@ -792,8 +794,6 @@ def startup():
         db.commit()
         if creators:
             print(f"已为 {len(creators)} 位创作者生成 stream_key")
-        
-        seed_data(db)
     except Exception as e:
         db.rollback()
         print("初始化演示数据失败：", e)
@@ -1448,9 +1448,14 @@ async def live_ws(ws: WebSocket, room_id: str, token: str = ''):
                 username = user.nickname; user_id = str(user.id)
         except Exception:
             pass
-    await live_hub.connect(room_id, ws)
-    await ws.send_json({'type': 'join_ack', 'onlineCount': len(live_hub.rooms.get(room_id, []))})
-    await live_hub.broadcast(room_id, {'type': 'system', 'content': f'{username} 进入直播间', 'timestamp': datetime.now(timezone.utc).isoformat()})
+    try:
+        await live_hub.connect(room_id, ws)
+        await ws.send_json({'type': 'join_ack', 'onlineCount': len(live_hub.rooms.get(room_id, []))})
+        await live_hub.broadcast(room_id, {'type': 'system', 'content': f'{username} 进入直播间', 'timestamp': datetime.now(timezone.utc).isoformat()})
+    except (WebSocketDisconnect, RuntimeError):
+        live_hub.disconnect(room_id, ws)
+        await live_hub.broadcast(room_id, {'type': 'online', 'count': len(live_hub.rooms.get(room_id, []))})
+        return
     try:
         while True:
             raw = await ws.receive_text()

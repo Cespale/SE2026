@@ -1,0 +1,6 @@
+PS C:\Users\lausu\Desktop\大三上学期\大二小学期\SE2026-main\0826测试报告\UNIT-TC04-01-审核状态规则\run-unit-tc04-gate.ps1 -Python .\\.venv\\Scripts\\python.exe -TestPath tests\\test_audit_rules_unit.py
+.                                                                        [100%]
+1 passed in 0.28s
+UNIT_TEST=PASSED
+PUBLISH_IMAGE=NOT_RUN
+DEPLOY=NOT_RUN

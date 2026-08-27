@@ -7,9 +7,16 @@ os.environ["SECRET_KEY"] = "streamhub-test-secret"
 
 import pytest
 from fastapi.testclient import TestClient
+from sqlalchemy import text
 
 from app.database import Base, engine
 from app.main import app
+
+
+def reset_test_schema():
+    with engine.begin() as connection:
+        connection.execute(text("DROP SCHEMA public CASCADE"))
+        connection.execute(text("CREATE SCHEMA public"))
 
 
 @pytest.fixture(autouse=True)
@@ -19,12 +26,12 @@ def reset_test_database():
     if not database_url.endswith("/streamhub_test"):
         raise RuntimeError(f"测试数据库错误：{database_url}")
 
-    Base.metadata.drop_all(bind=engine)
+    reset_test_schema()
     Base.metadata.create_all(bind=engine)
 
     yield
 
-    Base.metadata.drop_all(bind=engine)
+    reset_test_schema()
 
 
 @pytest.fixture

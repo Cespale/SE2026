@@ -50,7 +50,7 @@ def test_user_can_like_favorite_comment_and_send_danmaku(client):
     )
 
     assert like_response.status_code == 200
-    assert like_response.json()["likeCount"] == video["likeCount"] + 1
+    assert like_response.json()["data"]["likeCount"] == video["likeCount"] + 1
 
     favorite_response = client.post(
         f"/api/videos/{video['id']}/favorite",

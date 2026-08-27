@@ -113,7 +113,8 @@ export const useLiveStore = create<LiveState>((set, get) => ({
 
   connectWebSocket: (roomId: string) => {
     const token = useAuthStore.getState().token || '';
-    const wsUrl = `ws://${window.location.hostname}:8000/ws/live/${roomId}?token=${encodeURIComponent(token)}`;
+    const wsBase = API_BASE.replace(/^http/, 'ws');
+    const wsUrl = `${wsBase}/ws/live/${roomId}?token=${encodeURIComponent(token)}`;
     
     const ws = new WebSocket(wsUrl);
     let joined = false;  // 添加标志位

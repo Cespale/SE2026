@@ -17,6 +17,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLiveStore } from '../stores/liveStore';
 import { useAuthStore } from '../stores/authStore';
+import { API_BASE } from '../api';
 import { Flag } from 'lucide-react';
 import { ReportModal } from '../components/ReportModal';
 import { FollowButton } from '../components/social/FollowButton';
@@ -173,7 +174,7 @@ export function LivePage() {
       const auth = JSON.parse(localStorage.getItem('auth-storage')!);
       const token = auth.state?.token;
       
-      const response = await fetch(`http://localhost:8000/api/live/${currentRoom.id}/danmaku`, {
+      const response = await fetch(`${API_BASE}/api/live/${currentRoom.id}/danmaku`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -278,7 +279,13 @@ export function LivePage() {
               />
 
               {/* 离线/无推流提示 */}
-              {streamStatus === 'offline' && (
+              {currentRoom.status === 2 ? (
+                <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 flex flex-col items-center justify-center">
+                  <AlertCircle className="w-16 h-16 text-gray-400 mb-4" />
+                  <p className="text-gray-500 text-lg font-medium">直播已结束</p>
+                  <p className="text-gray-400 text-sm mt-2">感谢观看</p>
+                </div>
+              ) : streamStatus === 'offline' && (
                 <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 flex flex-col items-center justify-center">
                   <AlertCircle className="w-16 h-16 text-gray-400 mb-4" />
                   <p className="text-gray-500 text-lg font-medium">当前直播没有内容</p>
@@ -322,7 +329,7 @@ export function LivePage() {
               {/* 顶部信息栏 */}
               <div className="absolute top-4 left-4 flex items-center gap-2">
                 <span className={`px-3 py-1 text-white text-sm font-bold rounded-full ${streamStatus === 'live' ? 'bg-red-500 animate-pulse' : 'bg-gray-500'}`}>
-                  {streamStatus === 'live' ? 'LIVE' : '离线'}
+                  {currentRoom.status === 2 ? '已结束' : streamStatus === 'live' ? 'LIVE' : '离线'}
                 </span>
 
                 <span className="px-3 py-1 bg-black/50 text-white text-sm rounded-full flex items-center gap-1">
