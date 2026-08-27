@@ -53,8 +53,8 @@ def test_user_can_like_favorite_comment_and_send_danmaku(client):
     )
 
     assert like_response.status_code == 200
-    # 点赞接口返回信封结构：{code, message, data: {likeCount, isLiked}}
-    assert like_response.json()["data"]["likeCount"] == video["likeCount"] + 1
+    # 点赞接口直接返回视频对象（顶层 likeCount）
+    assert like_response.json()["likeCount"] == video["likeCount"] + 1
 
     favorite_response = client.post(
         f"/api/videos/{video['id']}/favorite",
