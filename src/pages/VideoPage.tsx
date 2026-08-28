@@ -115,10 +115,11 @@ export function VideoPage() {
     if (isLikeLoading) return;
     setIsLikeLoading(true);
     try {
-      const token = localStorage.getItem('auth-storage') 
-        ? JSON.parse(localStorage.getItem('auth-storage')!).state?.token 
+      const token = localStorage.getItem('auth-storage')
+        ? JSON.parse(localStorage.getItem('auth-storage')!).state?.token
         : '';
       if (isLiked) {
+        // 取消喜欢 - DELETE 请求
         const response = await fetch(`${API_BASE}/api/videos/${id}/like`, {
           method: 'DELETE',
           headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
@@ -126,9 +127,12 @@ export function VideoPage() {
         const data = await response.json();
         if (response.ok) {
           setIsLiked(false);
-          setLocalLikeCount(data.data.likeCount);
+          // 从 data.data.likeCount 或 data.likeCount 获取喜欢数
+          const likeCount = data.data?.likeCount ?? data.likeCount;
+          setLocalLikeCount(likeCount);
         }
       } else {
+        // 添加喜欢 - POST 请求
         const response = await fetch(`${API_BASE}/api/videos/${id}/like`, {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
@@ -136,7 +140,9 @@ export function VideoPage() {
         const data = await response.json();
         if (response.ok) {
           setIsLiked(true);
-          setLocalLikeCount(data.data.likeCount);
+          // 从 data.likeCount 或 data.data.likeCount 获取喜欢数
+          const likeCount = data.likeCount ?? data.data?.likeCount;
+          setLocalLikeCount(likeCount);
         } else if (response.status === 400 && data.detail === '已经点过赞了') {
           setIsLiked(true);
           await fetchLikeStatus();

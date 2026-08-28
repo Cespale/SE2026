@@ -323,6 +323,7 @@ def seed_data(db: Session):
     if not creator:
         return
 
+    """
     # 三、初始化可播放视频
     sample_videos = [
         {
@@ -398,6 +399,8 @@ def seed_data(db: Session):
             "favorite_count": 98,
         },
     ]
+    """
+    sample_videos = []
 
     created_videos = []
 

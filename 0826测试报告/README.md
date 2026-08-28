@@ -42,12 +42,22 @@ npm install
 npx playwright install chromium
 ```
 
-5. E2E 需要连接主库 `streamhub`。当前目录没有 `backend/.env` 时，在运行 E2E 前设置：
+5. E2E 需要连接主库 `streamhub`。当前目录没有 `backend/.env` 时，在项目根目录执行以下命令。命令会自动读取现有 `streamhub-postgres` 容器的数据库密码，并生成 `backend/.env`：
 
 ```powershell
-$env:DATABASE_URL = 'postgresql+psycopg2://postgres:123456@127.0.0.1:5433/streamhub'
-$env:SECRET_KEY = 'streamhub-demo-secret-key'
+$pgPassword = (docker exec streamhub-postgres printenv POSTGRES_PASSWORD).Trim()
+$encodedPassword = [uri]::EscapeDataString($pgPassword)
+
+@"
+DATABASE_URL=postgresql+psycopg2://postgres:${encodedPassword}@127.0.0.1:5433/streamhub
+SECRET_KEY=streamhub-coursework-secret
+CORS_ORIGINS=http://localhost:3266,http://127.0.0.1:3267
+"@ | Set-Content -LiteralPath .\backend\.env -Encoding ASCII
+
+Remove-Variable pgPassword, encodedPassword
 ```
+
+该命令不会在终端显示数据库密码。生成的 `backend/.env` 仅保存在本机，不要提交到公开仓库。
 
 > 不需要手动启动前端或后端再运行 E2E。E2E 会自动在 `8001` 启动后端、在 `3267` 启动前端；手动占用这些端口可能导致失败。
 
@@ -135,7 +145,7 @@ cd backend
 
 终端应显示 3 条用例均为 `ok`，最后显示：`3 passed`、`E2E_TEST=PASSED`、`PUBLISH_IMAGE=NOT_RUN`、`DEPLOY=NOT_RUN`。
 
-![终端截图-E2E测试-20260827 （1.1）.png](E2E-TC01-08-%E5%AE%8C%E6%95%B4%E4%B8%9A%E5%8A%A1%E6%B5%81%E7%A8%8B/%E8%AF%81%E6%8D%AE/%E7%BB%88%E7%AB%AF%E6%88%AA%E5%9B%BE-E2E%E6%B5%8B%E8%AF%95-20260827%20%EF%BC%881.1%EF%BC%89.png)![E2E 测试终端通过证据](<E2E-TC01-08-完整业务流程/证据/终端截图-E2E测试-20260827（2.1）.png>)
+![终端截图-E2E测试-20260827 （1.1）.png](E2E-TC01-08-%E5%AE%8C%E6%95%B4%E4%B8%9A%E5%8A%A1%E6%B5%81%E7%A8%8B/%E8%AF%81%E6%8D%AE/%E7%BB%88%E7%AB%AF%E6%88%AA%E5%9B%BE-E2E%E6%B5%8B%E8%AF%95-20260827%20%EF%BC%881.1%EF%BC%89.png)
 ![终端截图-E2E测试-20260827（2.1）.png](E2E-TC01-08-%E5%AE%8C%E6%95%B4%E4%B8%9A%E5%8A%A1%E6%B5%81%E7%A8%8B/%E8%AF%81%E6%8D%AE/%E7%BB%88%E7%AB%AF%E6%88%AA%E5%9B%BE-E2E%E6%B5%8B%E8%AF%95-20260827%EF%BC%882.1%EF%BC%89.png)
 
 详细报告：[E2E-TC01-08-完整业务流程/测试报告.md](<E2E-TC01-08-完整业务流程/测试报告.md>)。
@@ -150,3 +160,4 @@ cd backend
 
 - E2E 会向演示主库写入投稿、评论、弹幕和直播记录；重复运行会留下部分演示数据。
 - 当前 E2E 确认视频页面存在和业务流程可通，**不证明本地 MP4 已成功解码播放**。`public/demo-videos` 使用 Git LFS；必须取得真实 LFS 视频文件后，才能验证实际播放。
+
