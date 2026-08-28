@@ -5,6 +5,7 @@ import { useAuthStore } from './authStore';
 export interface LiveRoom {
   id: string;
   title: string;
+  description?: string;
   categoryId: string;
   categoryName: string;
   cover: string;
@@ -84,7 +85,7 @@ export const useLiveStore = create<LiveState>((set, get) => ({
     }
   },
 
-  createRoom: async (title: string, categoryId: string, cover: string, description?: string) => {
+  createRoom: async (title: string, categoryId: string, cover: string, description: string = '') => {
     try {
       const room = await apiRequest<LiveRoom>('/api/live/rooms', {
         method: 'POST',

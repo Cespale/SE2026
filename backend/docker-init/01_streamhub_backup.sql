@@ -2,7 +2,6 @@
 -- PostgreSQL database dump
 --
 
-\restrict MBYrqjcjn18f9Hvh11xYW7s6bCOI3zRQFncFotau3HnkaYnnasZQppToYPAJ2cT
 
 -- Dumped from database version 16.14 (Debian 16.14-1.pgdg13+1)
 -- Dumped by pg_dump version 16.14 (Debian 16.14-1.pgdg13+1)
@@ -68,6 +67,7 @@ CREATE TABLE public.comments (
     user_id uuid,
     video_id uuid,
     parent_id uuid,
+    reply_to_user_id uuid,
     like_count integer,
     is_top boolean,
     created_at timestamp with time zone DEFAULT now()
@@ -102,6 +102,7 @@ ALTER TABLE public.danmaku OWNER TO postgres;
 CREATE TABLE public.live_rooms (
     id uuid NOT NULL,
     title character varying(120) NOT NULL,
+    description text,
     category_id integer,
     cover text,
     stream_key character varying(80) NOT NULL,
@@ -132,7 +133,8 @@ CREATE TABLE public.users (
     user_type smallint,
     status smallint,
     created_at timestamp with time zone DEFAULT now(),
-    updated_at timestamp with time zone DEFAULT now()
+    updated_at timestamp with time zone DEFAULT now(),
+    stream_key character varying(20)
 );
 
 
@@ -159,7 +161,8 @@ CREATE TABLE public.videos (
     audit_status smallint,
     status smallint,
     created_at timestamp with time zone DEFAULT now(),
-    updated_at timestamp with time zone DEFAULT now()
+    updated_at timestamp with time zone DEFAULT now(),
+    reject_reason text
 );
 
 
@@ -425,5 +428,4 @@ ALTER TABLE ONLY public.videos
 -- PostgreSQL database dump complete
 --
 
-\unrestrict MBYrqjcjn18f9Hvh11xYW7s6bCOI3zRQFncFotau3HnkaYnnasZQppToYPAJ2cT
 
