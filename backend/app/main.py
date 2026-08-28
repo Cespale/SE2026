@@ -1145,14 +1145,7 @@ def like_video(
     db.commit()
     db.refresh(v)
     
-    return {
-        'code': 0,
-        'message': '点赞成功',
-        'data': {
-            'likeCount': v.like_count,
-            'isLiked': True
-        }
-    }
+    return video_out(v)
 
 @app.delete('/api/videos/{video_id}/like')
 def unlike_video(
