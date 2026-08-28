@@ -19,7 +19,6 @@ export interface LiveRoom {
   startTime: string;
   endTime: string;
   status: number;
-  description?: string;
 }
 
 export interface ChatMessage {
