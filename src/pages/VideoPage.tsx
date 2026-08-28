@@ -19,7 +19,7 @@ import { motion } from 'framer-motion';
 import { useVideoStore, Danmaku } from '../stores/videoStore';
 import { useAuthStore } from '../stores/authStore';
 import { ReportModal } from '../components/ReportModal';
-import { apiRequest } from '../api';
+import { apiRequest, API_BASE } from '../api';
 
 const DEFAULT_VIDEO_URL = '/demo-videos/This-is-beihang.mp4';
 const BACKUP_VIDEO_URL = '/demo-videos/beihang2025.mp4';
@@ -33,7 +33,7 @@ function getPlayableVideoUrl(url?: string) {
   if (!cleanUrl) return DEFAULT_VIDEO_URL;
 
   if (cleanUrl.startsWith('/uploads/')) {
-    return `http://localhost:8000${cleanUrl}`;
+    return `${API_BASE}${cleanUrl}`;
   }
 
   const lower = cleanUrl.toLowerCase();
@@ -119,7 +119,7 @@ export function VideoPage() {
         ? JSON.parse(localStorage.getItem('auth-storage')!).state?.token 
         : '';
       if (isLiked) {
-        const response = await fetch(`http://localhost:8000/api/videos/${id}/like`, {
+        const response = await fetch(`${API_BASE}/api/videos/${id}/like`, {
           method: 'DELETE',
           headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
         });
@@ -129,7 +129,7 @@ export function VideoPage() {
           setLocalLikeCount(data.data.likeCount);
         }
       } else {
-        const response = await fetch(`http://localhost:8000/api/videos/${id}/like`, {
+        const response = await fetch(`${API_BASE}/api/videos/${id}/like`, {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
         });
@@ -175,7 +175,7 @@ export function VideoPage() {
   const fetchLikeStatus = async () => {
     if (!id || !isLoggedIn) return;
     try {
-      const response = await fetch(`http://localhost:8000/api/videos/${id}/like-status`, {
+      const response = await fetch(`${API_BASE}/api/videos/${id}/like-status`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('auth-storage') ? JSON.parse(localStorage.getItem('auth-storage')!).state?.token : ''}` }
       });
       const data = await response.json();

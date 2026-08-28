@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Camera, Lock, User, FileText, Save } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
-import { changePassword } from '../api';
+import { changePassword, API_BASE } from '../api';
 
 export const SettingsPage: React.FC = () => {
   const { user, updateUser } = useAuthStore();
@@ -111,7 +111,7 @@ export const SettingsPage: React.FC = () => {
       const formData = new FormData();
       formData.append('file', file);
       
-      const response = await fetch('http://localhost:8000/api/auth/upload-avatar', {
+      const response = await fetch(`${API_BASE}/api/auth/upload-avatar`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`

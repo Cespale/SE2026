@@ -17,6 +17,13 @@ reports/
 test-results/
 playwright-report/
 
+# E2E 本地运行副本可能含临时 WebSocket Token；正式证据使用 stdout、JUnit 和无 Token 截图。
+0826测试报告/E2E-TC01-08-完整业务流程/证据/e2e-terminal-20260827.stderr.log
+0826测试报告/E2E-TC01-08-完整业务流程/证据/e2e-terminal-20260827-artifacts/
+0826测试报告/E2E-TC01-08-完整业务流程/è¯æ®/
+0826测试报告/E2E-TC01-08-完整业务流程/证据/终端截图-E2E测试-20260827 （1）.png
+0826测试报告/E2E-TC01-08-完整业务流程/证据/终端截图-E2E测试-20260827（2）.png
+
 .DS_Store
 
 # Docker 数据卷不要提交

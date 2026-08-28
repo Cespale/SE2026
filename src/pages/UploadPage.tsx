@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Upload, Loader2, CheckCircle, Film, ImageIcon, X } from 'lucide-react';
 import { useVideoStore } from '../stores/videoStore';
+import { API_BASE } from '../api';
 
 export const UploadPage: React.FC = () => {
   const navigate = useNavigate();
@@ -95,7 +96,7 @@ export const UploadPage: React.FC = () => {
       alert('网络错误');
       setIsUploading(false);
     };
-    xhr.open('POST', 'http://localhost:8000/api/videos/upload-file');
+    xhr.open('POST', `${API_BASE}/api/videos/upload-file`);
     xhr.setRequestHeader('Authorization', `Bearer ${getAuthToken()}`);
     xhr.send(formData);
   };
@@ -124,7 +125,7 @@ export const UploadPage: React.FC = () => {
     formData.append('file', file);
     
     try {
-      const response = await fetch('http://localhost:8000/api/videos/upload-cover', {
+      const response = await fetch(`${API_BASE}/api/videos/upload-cover`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${getAuthToken()}`

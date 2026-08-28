@@ -1,0 +1,11 @@
+
+Running 3 tests using 1 worker
+
+  ok 1 e2e\streamhub.spec.ts:26:5 › E2E-TC01-02：用户搜索、播放视频并发表评论和弹幕 (3.5s)
+  ok 2 e2e\streamhub.spec.ts:73:5 › E2E-TC03-05：创作者投稿，管理员审核，创作者查看结果 (9.3s)
+  ok 3 e2e\streamhub.spec.ts:122:5 › E2E-TC06-08：创建直播、观众发弹幕、接口结束直播 (10.2s)
+
+  3 passed (52.8s)
+E2E_TEST=PASSED
+PUBLISH_IMAGE=NOT_RUN
+DEPLOY=NOT_RUN

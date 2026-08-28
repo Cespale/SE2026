@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { Video, Copy, Check, AlertCircle, Loader2, Image as ImageIcon, X } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
 import { useLiveStore } from '../stores/liveStore';
-import { apiRequest } from '../api';
+import { apiRequest, API_BASE } from '../api';
 
 const DEFAULT_COVER = 'https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=900&auto=format&fit=crop';
 
@@ -92,7 +92,7 @@ export function LiveStartPage() {
       const token = localStorage.getItem('auth-storage') 
         ? JSON.parse(localStorage.getItem('auth-storage')!).state?.token 
         : '';
-      const response = await fetch('http://localhost:8000/api/videos/upload-cover', {
+      const response = await fetch(`${API_BASE}/api/videos/upload-cover`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` },
         body: formData
