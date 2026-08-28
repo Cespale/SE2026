@@ -89,6 +89,11 @@ jobs:
           kind load docker-image --name kind streamhub-backend:${VERSION}
           kind load docker-image --name kind streamhub-frontend:${VERSION}
 
+      - name: 预加载 postgres 镜像到 kind
+        run: |
+          docker pull postgres:16
+          kind load docker-image postgres:16 --name kind
+
       - name: 部署到 Kubernetes
         run: |
           export VERSION=${GITHUB_SHA:0:8}
