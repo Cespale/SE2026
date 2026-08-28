@@ -43,21 +43,52 @@ jobs:
           cd backend
           pytest -q
 
-  # ── 2 · 前端类型检查 + 编译 ──────────────────────────────
+  # ── 2 · 前端类型检查 + 编译 + E2E ──────────────────────────
   test-frontend:
-    name: 2 · 前端类型检查 + 编译
+    name: 2 · 前端类型检查 + 编译 + E2E
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: streamhub
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d streamhub"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      # E2E 里 playwright 会拉起 FastAPI：后端要连 Postgres，且 security.py 要求 SECRET_KEY
+      DATABASE_URL: postgresql+psycopg2://postgres:postgres@localhost:5432/streamhub
+      SECRET_KEY: streamhub-e2e-secret
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: 安装后端依赖（E2E 需要启动 FastAPI）
+        run: pip install -r backend/requirements.txt
+      - name: 预建应用上传目录（main.py 用绝对路径 /app/...）
+        run: |
+          sudo mkdir -p /app/public/uploads/videos /app/public/uploads/covers /app/public/avatars
+          sudo chmod -R 777 /app
       - name: 安装前端依赖
         run: npm ci
       - name: 类型检查
         run: npm run typecheck
       - name: 编译
         run: npm run build
+      - name: 安装 Playwright 浏览器
+        run: npx playwright install --with-deps chromium
+      - name: 前端 E2E 测试
+        run: npm test
 
   # ── 3 · 制作镜像（带版本号）→ 部署 K8s → 健康检查 ──────────
   # needs 保证：只要 1、2 任一步失败，本 job 不会执行，即「测试失败停流水线」。

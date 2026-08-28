@@ -8,6 +8,14 @@ const backendURL =
 const artifactDir = process.env.E2E_ARTIFACT_DIR || 'test-results';
 const junitOutput = process.env.E2E_JUNIT_OUTPUT || 'reports/e2e-tests.xml';
 
+// 后端启动用的 Python 解释器：
+// - CI(Linux)：用 python（setup-python 提供）
+// - 本地 Windows：默认用 backend/.venv 里的解释器（前斜杠在 Windows 上同样有效）
+// 也可用环境变量 E2E_BACKEND_PYTHON 覆盖。
+const backendPython =
+  process.env.E2E_BACKEND_PYTHON ||
+  (process.platform === 'win32' ? '.venv/Scripts/python.exe' : 'python');
+
 export default defineConfig({
   testDir: './e2e',
   timeout: 30_000,
@@ -30,7 +38,7 @@ export default defineConfig({
 
   webServer: [
     {
-      command: `.\\.venv\\Scripts\\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port ${backendPort}`,
+      command: `${backendPython} -m uvicorn app.main:app --host 127.0.0.1 --port ${backendPort}`,
       cwd: './backend',
       env: {
         ...process.env,

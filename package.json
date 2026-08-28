@@ -5,6 +5,7 @@
     "dev": "webpack serve",
     "build": "webpack --mode production",
     "typecheck": "tsc --noEmit",
+    "test": "playwright test",
     "test:e2e": "playwright test"
   },
   "dependencies": {
