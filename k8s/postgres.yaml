@@ -30,6 +30,8 @@ spec:
           volumeMounts:
             - name: db-init
               mountPath: /docker-entrypoint-initdb.d
+            - name: pg-data
+              mountPath: /var/lib/postgresql/data
           readinessProbe:
             exec:
               command: ["pg_isready", "-U", "postgres", "-d", "streamhub"]
@@ -39,6 +41,9 @@ spec:
         - name: db-init
           configMap:
             name: streamhub-db-init
+        - name: pg-data
+          persistentVolumeClaim:
+            claimName: postgres-pvc
 ---
 apiVersion: v1
 kind: Service
@@ -50,3 +55,17 @@ spec:
   ports:
     - port: 5432
       targetPort: 5432
+---
+# 持久化卷：让 postgres 数据脱离 Pod 生命周期（Pod 重建/重启数据不丢）。
+# kind 自带默认 StorageClass「standard」（local-path-provisioner），
+# 不指定 storageClassName 即会动态创建 PV，数据落在 kind 节点磁盘上。
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
