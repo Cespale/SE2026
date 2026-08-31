@@ -10,7 +10,7 @@ jobs:
   # ── 1 · 后端单元 + API 集成测试 ──────────────────────────────
   test-backend:
     name: 1 · 后端单元/集成测试
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     services:
       postgres:
         image: postgres:16
@@ -46,7 +46,7 @@ jobs:
   # ── 2 · 前端类型检查 + 编译 + E2E ──────────────────────────
   test-frontend:
     name: 2 · 前端类型检查 + 编译 + E2E
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     services:
       postgres:
         image: postgres:16
@@ -98,7 +98,7 @@ jobs:
     # 只在 push（推 fork / 合并进 main）时部署。PR 事件——尤其 fork PR——拿不到
     # secrets，部署 job 会因 POSTGRES_PASSWORD/SECRET_KEY 为空而失败，故 PR 上跳过。
     if: github.event_name == 'push'
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     env:
       POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       SECRET_KEY: ${{ secrets.SECRET_KEY }}
