@@ -1,5 +1,12 @@
 name: StreamHub CI/CD
 
+# ── runner 切换开关 ─────────────────────────────────────────────
+# 在仓库 Settings → Secrets and variables → Actions → Variables 配置
+# （不配置则用默认值，无需任何改动即可保持现状）：
+#   TEST_RUNNER   = ubuntu-latest 或 self-hosted   （默认 self-hosted，控制两个测试 job）
+#   DEPLOY_RUNNER = ubuntu-latest 或 self-hosted   （默认 self-hosted，控制部署 job）
+# 例：测试在自托管上太慢时，把 TEST_RUNNER 改成 ubuntu-latest 即可整体切换，不用改代码。
+# 注意：部署 job 切到 ubuntu-latest 时，下方会自动多跑一个「安装 kubectl」步骤。
 on:
   push:
     branches: [main]
@@ -10,7 +17,7 @@ jobs:
   # ── 1 · 后端单元 + API 集成测试 ──────────────────────────────
   test-backend:
     name: 1 · 后端单元/集成测试
-    runs-on: self-hosted
+    runs-on: ${{ vars.TEST_RUNNER || 'self-hosted' }}
     services:
       postgres:
         image: postgres:16
@@ -46,7 +53,7 @@ jobs:
   # ── 2 · 前端类型检查 + 编译 + E2E ──────────────────────────
   test-frontend:
     name: 2 · 前端类型检查 + 编译 + E2E
-    runs-on: self-hosted
+    runs-on: ${{ vars.TEST_RUNNER || 'self-hosted' }}
     services:
       postgres:
         image: postgres:16
@@ -98,7 +105,7 @@ jobs:
     # 只在 push（推 fork / 合并进 main）时部署。PR 事件——尤其 fork PR——拿不到
     # secrets，部署 job 会因 POSTGRES_PASSWORD/SECRET_KEY 为空而失败，故 PR 上跳过。
     if: github.event_name == 'push'
-    runs-on: self-hosted
+    runs-on: ${{ vars.DEPLOY_RUNNER || 'self-hosted' }}
     env:
       POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       SECRET_KEY: ${{ secrets.SECRET_KEY }}
@@ -130,6 +137,16 @@ jobs:
           # 绕开：手动 docker save，再用不带 --all-platforms 的 ctr import，只导入当前架构内容。
           docker pull postgres:16
           docker save postgres:16 | docker exec -i kind-control-plane ctr --namespace=k8s.io images import -
+
+      - name: 安装 kubectl（若不存在；托管 runner 上需要，自托管通常已装则跳过）
+        run: |
+          if command -v kubectl >/dev/null 2>&1; then
+            echo "kubectl 已存在，跳过安装"
+          else
+            curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+            chmod +x kubectl
+            sudo mv kubectl /usr/local/bin/kubectl
+          fi
 
       - name: 部署到 Kubernetes
         run: |
