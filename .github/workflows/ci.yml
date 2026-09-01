@@ -122,12 +122,11 @@ jobs:
 
       - name: 预加载 postgres 镜像到 kind
         run: |
-          # 自托管 runner 上 Docker 缓存会跨 job/流水线保留，postgres:16 若缓存损坏，
-          # kind load 会报 "content digest ... not found"（docker save 导出的内容不完整）。
-          # 先强制删除旧镜像再重拉，保证每次导入的都是完整内容。
-          docker rmi -f postgres:16 || true
-          docker pull postgres:16
-          kind load docker-image postgres:16 --name kind
+          # 宿主机 docker save → 节点 ctr import 这条路径在当前 Docker（containerd 镜像存储）
+          # 下不兼容：即使镜像全新拉取，kind load 仍报 "content digest ... not found"。
+          # 绕开方案：让 kind 节点自身的 containerd 直接从 Docker Hub 拉取，
+          # 不经过宿主机 docker save/load（拉进 k8s.io 命名空间，kubelet 可直接使用）。
+          docker exec kind-control-plane ctr --namespace=k8s.io images pull docker.io/library/postgres:16
 
       - name: 部署到 Kubernetes
         run: |
