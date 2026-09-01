@@ -122,11 +122,14 @@ jobs:
 
       - name: 预加载 postgres 镜像到 kind
         run: |
-          # 宿主机 docker save → 节点 ctr import 这条路径在当前 Docker（containerd 镜像存储）
-          # 下不兼容：即使镜像全新拉取，kind load 仍报 "content digest ... not found"。
-          # 绕开方案：让 kind 节点自身的 containerd 直接从 Docker Hub 拉取，
-          # 不经过宿主机 docker save/load（拉进 k8s.io 命名空间，kubelet 可直接使用）。
-          docker exec kind-control-plane ctr --namespace=k8s.io images pull docker.io/library/postgres:16
+          set -o pipefail
+          # kind load 对 postgres:16（多平台 manifest list）内部用 ctr import --all-platforms，
+          # 而 docker save 只导出当前架构的 layer → 其余平台内容缺失 → "content digest not found"
+          # （后端/前端是本机构建的单平台镜像，所以 kind load 一直正常）。
+          # 节点又不能直连 Docker Hub（ctr pull 卡在 resolving）。
+          # 绕开：手动 docker save，再用不带 --all-platforms 的 ctr import，只导入当前架构内容。
+          docker pull postgres:16
+          docker save postgres:16 | docker exec -i kind-control-plane ctr --namespace=k8s.io images import -
 
       - name: 部署到 Kubernetes
         run: |
