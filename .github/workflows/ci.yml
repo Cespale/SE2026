@@ -122,6 +122,10 @@ jobs:
 
       - name: 预加载 postgres 镜像到 kind
         run: |
+          # 自托管 runner 上 Docker 缓存会跨 job/流水线保留，postgres:16 若缓存损坏，
+          # kind load 会报 "content digest ... not found"（docker save 导出的内容不完整）。
+          # 先强制删除旧镜像再重拉，保证每次导入的都是完整内容。
+          docker rmi -f postgres:16 || true
           docker pull postgres:16
           kind load docker-image postgres:16 --name kind
 
