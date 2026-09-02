@@ -1,8 +1,9 @@
 name: StreamHub Microservices CI/CD
 
-# Runner model integrated from Cespale/SE2026@76b18e947342fcb459e3ef7c008e4c0f53aa108b.
-# Trusted main pushes use the teammate's self-hosted runner. Public pull requests
-# stay on isolated GitHub-hosted runners; business steps remain microservice-aware.
+# Runner 通过仓库变量 USE_SELF_HOSTED 在「自托管服务器」与「GitHub 自带 runner」之间切换：
+#   - 未设置 / 设为 false → ubuntu-latest（GitHub 自带临时 runner，免费，当前默认）
+#   - 设为 true            → self-hosted（需该 runner 保持在线）
+# 设置位置：Settings → Secrets and variables → Actions → Variables → 新建 USE_SELF_HOSTED
 
 on:
   push:
@@ -50,7 +51,7 @@ permissions:
 jobs:
   contract-tests:
     name: 1 · 微服务契约与接口清单
-    runs-on: ${{ github.event_name == 'push' && 'self-hosted' || 'ubuntu-latest' }}
+    runs-on: ${{ vars.USE_SELF_HOSTED == 'true' && 'self-hosted' || 'ubuntu-latest' }}
     timeout-minutes: 15
     steps:
       - name: 获取代码
@@ -83,7 +84,7 @@ jobs:
 
   service-tests:
     name: 2 · ${{ matrix.service }} 独立测试
-    runs-on: ${{ github.event_name == 'push' && 'self-hosted' || 'ubuntu-latest' }}
+    runs-on: ${{ vars.USE_SELF_HOSTED == 'true' && 'self-hosted' || 'ubuntu-latest' }}
     timeout-minutes: 20
     strategy:
       fail-fast: false
@@ -134,7 +135,7 @@ jobs:
   microservices-regression:
     name: 3 · 85接口 + UC01–UC08 微服务回归
     needs: [contract-tests, service-tests]
-    runs-on: ${{ github.event_name == 'push' && 'self-hosted' || 'ubuntu-latest' }}
+    runs-on: ${{ vars.USE_SELF_HOSTED == 'true' && 'self-hosted' || 'ubuntu-latest' }}
     timeout-minutes: 45
     steps:
       - name: 获取代码
@@ -239,7 +240,7 @@ jobs:
     name: 4 · SHA镜像 + Kind部署 + 可观测检查
     needs: [contract-tests, service-tests, microservices-regression]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    runs-on: ${{ github.event_name == 'push' && 'self-hosted' || 'ubuntu-latest' }}
+    runs-on: ${{ vars.USE_SELF_HOSTED == 'true' && 'self-hosted' || 'ubuntu-latest' }}
     timeout-minutes: 45
     permissions:
       contents: read
