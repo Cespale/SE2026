@@ -1,4 +1,5 @@
 import json
+import os
 from pathlib import Path
 
 import pytest
@@ -8,6 +9,7 @@ from scripts.check_microservices_workspace import check_workspace
 _PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 
+@pytest.mark.skipif(os.name != "nt", reason="workspace guard validates Windows copy paths")
 def test_accepts_copy_and_rejects_source() -> None:
     # Derive paths from the workspace marker (single source of truth) so the
     # test stays valid when the workspace is moved to another machine/path.

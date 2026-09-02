@@ -1,5 +1,6 @@
 name: StreamHub Microservices CI/CD
 
+# Runner model integrated from Cespale/SE2026@76b18e947342fcb459e3ef7c008e4c0f53aa108b.
 # Runner 通过仓库变量 USE_SELF_HOSTED 在「自托管服务器」与「GitHub 自带 runner」之间切换：
 #   - 未设置 / 设为 false → ubuntu-latest（GitHub 自带临时 runner，免费，当前默认）
 #   - 设为 true            → self-hosted（需该 runner 保持在线）

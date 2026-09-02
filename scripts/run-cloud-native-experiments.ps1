@@ -213,8 +213,9 @@ try {
     } while ((Get-Date) -lt $faultDeadline)
     if ($contentState.Ready -ne 0) { throw 'content-service did not stop' }
 
-    # scale 到 0 后，Deployment readyReplicas=0 与 kube-proxy/EndpointSlice 摘除之间存在延迟；
-    # 单次探测会偶发撞上“请求仍被路由到正在终止的 Pod”的窗口，返回 200。改为轮询等待 503 降级。
+    # After scaling to 0 there is a lag between readyReplicas=0 and kube-proxy/EndpointSlice removal;
+    # a single probe can occasionally hit the window where requests are still routed to a
+    # terminating Pod and return 200. Poll for the 503 degradation instead.
     $contentProbe = Wait-HttpStatus "$gatewayBase/api/videos" 503 90
     $userProbe = Invoke-Probe "$gatewayBase/_services/user/health"
     $socialProbe = Invoke-Probe "$gatewayBase/_services/social/health"

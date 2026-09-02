@@ -45,9 +45,9 @@ def test_workflow_tests_each_business_service_independently():
     assert "--junitxml" in commands
 
 
-def test_upstream_self_hosted_runner_is_used_only_for_trusted_main_pushes():
+def test_runner_switches_between_self_hosted_and_github_hosted_via_variable():
     workflow = load_workflow()
-    expected_runner = "${{ github.event_name == 'push' && 'self-hosted' || 'ubuntu-latest' }}"
+    expected_runner = "${{ vars.USE_SELF_HOSTED == 'true' && 'self-hosted' || 'ubuntu-latest' }}"
     for job_name in (
         "contract-tests",
         "service-tests",
@@ -57,6 +57,7 @@ def test_upstream_self_hosted_runner_is_used_only_for_trusted_main_pushes():
         assert workflow["jobs"][job_name]["runs-on"] == expected_runner
     source = WORKFLOW.read_text(encoding="utf-8")
     assert "76b18e947342fcb459e3ef7c008e4c0f53aa108b" in source
+    assert "USE_SELF_HOSTED" in source
 
 
 def test_workflow_runs_public_api_and_uc01_to_uc08_regression_before_deploy():
