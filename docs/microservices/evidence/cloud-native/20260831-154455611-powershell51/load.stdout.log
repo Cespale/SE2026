@@ -1,0 +1,1 @@
+{"concurrency": 4, "duration_seconds": 121.105, "requests": 236, "successes": 236, "errors": 0, "throughput_rps": 1.949, "average_ms": 2047.35, "p95_ms": 3904.009, "error_rate_percent": 0.0, "status_codes": {"200": 236}}

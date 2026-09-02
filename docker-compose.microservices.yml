@@ -1,0 +1,188 @@
+name: streamhub-ms
+
+services:
+  postgres-ms:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set in .env.microservices}
+      POSTGRES_DB: ${POSTGRES_DB:-streamhub}
+      USER_SERVICE_DB_PASSWORD: ${USER_SERVICE_DB_PASSWORD:?set in .env.microservices}
+      CONTENT_SERVICE_DB_PASSWORD: ${CONTENT_SERVICE_DB_PASSWORD:?set in .env.microservices}
+      SOCIAL_SERVICE_DB_PASSWORD: ${SOCIAL_SERVICE_DB_PASSWORD:?set in .env.microservices}
+    ports:
+      - "127.0.0.1:5434:5432"
+    volumes:
+      - streamhub_ms_pgdata:/var/lib/postgresql/data
+      - ./backend/docker-init/01_streamhub_backup.sql:/docker-entrypoint-initdb.d/01-streamhub-backup.sql:ro
+      - ./database/init/01-service-schemas.sh:/docker-entrypoint-initdb.d/02-service-schemas.sh:ro
+      - ./database/migrations/001-service-tables.sql:/docker-entrypoint-initdb.d/03-service-tables.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ${POSTGRES_DB:-streamhub}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  minio-ms:
+    image: quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:?set in .env.microservices}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?set in .env.microservices}
+    ports:
+      - "127.0.0.1:9100:9000"
+      - "127.0.0.1:9101:9001"
+    volumes:
+      - streamhub_ms_minio_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:9000/minio/health/live >/dev/null || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  user-service:
+    image: streamhub-user-service:${IMAGE_TAG:-local-ms}
+    build:
+      context: .
+      dockerfile: services/user-service/Dockerfile
+    environment:
+      USER_DATABASE_URL: ${USER_DATABASE_URL:?set in .env.microservices}
+      SECRET_KEY: ${SECRET_KEY:?set in .env.microservices}
+      SERVICE_VERSION: ${APP_VERSION:-dev}
+      CONTENT_SERVICE_URL: ${CONTENT_SERVICE_URL:-http://content-service:8000}
+      SERVICE_CONNECT_TIMEOUT_SECONDS: ${SERVICE_CONNECT_TIMEOUT_SECONDS:-0.5}
+      SERVICE_TOTAL_TIMEOUT_SECONDS: ${SERVICE_TOTAL_TIMEOUT_SECONDS:-1.5}
+      MINIO_ENDPOINT: minio-ms:9000
+      MINIO_ACCESS_KEY: ${MINIO_ROOT_USER:?set in .env.microservices}
+      MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD:?set in .env.microservices}
+      MINIO_BUCKET: ${MINIO_BUCKET:-streamhub-media}
+      MINIO_SECURE: "false"
+    depends_on:
+      postgres-ms:
+        condition: service_healthy
+      minio-ms:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/ready', timeout=2)"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  content-service:
+    image: streamhub-content-service:${IMAGE_TAG:-local-ms}
+    build:
+      context: .
+      dockerfile: services/content-service/Dockerfile
+    environment:
+      CONTENT_DATABASE_URL: ${CONTENT_DATABASE_URL:?set in .env.microservices}
+      SERVICE_VERSION: ${APP_VERSION:-dev}
+      USER_SERVICE_URL: ${USER_SERVICE_URL:-http://user-service:8000}
+      SOCIAL_SERVICE_URL: ${SOCIAL_SERVICE_URL:-http://social-service:8000}
+      SERVICE_CONNECT_TIMEOUT_SECONDS: ${SERVICE_CONNECT_TIMEOUT_SECONDS:-0.5}
+      SERVICE_TOTAL_TIMEOUT_SECONDS: ${SERVICE_TOTAL_TIMEOUT_SECONDS:-1.5}
+      MINIO_ENDPOINT: minio-ms:9000
+      MINIO_ACCESS_KEY: ${MINIO_ROOT_USER:?set in .env.microservices}
+      MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD:?set in .env.microservices}
+      MINIO_BUCKET: ${MINIO_BUCKET:-streamhub-media}
+      MINIO_SECURE: "false"
+      OUTBOX_WORKER_ENABLED: "true"
+    depends_on:
+      postgres-ms:
+        condition: service_healthy
+      minio-ms:
+        condition: service_healthy
+      user-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/ready', timeout=2)"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  social-service:
+    image: streamhub-social-service:${IMAGE_TAG:-local-ms}
+    build:
+      context: .
+      dockerfile: services/social-service/Dockerfile
+    environment:
+      SOCIAL_DATABASE_URL: ${SOCIAL_DATABASE_URL:?set in .env.microservices}
+      SERVICE_VERSION: ${APP_VERSION:-dev}
+      USER_SERVICE_URL: ${USER_SERVICE_URL:-http://user-service:8000}
+      CONTENT_SERVICE_URL: ${CONTENT_SERVICE_URL:-http://content-service:8000}
+      SERVICE_CONNECT_TIMEOUT_SECONDS: ${SERVICE_CONNECT_TIMEOUT_SECONDS:-0.5}
+      SERVICE_TOTAL_TIMEOUT_SECONDS: ${SERVICE_TOTAL_TIMEOUT_SECONDS:-1.5}
+      OUTBOX_WORKER_ENABLED: "true"
+      SRS_PUBLIC_RTMP_BASE: rtmp://localhost:1936/live
+      SRS_PUBLIC_HTTP_BASE: http://localhost:8081/live
+    depends_on:
+      postgres-ms:
+        condition: service_healthy
+      user-service:
+        condition: service_healthy
+      content-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/ready', timeout=2)"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  gateway:
+    image: streamhub-gateway:${IMAGE_TAG:-local-ms}
+    build:
+      context: .
+      dockerfile: gateway/Dockerfile
+    ports:
+      - "127.0.0.1:8100:80"
+    environment:
+      APP_VERSION: ${APP_VERSION:-dev}
+    depends_on:
+      user-service:
+        condition: service_healthy
+      content-service:
+        condition: service_healthy
+      social-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1/health >/dev/null || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  frontend-ms:
+    image: streamhub-frontend:${IMAGE_TAG:-local-ms}
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    environment:
+      REACT_APP_API_BASE_URL: http://127.0.0.1:8100
+      STREAMHUB_BACKEND_PROXY_TARGET: http://gateway:80
+    ports:
+      - "127.0.0.1:5273:3266"
+    depends_on:
+      gateway:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3266').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 3s
+      timeout: 3s
+      retries: 40
+      start_period: 5s
+    restart: unless-stopped
+
+  srs-ms:
+    image: ossrs/srs:5
+    ports:
+      - "127.0.0.1:1936:1935"
+      - "127.0.0.1:8081:8080"
+    restart: unless-stopped
+
+volumes:
+  streamhub_ms_pgdata:
+  streamhub_ms_minio_data:

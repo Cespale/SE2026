@@ -1,0 +1,7 @@
+﻿{
+    "stopped_service":  "content-service",
+    "content_status":  503,
+    "content_body":  "{\"detail\":\"上游服务暂不可用\"}",
+    "user_health_status":  200,
+    "social_health_status":  200
+}

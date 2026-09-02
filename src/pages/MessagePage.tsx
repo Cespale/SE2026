@@ -80,7 +80,11 @@ export function MessagePage() {
               私信
             </h2>
             <p className="text-xs text-gray-400 mt-1">
-              {ws ? '🟢 实时连接' : '⚪ 连接中...'}
+              {ws && ws.readyState === WebSocket.OPEN
+                ? '🟢 实时连接'
+                : ws && ws.readyState === WebSocket.CONNECTING
+                ? '🟡 连接中...'
+                : '⚪ 未连接'}
             </p>
           </div>
           <div className="flex-1 overflow-y-auto">

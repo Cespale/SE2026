@@ -1,0 +1,125 @@
+LAST SEEN   TYPE      REASON                         OBJECT                                  MESSAGE
+47m         Warning   Unhealthy                      pod/user-service-7889876998-hbxz5       Readiness probe failed: Get "http://10.244.0.16:8000/ready": dial tcp 10.244.0.16:8000: connect: connection refused
+47m         Warning   Unhealthy                      pod/content-service-6d684949bf-hd8m6    Readiness probe failed: Get "http://10.244.0.17:8000/ready": dial tcp 10.244.0.17:8000: connect: connection refused
+47m         Warning   Unhealthy                      pod/social-service-5f86bd9676-l6sc5     Readiness probe failed: Get "http://10.244.0.18:8000/ready": dial tcp 10.244.0.18:8000: connect: connection refused
+53m         Warning   Unhealthy                      pod/social-service-5f86bd9676-l6sc5     Readiness probe failed: Get "http://10.244.0.18:8000/ready": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+49m         Warning   Unhealthy                      pod/postgres-ms-79c9cbd4c5-mjrxc        Liveness probe failed: command timed out: "sh -c pg_isready -U postgres -d $POSTGRES_DB" timed out after 1s
+49m         Warning   Unhealthy                      pod/postgres-ms-79c9cbd4c5-mjrxc        Readiness probe failed: command timed out: "sh -c pg_isready -U postgres -d $POSTGRES_DB" timed out after 1s
+2m34s       Normal    SuccessfulRescale              horizontalpodautoscaler/user-service    New size: 3; reason: cpu resource utilization (percentage of request) above target
+4s          Normal    SuccessfulRescale              horizontalpodautoscaler/user-service    New size: 1; reason: All metrics below target
+48m         Normal    SuccessfulCreate               job/schema-migration                    Created pod: schema-migration-57vg5
+48m         Normal    Scheduled                      pod/schema-migration-57vg5              Successfully assigned streamhub-ms/schema-migration-57vg5 to streamhub-lab-control-plane
+48m         Normal    Started                        pod/schema-migration-57vg5              Container started
+48m         Normal    Created                        pod/schema-migration-57vg5              Container created
+48m         Normal    Pulled                         pod/schema-migration-57vg5              Container image "postgres:16" already present on machine and can be accessed by the pod
+48m         Normal    Completed                      job/schema-migration                    Job completed
+48m         Normal    SuccessfulCreate               replicaset/user-service-cf8f7df87       Created pod: user-service-cf8f7df87-252mb
+48m         Normal    ScalingReplicaSet              deployment/user-service                 Scaled up replica set user-service-cf8f7df87 from 0 to 1
+48m         Normal    Scheduled                      pod/user-service-cf8f7df87-252mb        Successfully assigned streamhub-ms/user-service-cf8f7df87-252mb to streamhub-lab-control-plane
+48m         Normal    Created                        pod/user-service-cf8f7df87-252mb        Container created
+48m         Normal    Pulled                         pod/user-service-cf8f7df87-252mb        Container image "streamhub-user-service:local-ci-20260831-cn1" already present on machine and can be accessed by the pod
+48m         Normal    Started                        pod/user-service-cf8f7df87-252mb        Container started
+5m31s       Warning   Unhealthy                      pod/user-service-cf8f7df87-252mb        Readiness probe failed: Get "http://10.244.0.35:8000/ready": dial tcp 10.244.0.35:8000: connect: connection refused
+48m         Normal    ScalingReplicaSet              deployment/user-service                 Scaled down replica set user-service-7889876998 from 1 to 0
+48m         Normal    SuccessfulDelete               replicaset/user-service-7889876998      Deleted pod: user-service-7889876998-hbxz5
+48m         Normal    Killing                        pod/user-service-7889876998-hbxz5       Stopping container user-service
+5m27s       Normal    ScalingReplicaSet              deployment/content-service              Scaled up replica set content-service-db8588cf8 from 0 to 1
+48m         Normal    Scheduled                      pod/content-service-db8588cf8-6l29w     Successfully assigned streamhub-ms/content-service-db8588cf8-6l29w to streamhub-lab-control-plane
+48m         Normal    SuccessfulCreate               replicaset/content-service-db8588cf8    Created pod: content-service-db8588cf8-6l29w
+48m         Normal    Started                        pod/content-service-db8588cf8-6l29w     Container started
+48m         Normal    Pulled                         pod/content-service-db8588cf8-6l29w     Container image "streamhub-content-service:local-ci-20260831-cn1" already present on machine and can be accessed by the pod
+48m         Normal    Created                        pod/content-service-db8588cf8-6l29w     Container created
+47m         Warning   FailedGetResourceMetric        horizontalpodautoscaler/user-service    failed to get cpu utilization: did not receive metrics for targeted pods (pods might be unready)
+47m         Warning   FailedComputeMetricsReplicas   horizontalpodautoscaler/user-service    invalid metrics (1 invalid out of 1), first error is: failed to get cpu resource metric value: failed to get cpu utilization: did not receive metrics for targeted pods (pods might be unready)
+5m24s       Warning   Unhealthy                      pod/content-service-db8588cf8-6l29w     Readiness probe failed: Get "http://10.244.0.36:8000/ready": dial tcp 10.244.0.36:8000: connect: connection refused
+47m         Normal    ScalingReplicaSet              deployment/content-service              Scaled down replica set content-service-6d684949bf from 1 to 0
+47m         Normal    SuccessfulDelete               replicaset/content-service-6d684949bf   Deleted pod: content-service-6d684949bf-hd8m6
+47m         Normal    Killing                        pod/content-service-6d684949bf-hd8m6    Stopping container content-service
+47m         Normal    SuccessfulCreate               replicaset/social-service-58c6f8c7dc    Created pod: social-service-58c6f8c7dc-fq7jd
+47m         Normal    Pulled                         pod/social-service-58c6f8c7dc-fq7jd     Container image "streamhub-social-service:local-ci-20260831-cn1" already present on machine and can be accessed by the pod
+47m         Normal    ScalingReplicaSet              deployment/social-service               Scaled up replica set social-service-58c6f8c7dc from 0 to 1
+47m         Normal    Scheduled                      pod/social-service-58c6f8c7dc-fq7jd     Successfully assigned streamhub-ms/social-service-58c6f8c7dc-fq7jd to streamhub-lab-control-plane
+47m         Normal    Started                        pod/social-service-58c6f8c7dc-fq7jd     Container started
+47m         Normal    Created                        pod/social-service-58c6f8c7dc-fq7jd     Container created
+47m         Warning   Unhealthy                      pod/social-service-58c6f8c7dc-fq7jd     Readiness probe failed: Get "http://10.244.0.37:8000/ready": dial tcp 10.244.0.37:8000: connect: connection refused
+47m         Normal    Killing                        pod/social-service-5f86bd9676-l6sc5     Stopping container social-service
+47m         Normal    ScalingReplicaSet              deployment/social-service               Scaled down replica set social-service-5f86bd9676 from 1 to 0
+47m         Normal    SuccessfulDelete               replicaset/social-service-5f86bd9676    Deleted pod: social-service-5f86bd9676-l6sc5
+47m         Normal    ScalingReplicaSet              deployment/gateway                      Scaled up replica set gateway-6f687c5f74 from 0 to 1
+47m         Normal    SuccessfulCreate               replicaset/gateway-6f687c5f74           Created pod: gateway-6f687c5f74-j6b9v
+47m         Normal    Scheduled                      pod/gateway-6f687c5f74-j6b9v            Successfully assigned streamhub-ms/gateway-6f687c5f74-j6b9v to streamhub-lab-control-plane
+47m         Normal    Started                        pod/gateway-6f687c5f74-j6b9v            Container started
+47m         Normal    Created                        pod/gateway-6f687c5f74-j6b9v            Container created
+47m         Normal    Pulled                         pod/gateway-6f687c5f74-j6b9v            Container image "streamhub-gateway:local-ci-20260831-cn1" already present on machine and can be accessed by the pod
+47m         Normal    ScalingReplicaSet              deployment/gateway                      Scaled down replica set gateway-59c998d57f from 1 to 0
+47m         Normal    SuccessfulDelete               replicaset/gateway-59c998d57f           Deleted pod: gateway-59c998d57f-9xjpc
+47m         Normal    Killing                        pod/gateway-59c998d57f-9xjpc            Stopping container gateway
+38m         Warning   Unhealthy                      pod/social-service-58c6f8c7dc-fq7jd     Readiness probe failed: Get "http://10.244.0.37:8000/ready": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+8m          Warning   Unhealthy                      pod/user-service-cf8f7df87-252mb        Readiness probe failed: Get "http://10.244.0.35:8000/ready": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+8m32s       Warning   Unhealthy                      pod/user-service-cf8f7df87-252mb        Liveness probe failed: Get "http://10.244.0.35:8000/health": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+8m19s       Normal    Scheduled                      pod/user-service-cf8f7df87-c8v9v        Successfully assigned streamhub-ms/user-service-cf8f7df87-c8v9v to streamhub-lab-control-plane
+8m20s       Normal    SuccessfulCreate               replicaset/user-service-cf8f7df87       Created pod: user-service-cf8f7df87-cb6jv
+8m20s       Normal    SuccessfulCreate               replicaset/user-service-cf8f7df87       Created pod: user-service-cf8f7df87-c8v9v
+8m19s       Normal    Scheduled                      pod/user-service-cf8f7df87-cb6jv        Successfully assigned streamhub-ms/user-service-cf8f7df87-cb6jv to streamhub-lab-control-plane
+2m34s       Normal    ScalingReplicaSet              deployment/user-service                 Scaled up replica set user-service-cf8f7df87 from 1 to 3
+8m18s       Normal    Started                        pod/user-service-cf8f7df87-cb6jv        Container started
+8m18s       Normal    Pulled                         pod/user-service-cf8f7df87-cb6jv        Container image "streamhub-user-service:local-ci-20260831-cn1" already present on machine and can be accessed by the pod
+8m18s       Normal    Created                        pod/user-service-cf8f7df87-c8v9v        Container created
+8m18s       Normal    Started                        pod/user-service-cf8f7df87-c8v9v        Container started
+8m18s       Normal    Created                        pod/user-service-cf8f7df87-cb6jv        Container created
+8m18s       Normal    Pulled                         pod/user-service-cf8f7df87-c8v9v        Container image "streamhub-user-service:local-ci-20260831-cn1" already present on machine and can be accessed by the pod
+8m8s        Warning   Unhealthy                      pod/user-service-cf8f7df87-c8v9v        Readiness probe failed: Get "http://10.244.0.41:8000/ready": dial tcp 10.244.0.41:8000: connect: connection refused
+8m8s        Warning   Unhealthy                      pod/user-service-cf8f7df87-cb6jv        Readiness probe failed: Get "http://10.244.0.40:8000/ready": dial tcp 10.244.0.40:8000: connect: connection refused
+8m5s        Normal    SuccessfulCreate               replicaset/user-service-cf8f7df87       Created pod: user-service-cf8f7df87-k6c5f
+2m19s       Normal    SuccessfulRescale              horizontalpodautoscaler/user-service    New size: 4; reason: cpu resource utilization (percentage of request) above target
+8m4s        Normal    Scheduled                      pod/user-service-cf8f7df87-k6c5f        Successfully assigned streamhub-ms/user-service-cf8f7df87-k6c5f to streamhub-lab-control-plane
+2m19s       Normal    ScalingReplicaSet              deployment/user-service                 Scaled up replica set user-service-cf8f7df87 from 3 to 4
+8m4s        Normal    Pulled                         pod/user-service-cf8f7df87-k6c5f        Container image "streamhub-user-service:local-ci-20260831-cn1" already present on machine and can be accessed by the pod
+8m4s        Normal    Started                        pod/user-service-cf8f7df87-k6c5f        Container started
+8m4s        Normal    Created                        pod/user-service-cf8f7df87-k6c5f        Container created
+7m58s       Warning   Unhealthy                      pod/user-service-cf8f7df87-k6c5f        Readiness probe failed: Get "http://10.244.0.42:8000/ready": dial tcp 10.244.0.42:8000: connect: connection refused
+7m40s       Warning   Unhealthy                      pod/user-service-cf8f7df87-c8v9v        Readiness probe failed: Get "http://10.244.0.41:8000/ready": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+7m48s       Warning   Unhealthy                      pod/user-service-cf8f7df87-c8v9v        Liveness probe failed: Get "http://10.244.0.41:8000/health": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+7m36s       Warning   Unhealthy                      pod/user-service-cf8f7df87-cb6jv        Readiness probe failed: Get "http://10.244.0.40:8000/ready": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+5m34s       Normal    SuccessfulDelete               replicaset/user-service-cf8f7df87       Deleted pod: user-service-cf8f7df87-252mb
+4s          Normal    ScalingReplicaSet              deployment/user-service                 Scaled down replica set user-service-cf8f7df87 from 4 to 1
+5m34s       Normal    SuccessfulDelete               replicaset/user-service-cf8f7df87       Deleted pod: user-service-cf8f7df87-c8v9v
+5m34s       Normal    SuccessfulDelete               replicaset/user-service-cf8f7df87       Deleted pod: user-service-cf8f7df87-cb6jv
+5m34s       Normal    Killing                        pod/user-service-cf8f7df87-c8v9v        Stopping container user-service
+5m34s       Normal    Killing                        pod/user-service-cf8f7df87-cb6jv        Stopping container user-service
+5m34s       Normal    Killing                        pod/user-service-cf8f7df87-252mb        Stopping container user-service
+2s          Normal    ScalingReplicaSet              deployment/content-service              Scaled down replica set content-service-db8588cf8 from 1 to 0
+5m30s       Normal    SuccessfulDelete               replicaset/content-service-db8588cf8    Deleted pod: content-service-db8588cf8-6l29w
+5m30s       Normal    Killing                        pod/content-service-db8588cf8-6l29w     Stopping container content-service
+5m27s       Normal    Created                        pod/content-service-db8588cf8-9zz96     Container created
+5m27s       Normal    SuccessfulCreate               replicaset/content-service-db8588cf8    Created pod: content-service-db8588cf8-9zz96
+5m27s       Normal    Pulled                         pod/content-service-db8588cf8-9zz96     Container image "streamhub-content-service:local-ci-20260831-cn1" already present on machine and can be accessed by the pod
+5m27s       Normal    Scheduled                      pod/content-service-db8588cf8-9zz96     Successfully assigned streamhub-ms/content-service-db8588cf8-9zz96 to streamhub-lab-control-plane
+5m26s       Normal    Started                        pod/content-service-db8588cf8-9zz96     Container started
+1s          Warning   Unhealthy                      pod/content-service-db8588cf8-9zz96     Readiness probe failed: Get "http://10.244.0.43:8000/ready": dial tcp 10.244.0.43:8000: connect: connection refused
+2m34s       Normal    SuccessfulCreate               replicaset/user-service-cf8f7df87       Created pod: user-service-cf8f7df87-wvdh8
+2m34s       Normal    SuccessfulCreate               replicaset/user-service-cf8f7df87       Created pod: user-service-cf8f7df87-dmfdv
+2m33s       Normal    Scheduled                      pod/user-service-cf8f7df87-dmfdv        Successfully assigned streamhub-ms/user-service-cf8f7df87-dmfdv to streamhub-lab-control-plane
+2m33s       Normal    Scheduled                      pod/user-service-cf8f7df87-wvdh8        Successfully assigned streamhub-ms/user-service-cf8f7df87-wvdh8 to streamhub-lab-control-plane
+2m33s       Normal    Started                        pod/user-service-cf8f7df87-wvdh8        Container started
+2m33s       Normal    Created                        pod/user-service-cf8f7df87-wvdh8        Container created
+2m33s       Normal    Pulled                         pod/user-service-cf8f7df87-wvdh8        Container image "streamhub-user-service:local-ci-20260831-cn1" already present on machine and can be accessed by the pod
+2m33s       Normal    Pulled                         pod/user-service-cf8f7df87-dmfdv        Container image "streamhub-user-service:local-ci-20260831-cn1" already present on machine and can be accessed by the pod
+2m33s       Normal    Created                        pod/user-service-cf8f7df87-dmfdv        Container created
+2m33s       Normal    Started                        pod/user-service-cf8f7df87-dmfdv        Container started
+2m27s       Warning   Unhealthy                      pod/user-service-cf8f7df87-wvdh8        Readiness probe failed: Get "http://10.244.0.44:8000/ready": dial tcp 10.244.0.44:8000: connect: connection refused
+2m27s       Warning   Unhealthy                      pod/user-service-cf8f7df87-dmfdv        Readiness probe failed: Get "http://10.244.0.45:8000/ready": dial tcp 10.244.0.45:8000: connect: connection refused
+2m19s       Normal    SuccessfulCreate               replicaset/user-service-cf8f7df87       Created pod: user-service-cf8f7df87-r6cs9
+2m18s       Normal    Scheduled                      pod/user-service-cf8f7df87-r6cs9        Successfully assigned streamhub-ms/user-service-cf8f7df87-r6cs9 to streamhub-lab-control-plane
+2m18s       Normal    Started                        pod/user-service-cf8f7df87-r6cs9        Container started
+2m18s       Normal    Created                        pod/user-service-cf8f7df87-r6cs9        Container created
+2m18s       Normal    Pulled                         pod/user-service-cf8f7df87-r6cs9        Container image "streamhub-user-service:local-ci-20260831-cn1" already present on machine and can be accessed by the pod
+3s          Warning   Unhealthy                      pod/user-service-cf8f7df87-r6cs9        Readiness probe failed: Get "http://10.244.0.46:8000/ready": dial tcp 10.244.0.46:8000: connect: connection refused
+4s          Normal    SuccessfulDelete               replicaset/user-service-cf8f7df87       Deleted pod: user-service-cf8f7df87-dmfdv
+4s          Normal    SuccessfulDelete               replicaset/user-service-cf8f7df87       Deleted pod: user-service-cf8f7df87-wvdh8
+4s          Normal    SuccessfulDelete               replicaset/user-service-cf8f7df87       Deleted pod: user-service-cf8f7df87-r6cs9
+4s          Normal    Killing                        pod/user-service-cf8f7df87-wvdh8        Stopping container user-service
+4s          Normal    Killing                        pod/user-service-cf8f7df87-r6cs9        Stopping container user-service
+4s          Normal    Killing                        pod/user-service-cf8f7df87-dmfdv        Stopping container user-service
+2s          Normal    Killing                        pod/content-service-db8588cf8-9zz96     Stopping container content-service
+2s          Normal    SuccessfulDelete               replicaset/content-service-db8588cf8    Deleted pod: content-service-db8588cf8-9zz96

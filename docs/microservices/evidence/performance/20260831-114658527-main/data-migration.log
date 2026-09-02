@@ -1,0 +1,16 @@
+users: source=3 target=3
+follows: source=missing skipped=true
+conversations: source=missing skipped=true
+messages: source=missing skipped=true
+notifications: source=missing skipped=true
+categories: source=10 target=10
+videos: source=18 target=18
+comments: source=18 target=18
+comment_mentions: source=missing skipped=true
+video_likes: source=missing skipped=true
+danmaku: source=24 target=24
+live_rooms: source=2 target=2
+reports: source=missing skipped=true
+sensitive_words: source=missing skipped=true
+video_interaction_baselines: source=18 seeded=18
+DATA_MIGRATION=PASS

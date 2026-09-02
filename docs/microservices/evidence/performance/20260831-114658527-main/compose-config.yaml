@@ -1,0 +1,202 @@
+name: streamhub-perf
+
+services:
+  postgres-perf:
+    image: postgres:16
+    container_name: streamhub-perf-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${PERF_POSTGRES_PASSWORD:?required}
+      POSTGRES_DB: streamhub
+      USER_SERVICE_DB_PASSWORD: ${PERF_USER_DB_PASSWORD:?required}
+      CONTENT_SERVICE_DB_PASSWORD: ${PERF_CONTENT_DB_PASSWORD:?required}
+      SOCIAL_SERVICE_DB_PASSWORD: ${PERF_SOCIAL_DB_PASSWORD:?required}
+    ports:
+      - "127.0.0.1:55435:5432"
+    tmpfs:
+      - /var/lib/postgresql/data
+    volumes:
+      - ./backend/docker-init/01_streamhub_backup.sql:/docker-entrypoint-initdb.d/01-monolith.sql:ro
+      - ./database/init/01-service-schemas.sh:/docker-entrypoint-initdb.d/02-service-schemas.sh:ro
+      - ./database/migrations/001-service-tables.sql:/docker-entrypoint-initdb.d/03-service-tables.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d streamhub"]
+      interval: 2s
+      timeout: 3s
+      retries: 60
+    cpus: 1.0
+    mem_limit: "512m"
+    restart: "no"
+
+  minio-perf:
+    image: quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z
+    container_name: streamhub-perf-minio
+    command: server /data
+    environment:
+      MINIO_ROOT_USER: ${PERF_MINIO_USER:?required}
+      MINIO_ROOT_PASSWORD: ${PERF_MINIO_PASSWORD:?required}
+    tmpfs:
+      - /data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:9000/minio/health/live >/dev/null || exit 1"]
+      interval: 2s
+      timeout: 3s
+      retries: 60
+    cpus: 0.25
+    mem_limit: "256m"
+    restart: "no"
+
+  monolith:
+    image: streamhub-monolith:perf-local
+    container_name: streamhub-perf-monolith
+    build:
+      context: .
+      dockerfile: backend/Dockerfile.performance
+    environment:
+      DATABASE_URL: postgresql://postgres:${PERF_POSTGRES_PASSWORD}@postgres-perf:5432/streamhub
+      SECRET_KEY: ${PERF_SECRET_KEY:?required}
+      MINIO_ENDPOINT: minio-perf:9000
+      MINIO_ACCESS_KEY: ${PERF_MINIO_USER:?required}
+      MINIO_SECRET_KEY: ${PERF_MINIO_PASSWORD:?required}
+      MINIO_BUCKET: streamhub-media
+      MINIO_SECURE: "false"
+      MINIO_MIGRATE_ON_STARTUP: "false"
+      LEGACY_PUBLIC_ROOT: /nonexistent
+    ports:
+      - "127.0.0.1:18200:8000"
+    depends_on:
+      postgres-perf:
+        condition: service_healthy
+      minio-perf:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=2)"]
+      interval: 2s
+      timeout: 3s
+      retries: 60
+    cpus: 0.5
+    mem_limit: "512m"
+    restart: "no"
+
+  user-service:
+    image: streamhub-user-service:perf-local
+    container_name: streamhub-perf-user
+    build:
+      context: .
+      dockerfile: services/user-service/Dockerfile
+    environment:
+      USER_DATABASE_URL: postgresql://streamhub_user_service:${PERF_USER_DB_PASSWORD}@postgres-perf:5432/streamhub
+      SECRET_KEY: ${PERF_SECRET_KEY:?required}
+      SERVICE_VERSION: perf-local
+      CONTENT_SERVICE_URL: http://content-service:8000
+      SERVICE_CONNECT_TIMEOUT_SECONDS: 0.5
+      SERVICE_TOTAL_TIMEOUT_SECONDS: 5
+      MINIO_ENDPOINT: minio-perf:9000
+      MINIO_ACCESS_KEY: ${PERF_MINIO_USER:?required}
+      MINIO_SECRET_KEY: ${PERF_MINIO_PASSWORD:?required}
+      MINIO_BUCKET: streamhub-media
+      MINIO_SECURE: "false"
+    depends_on:
+      postgres-perf:
+        condition: service_healthy
+      minio-perf:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/ready', timeout=2)"]
+      interval: 2s
+      timeout: 3s
+      retries: 60
+    cpus: 0.5
+    mem_limit: "512m"
+    restart: "no"
+
+  content-service:
+    image: streamhub-content-service:perf-local
+    container_name: streamhub-perf-content
+    build:
+      context: .
+      dockerfile: services/content-service/Dockerfile
+    environment:
+      CONTENT_DATABASE_URL: postgresql://streamhub_content_service:${PERF_CONTENT_DB_PASSWORD}@postgres-perf:5432/streamhub
+      SERVICE_VERSION: perf-local
+      USER_SERVICE_URL: http://user-service:8000
+      SOCIAL_SERVICE_URL: http://social-service:8000
+      SERVICE_CONNECT_TIMEOUT_SECONDS: 0.5
+      SERVICE_TOTAL_TIMEOUT_SECONDS: 5
+      MINIO_ENDPOINT: minio-perf:9000
+      MINIO_ACCESS_KEY: ${PERF_MINIO_USER:?required}
+      MINIO_SECRET_KEY: ${PERF_MINIO_PASSWORD:?required}
+      MINIO_BUCKET: streamhub-media
+      MINIO_SECURE: "false"
+      OUTBOX_WORKER_ENABLED: "false"
+    depends_on:
+      postgres-perf:
+        condition: service_healthy
+      minio-perf:
+        condition: service_healthy
+      user-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/ready', timeout=2)"]
+      interval: 2s
+      timeout: 3s
+      retries: 60
+    cpus: 0.5
+    mem_limit: "512m"
+    restart: "no"
+
+  social-service:
+    image: streamhub-social-service:perf-local
+    container_name: streamhub-perf-social
+    build:
+      context: .
+      dockerfile: services/social-service/Dockerfile
+    environment:
+      SOCIAL_DATABASE_URL: postgresql://streamhub_social_service:${PERF_SOCIAL_DB_PASSWORD}@postgres-perf:5432/streamhub
+      SERVICE_VERSION: perf-local
+      USER_SERVICE_URL: http://user-service:8000
+      CONTENT_SERVICE_URL: http://content-service:8000
+      SERVICE_CONNECT_TIMEOUT_SECONDS: 0.5
+      SERVICE_TOTAL_TIMEOUT_SECONDS: 5
+      OUTBOX_WORKER_ENABLED: "false"
+    depends_on:
+      postgres-perf:
+        condition: service_healthy
+      user-service:
+        condition: service_healthy
+      content-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/ready', timeout=2)"]
+      interval: 2s
+      timeout: 3s
+      retries: 60
+    cpus: 0.5
+    mem_limit: "512m"
+    restart: "no"
+
+  gateway:
+    image: streamhub-gateway:perf-local
+    container_name: streamhub-perf-gateway
+    build:
+      context: .
+      dockerfile: gateway/Dockerfile
+    environment:
+      APP_VERSION: perf-local
+    ports:
+      - "127.0.0.1:18210:80"
+    depends_on:
+      user-service:
+        condition: service_healthy
+      content-service:
+        condition: service_healthy
+      social-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1/ready >/dev/null || exit 1"]
+      interval: 2s
+      timeout: 3s
+      retries: 60
+    cpus: 0.25
+    mem_limit: "128m"
+    restart: "no"

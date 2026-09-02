@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: srs-ms
+  namespace: streamhub-ms
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: srs-ms
+  template:
+    metadata:
+      labels:
+        app: srs-ms
+    spec:
+      containers:
+        - name: srs
+          image: ossrs/srs:5
+          ports:
+            - name: rtmp
+              containerPort: 1935
+            - name: http-flv
+              containerPort: 8080
+          readinessProbe:
+            tcpSocket:
+              port: 1935
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            tcpSocket:
+              port: 1935
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: srs-ms
+  namespace: streamhub-ms
+spec:
+  type: ClusterIP
+  selector:
+    app: srs-ms
+  ports:
+    - name: rtmp
+      port: 1935
+      targetPort: 1935
+    - name: http-flv
+      port: 8080
+      targetPort: 8080

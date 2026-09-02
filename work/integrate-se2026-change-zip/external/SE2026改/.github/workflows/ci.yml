@@ -1,0 +1,309 @@
+name: StreamHub CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test-backend:
+    name: 1 · 后端单元测试 + 集成测试
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: streamhub
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d streamhub"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      DATABASE_URL: postgresql+psycopg2://postgres:postgres@127.0.0.1:5432/streamhub
+      SECRET_KEY: streamhub-backend-test-secret
+    steps:
+      - name: 获取代码
+        uses: actions/checkout@v6
+
+      - name: 准备 Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: |
+            backend/requirements.txt
+            backend/requirements-test.txt
+
+      - name: 准备测试记录目录
+        run: mkdir -p .ci-results/backend
+
+      - name: 安装后端测试依赖
+        id: backend_dependencies
+        run: python -m pip install -r backend/requirements-test.txt
+
+      - name: 流水线契约检查
+        id: ci_contract
+        run: python scripts/test_ci_contract.py -v
+
+      - name: 测试点数量与用例稳定性检查
+        id: test_point_contract
+        run: >-
+          python scripts/test_point_report.py
+          --min-total 200
+          --min-e2e 60
+          --output .ci-results/backend/test-points.md
+
+      - name: 后端单元测试
+        id: backend_unit
+        working-directory: backend
+        run: >-
+          python -m pytest -q
+          tests/test_audit_rules_unit.py
+          tests/test_object_storage_unit.py
+          tests/test_security_unit.py
+          --junitxml=../.ci-results/backend/backend-unit.xml
+
+      - name: 后端集成测试
+        id: backend_integration
+        working-directory: backend
+        run: >-
+          python -m pytest -q
+          tests/test_live_api.py
+          tests/test_media_storage_api.py
+          tests/test_video_consumption_api.py
+          tests/test_video_flow_api.py
+          --junitxml=../.ci-results/backend/backend-integration.xml
+
+      - name: 记录后端阶段结果
+        if: ${{ always() }}
+        run: |
+          {
+            echo "dependencies=${{ steps.backend_dependencies.outcome }}"
+            echo "ci_contract=${{ steps.ci_contract.outcome }}"
+            echo "test_point_contract=${{ steps.test_point_contract.outcome }}"
+            echo "unit_tests=${{ steps.backend_unit.outcome }}"
+            echo "integration_tests=${{ steps.backend_integration.outcome }}"
+          } > .ci-results/backend/backend-stage-results.txt
+
+      - name: 保留后端成功或失败记录
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v6
+        with:
+          name: backend-test-reports-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .ci-results/backend/
+          if-no-files-found: warn
+          retention-days: 30
+
+  test-frontend:
+    name: 2 · 前端编译 + 系统测试
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: streamhub
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d streamhub"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+      minio:
+        image: quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z
+        command: server /data --console-address :9001
+        env:
+          MINIO_ROOT_USER: streamhub-ci
+          MINIO_ROOT_PASSWORD: streamhub-ci-secret
+        ports:
+          - 9000:9000
+        options: >-
+          --health-cmd "curl -f http://localhost:9000/minio/health/live"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      DATABASE_URL: postgresql+psycopg2://postgres:postgres@127.0.0.1:5432/streamhub
+      SECRET_KEY: streamhub-e2e-secret
+      MINIO_ENDPOINT: 127.0.0.1:9000
+      MINIO_ACCESS_KEY: streamhub-ci
+      MINIO_SECRET_KEY: streamhub-ci-secret
+      MINIO_BUCKET: streamhub-media
+      MINIO_SECURE: "false"
+      E2E_JUNIT_OUTPUT: .ci-results/frontend/e2e-tests.xml
+    steps:
+      - name: 获取代码
+        uses: actions/checkout@v6
+
+      - name: 准备 Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: 准备 Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+
+      - name: 准备测试记录目录
+        run: mkdir -p .ci-results/frontend
+
+      - name: 安装后端运行依赖
+        id: e2e_backend_dependencies
+        run: python -m pip install -r backend/requirements.txt
+
+      - name: 安装前端依赖
+        id: frontend_dependencies
+        run: npm ci
+
+      - name: 前端类型检查
+        id: frontend_typecheck
+        run: npm run typecheck
+
+      - name: 前端编译
+        id: frontend_build
+        run: npm run build
+
+      - name: 安装 Playwright 浏览器
+        id: playwright_install
+        run: npx playwright install --with-deps chromium
+
+      - name: 系统测试（Playwright E2E）
+        id: system_tests
+        run: npm test
+
+      - name: 记录前端和系统测试阶段结果
+        if: ${{ always() }}
+        run: |
+          {
+            echo "backend_dependencies=${{ steps.e2e_backend_dependencies.outcome }}"
+            echo "frontend_dependencies=${{ steps.frontend_dependencies.outcome }}"
+            echo "typecheck=${{ steps.frontend_typecheck.outcome }}"
+            echo "build=${{ steps.frontend_build.outcome }}"
+            echo "playwright_install=${{ steps.playwright_install.outcome }}"
+            echo "system_tests=${{ steps.system_tests.outcome }}"
+          } > .ci-results/frontend/frontend-stage-results.txt
+
+      - name: 保留前端成功或失败记录
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v6
+        with:
+          name: frontend-test-reports-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .ci-results/frontend/
+          if-no-files-found: warn
+          retention-days: 30
+
+  build-deploy:
+    name: 3 · 版本镜像 + Kubernetes 部署 + 健康检查
+    needs: [test-backend, test-frontend]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: write
+    env:
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+    steps:
+      - name: 获取代码
+        uses: actions/checkout@v6
+
+      - name: 准备部署记录目录
+        run: mkdir -p .ci-results/deployment
+
+      - name: 登录 GitHub Container Registry
+        id: registry_login
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 创建 Kind 集群
+        id: kind_cluster
+        uses: helm/kind-action@v1.14.0
+        with:
+          cluster_name: kind
+
+      - name: 制作版本镜像并载入 Kind
+        id: build_images
+        run: |
+          VERSION="${GITHUB_SHA:0:8}"
+          OWNER="$(printf '%s' "${GITHUB_REPOSITORY_OWNER}" | tr '[:upper:]' '[:lower:]')"
+          BACKEND_REGISTRY_IMAGE="ghcr.io/${OWNER}/streamhub-backend:${VERSION}"
+          FRONTEND_REGISTRY_IMAGE="ghcr.io/${OWNER}/streamhub-frontend:${VERSION}"
+          echo "VERSION=${VERSION}" >> "${GITHUB_ENV}"
+          docker build -f backend/Dockerfile \
+            -t "streamhub-backend:${VERSION}" \
+            -t "${BACKEND_REGISTRY_IMAGE}" .
+          docker build -f Dockerfile.frontend \
+            -t "streamhub-frontend:${VERSION}" \
+            -t "${FRONTEND_REGISTRY_IMAGE}" .
+          docker push "${BACKEND_REGISTRY_IMAGE}"
+          docker push "${FRONTEND_REGISTRY_IMAGE}"
+          kind load docker-image --name kind "streamhub-backend:${VERSION}"
+          kind load docker-image --name kind "streamhub-frontend:${VERSION}"
+          printf '%s\n' "${BACKEND_REGISTRY_IMAGE}" "${FRONTEND_REGISTRY_IMAGE}" \
+            > .ci-results/deployment/images.txt
+
+      - name: 预加载数据库、MinIO 和 SRS 镜像
+        id: runtime_images
+        run: |
+          MINIO_IMAGE="quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z"
+          SRS_IMAGE="ossrs/srs:5"
+          docker pull postgres:16
+          docker pull "${MINIO_IMAGE}"
+          docker pull "${SRS_IMAGE}"
+          kind load docker-image postgres:16 --name kind
+          kind load docker-image "${MINIO_IMAGE}" --name kind
+          kind load docker-image "${SRS_IMAGE}" --name kind
+
+      - name: 部署到 Kubernetes
+        id: kubernetes_deploy
+        run: |
+          set -o pipefail
+          bash scripts/deploy.sh 2>&1 | tee .ci-results/deployment/deploy.log
+
+      - name: 健康检查
+        id: health_check
+        run: |
+          set -o pipefail
+          bash scripts/health-check.sh 2>&1 | tee .ci-results/deployment/health-check.log
+
+      - name: 记录部署阶段结果
+        if: ${{ always() }}
+        run: |
+          {
+            echo "registry_login=${{ steps.registry_login.outcome }}"
+            echo "kind_cluster=${{ steps.kind_cluster.outcome }}"
+            echo "build_images=${{ steps.build_images.outcome }}"
+            echo "runtime_images=${{ steps.runtime_images.outcome }}"
+            echo "kubernetes_deploy=${{ steps.kubernetes_deploy.outcome }}"
+            echo "health_check=${{ steps.health_check.outcome }}"
+          } > .ci-results/deployment/deployment-stage-results.txt
+
+      - name: 保留部署成功或失败记录
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v6
+        with:
+          name: deployment-reports-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .ci-results/deployment/
+          if-no-files-found: warn
+          retention-days: 30

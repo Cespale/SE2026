@@ -1,0 +1,36 @@
+{
+  "result": "PASS",
+  "hpa": {
+    "baseline_pods": 1,
+    "maximum_ready_pods": 4.0,
+    "final_pods": 1,
+    "states": [
+      "scaled-up",
+      "scaled-down"
+    ]
+  },
+  "load": {
+    "concurrency": 12,
+    "duration_seconds": 122.95,
+    "requests": 805,
+    "successes": 173,
+    "errors": 632,
+    "throughput_rps": 6.547,
+    "average_ms": 1811.601,
+    "p95_ms": 5023.936,
+    "error_rate_percent": 78.509,
+    "status_codes": {
+      "0": 144,
+      "200": 173,
+      "503": 488
+    }
+  },
+  "fault": {
+    "stopped_service": "content-service",
+    "content_status": 503,
+    "content_body": "{\"detail\":\"上游服务暂不可用\"}",
+    "user_health_status": 200,
+    "social_health_status": 200
+  },
+  "evidence_directory": "C:\\Users\\lausu\\Desktop\\SE2026-microservices\\.ci-results\\cloud-native\\20260831-103047581"
+}

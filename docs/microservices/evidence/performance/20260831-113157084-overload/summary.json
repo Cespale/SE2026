@@ -1,0 +1,954 @@
+{
+  "result": "PASS",
+  "generated_at": "2026-08-31T03:45:47.9875972Z",
+  "machine": {
+    "docker_host": "same-local-docker-desktop",
+    "sequential_versions": true
+  },
+  "controls": {
+    "runs_per_endpoint_version": 3,
+    "warmup_seconds": 5,
+    "read_concurrency": 16,
+    "read_duration_seconds": 20,
+    "login_concurrency": 4,
+    "login_duration_seconds": 30,
+    "monolith_cpu_limit": 0.5,
+    "active_business_service_cpu_limit": 0.5,
+    "same_postgres_container": true
+  },
+  "aggregates": [
+    {
+      "endpoint": "categories",
+      "version": "microservices",
+      "runs": 3,
+      "concurrency": 16,
+      "throughput_rps": {
+        "mean": 42.561,
+        "min": 41.882,
+        "max": 43.556
+      },
+      "average_ms": {
+        "mean": 374.509,
+        "min": 365.525,
+        "max": 380.231
+      },
+      "p95_ms": {
+        "mean": 597.097,
+        "min": 591.231,
+        "max": 600.371
+      },
+      "error_rate_percent": {
+        "mean": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "app_cpu_mean_percent": {
+        "mean": 98.703,
+        "min": 97.455,
+        "max": 101.113
+      },
+      "app_cpu_peak_percent": {
+        "mean": 156.02,
+        "min": 139.56,
+        "max": 166.64
+      },
+      "app_memory_mean_bytes": {
+        "mean": 278588436.333,
+        "min": 263571017.0,
+        "max": 304626008.0
+      },
+      "app_memory_peak_bytes": {
+        "mean": 295590079.333,
+        "min": 281259541.0,
+        "max": 323968042.0
+      },
+      "postgres_cpu_mean_percent": {
+        "mean": 18.755,
+        "min": 16.299,
+        "max": 21.785
+      },
+      "postgres_memory_mean_bytes": {
+        "mean": 117249861.667,
+        "min": 115815219.0,
+        "max": 118441425.0
+      }
+    },
+    {
+      "endpoint": "categories",
+      "version": "monolith",
+      "runs": 3,
+      "concurrency": 16,
+      "throughput_rps": {
+        "mean": 57.214,
+        "min": 54.614,
+        "max": 58.885
+      },
+      "average_ms": {
+        "mean": 278.816,
+        "min": 271.047,
+        "max": 291.727
+      },
+      "p95_ms": {
+        "mean": 461.627,
+        "min": 422.349,
+        "max": 489.524
+      },
+      "error_rate_percent": {
+        "mean": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "app_cpu_mean_percent": {
+        "mean": 48.787,
+        "min": 46.691,
+        "max": 51.184
+      },
+      "app_cpu_peak_percent": {
+        "mean": 53.283,
+        "min": 51.51,
+        "max": 54.91
+      },
+      "app_memory_mean_bytes": {
+        "mean": 106679739.0,
+        "min": 92175073.0,
+        "max": 117879007.0
+      },
+      "app_memory_peak_bytes": {
+        "mean": 111121094.0,
+        "min": 96804536.0,
+        "max": 121215386.0
+      },
+      "postgres_cpu_mean_percent": {
+        "mean": 19.402,
+        "min": 16.478,
+        "max": 22.519
+      },
+      "postgres_memory_mean_bytes": {
+        "mean": 115567374.333,
+        "min": 114180394.0,
+        "max": 117818000.0
+      }
+    },
+    {
+      "endpoint": "login",
+      "version": "microservices",
+      "runs": 3,
+      "concurrency": 4,
+      "throughput_rps": {
+        "mean": 0.903,
+        "min": 0.894,
+        "max": 0.921
+      },
+      "average_ms": {
+        "mean": 4396.914,
+        "min": 4312.816,
+        "max": 4449.456
+      },
+      "p95_ms": {
+        "mean": 4796.54,
+        "min": 4687.729,
+        "max": 5001.104
+      },
+      "error_rate_percent": {
+        "mean": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "app_cpu_mean_percent": {
+        "mean": 82.7,
+        "min": 80.984,
+        "max": 84.092
+      },
+      "app_cpu_peak_percent": {
+        "mean": 131.093,
+        "min": 113.84,
+        "max": 141.13
+      },
+      "app_memory_mean_bytes": {
+        "mean": 283457035.333,
+        "min": 269341163.0,
+        "max": 308915383.0
+      },
+      "app_memory_peak_bytes": {
+        "mean": 300039537.0,
+        "min": 283692237.0,
+        "max": 326820168.0
+      },
+      "postgres_cpu_mean_percent": {
+        "mean": 10.797,
+        "min": 9.675,
+        "max": 12.154
+      },
+      "postgres_memory_mean_bytes": {
+        "mean": 138687866.0,
+        "min": 138104450.0,
+        "max": 139167007.0
+      }
+    },
+    {
+      "endpoint": "login",
+      "version": "monolith",
+      "runs": 3,
+      "concurrency": 4,
+      "throughput_rps": {
+        "mean": 0.965,
+        "min": 0.957,
+        "max": 0.973
+      },
+      "average_ms": {
+        "mean": 4109.935,
+        "min": 4072.098,
+        "max": 4135.327
+      },
+      "p95_ms": {
+        "mean": 4467.064,
+        "min": 4405.904,
+        "max": 4498.474
+      },
+      "error_rate_percent": {
+        "mean": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "app_cpu_mean_percent": {
+        "mean": 48.683,
+        "min": 47.578,
+        "max": 49.636
+      },
+      "app_cpu_peak_percent": {
+        "mean": 52.41,
+        "min": 51.83,
+        "max": 53.31
+      },
+      "app_memory_mean_bytes": {
+        "mean": 108147224.333,
+        "min": 94867138.0,
+        "max": 119400038.0
+      },
+      "app_memory_peak_bytes": {
+        "mean": 114284298.333,
+        "min": 101890130.0,
+        "max": 123941683.0
+      },
+      "postgres_cpu_mean_percent": {
+        "mean": 5.685,
+        "min": 4.656,
+        "max": 7.681
+      },
+      "postgres_memory_mean_bytes": {
+        "mean": 111149056.0,
+        "min": 110100480.0,
+        "max": 112906963.0
+      }
+    },
+    {
+      "endpoint": "videos-latest",
+      "version": "microservices",
+      "runs": 3,
+      "concurrency": 16,
+      "throughput_rps": {
+        "mean": 7.902,
+        "min": 7.88,
+        "max": 7.934
+      },
+      "average_ms": {
+        "mean": 2016.227,
+        "min": 2011.549,
+        "max": 2018.814
+      },
+      "p95_ms": {
+        "mean": 2062.574,
+        "min": 2028.656,
+        "max": 2088.848
+      },
+      "error_rate_percent": {
+        "mean": 100.0,
+        "min": 100.0,
+        "max": 100.0
+      },
+      "app_cpu_mean_percent": {
+        "mean": 51.692,
+        "min": 47.843,
+        "max": 55.012
+      },
+      "app_cpu_peak_percent": {
+        "mean": 94.037,
+        "min": 88.07,
+        "max": 99.42
+      },
+      "app_memory_mean_bytes": {
+        "mean": 278277167.667,
+        "min": 263220220.0,
+        "max": 306286952.0
+      },
+      "app_memory_peak_bytes": {
+        "mean": 295411821.333,
+        "min": 276069089.0,
+        "max": 326222480.0
+      },
+      "postgres_cpu_mean_percent": {
+        "mean": 8.046,
+        "min": 4.915,
+        "max": 13.712
+      },
+      "postgres_memory_mean_bytes": {
+        "mean": 132463746.667,
+        "min": 131134915.0,
+        "max": 133525668.0
+      }
+    },
+    {
+      "endpoint": "videos-latest",
+      "version": "monolith",
+      "runs": 3,
+      "concurrency": 16,
+      "throughput_rps": {
+        "mean": 16.508,
+        "min": 15.44,
+        "max": 17.779
+      },
+      "average_ms": {
+        "mean": 965.9,
+        "min": 893.926,
+        "max": 1026.691
+      },
+      "p95_ms": {
+        "mean": 1431.425,
+        "min": 1284.791,
+        "max": 1594.038
+      },
+      "error_rate_percent": {
+        "mean": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "app_cpu_mean_percent": {
+        "mean": 48.869,
+        "min": 46.205,
+        "max": 50.402
+      },
+      "app_cpu_peak_percent": {
+        "mean": 54.07,
+        "min": 51.72,
+        "max": 55.77
+      },
+      "app_memory_mean_bytes": {
+        "mean": 109123334.333,
+        "min": 95701434.0,
+        "max": 120586240.0
+      },
+      "app_memory_peak_bytes": {
+        "mean": 115699875.667,
+        "min": 102571704.0,
+        "max": 128135987.0
+      },
+      "postgres_cpu_mean_percent": {
+        "mean": 20.327,
+        "min": 19.396,
+        "max": 21.04
+      },
+      "postgres_memory_mean_bytes": {
+        "mean": 122220747.333,
+        "min": 120261181.0,
+        "max": 124608959.0
+      }
+    }
+  ],
+  "raw_runs": [
+    {
+      "version": "monolith",
+      "endpoint": "categories",
+      "run": 1,
+      "url": "http://127.0.0.1:18200/api/categories",
+      "method": "GET",
+      "warmup_seconds": 5.0,
+      "http": {
+        "concurrency": 16,
+        "duration_seconds": 20.379,
+        "requests": 1113,
+        "successes": 1113,
+        "errors": 0,
+        "throughput_rps": 54.614,
+        "average_ms": 291.727,
+        "p95_ms": 489.524,
+        "error_rate_percent": 0.0,
+        "status_codes": {
+          "200": 1113
+        }
+      },
+      "resources": {
+        "samples": 10,
+        "app_cpu_mean_percent": 51.184,
+        "app_cpu_peak_percent": 53.43,
+        "app_memory_mean_bytes": 109985137,
+        "app_memory_peak_bytes": 115343360.0,
+        "infra_cpu_mean_percent": 19.21,
+        "infra_cpu_peak_percent": 28.68,
+        "infra_memory_mean_bytes": 117818000,
+        "infra_memory_peak_bytes": 126353408.0
+      }
+    },
+    {
+      "version": "monolith",
+      "endpoint": "videos-latest",
+      "run": 1,
+      "url": "http://127.0.0.1:18200/api/videos?sort=latest&page=1&page_size=20",
+      "method": "GET",
+      "warmup_seconds": 5.0,
+      "http": {
+        "concurrency": 16,
+        "duration_seconds": 20.596,
+        "requests": 318,
+        "successes": 318,
+        "errors": 0,
+        "throughput_rps": 15.44,
+        "average_ms": 1026.691,
+        "p95_ms": 1594.038,
+        "error_rate_percent": 0.0,
+        "status_codes": {
+          "200": 318
+        }
+      },
+      "resources": {
+        "samples": 11,
+        "app_cpu_mean_percent": 46.205,
+        "app_cpu_peak_percent": 55.77,
+        "app_memory_mean_bytes": 111082329,
+        "app_memory_peak_bytes": 116391936.0,
+        "infra_cpu_mean_percent": 21.04,
+        "infra_cpu_peak_percent": 37.03,
+        "infra_memory_mean_bytes": 124608959,
+        "infra_memory_peak_bytes": 133274010.0
+      }
+    },
+    {
+      "version": "monolith",
+      "endpoint": "login",
+      "run": 1,
+      "url": "http://127.0.0.1:18200/api/auth/login",
+      "method": "POST",
+      "warmup_seconds": 5.0,
+      "http": {
+        "concurrency": 4,
+        "duration_seconds": 33.183,
+        "requests": 32,
+        "successes": 32,
+        "errors": 0,
+        "throughput_rps": 0.964,
+        "average_ms": 4122.379,
+        "p95_ms": 4405.904,
+        "error_rate_percent": 0.0,
+        "status_codes": {
+          "200": 32
+        }
+      },
+      "resources": {
+        "samples": 17,
+        "app_cpu_mean_percent": 47.578,
+        "app_cpu_peak_percent": 51.83,
+        "app_memory_mean_bytes": 110174497,
+        "app_memory_peak_bytes": 117021082.0,
+        "infra_cpu_mean_percent": 4.656,
+        "infra_cpu_peak_percent": 17.76,
+        "infra_memory_mean_bytes": 112906963,
+        "infra_memory_peak_bytes": 115028787.0
+      }
+    },
+    {
+      "version": "microservices",
+      "endpoint": "categories",
+      "run": 1,
+      "url": "http://127.0.0.1:18210/api/categories",
+      "method": "GET",
+      "warmup_seconds": 5.0,
+      "http": {
+        "concurrency": 16,
+        "duration_seconds": 20.296,
+        "requests": 884,
+        "successes": 884,
+        "errors": 0,
+        "throughput_rps": 43.556,
+        "average_ms": 365.525,
+        "p95_ms": 591.231,
+        "error_rate_percent": 0.0,
+        "status_codes": {
+          "200": 884
+        }
+      },
+      "resources": {
+        "samples": 10,
+        "app_cpu_mean_percent": 101.113,
+        "app_cpu_peak_percent": 161.86,
+        "app_memory_mean_bytes": 304626008,
+        "app_memory_peak_bytes": 323968042.0,
+        "infra_cpu_mean_percent": 16.299,
+        "infra_cpu_peak_percent": 34.5,
+        "infra_memory_mean_bytes": 117492941,
+        "infra_memory_peak_bytes": 121215386.0
+      }
+    },
+    {
+      "version": "microservices",
+      "endpoint": "videos-latest",
+      "run": 1,
+      "url": "http://127.0.0.1:18210/api/videos?sort=latest&page=1&page_size=20",
+      "method": "GET",
+      "warmup_seconds": 5.0,
+      "http": {
+        "concurrency": 16,
+        "duration_seconds": 20.166,
+        "requests": 160,
+        "successes": 0,
+        "errors": 160,
+        "throughput_rps": 7.934,
+        "average_ms": 2011.549,
+        "p95_ms": 2028.656,
+        "error_rate_percent": 100.0,
+        "status_codes": {
+          "503": 160
+        }
+      },
+      "resources": {
+        "samples": 10,
+        "app_cpu_mean_percent": 55.012,
+        "app_cpu_peak_percent": 94.62,
+        "app_memory_mean_bytes": 306286952,
+        "app_memory_peak_bytes": 326222480.0,
+        "infra_cpu_mean_percent": 5.51,
+        "infra_cpu_peak_percent": 15.31,
+        "infra_memory_mean_bytes": 133525668,
+        "infra_memory_peak_bytes": 133693440.0
+      }
+    },
+    {
+      "version": "microservices",
+      "endpoint": "login",
+      "run": 1,
+      "url": "http://127.0.0.1:18210/api/auth/login",
+      "method": "POST",
+      "warmup_seconds": 5.0,
+      "http": {
+        "concurrency": 4,
+        "duration_seconds": 31.309,
+        "requests": 28,
+        "successes": 28,
+        "errors": 0,
+        "throughput_rps": 0.894,
+        "average_ms": 4428.471,
+        "p95_ms": 4700.786,
+        "error_rate_percent": 0.0,
+        "status_codes": {
+          "200": 28
+        }
+      },
+      "resources": {
+        "samples": 15,
+        "app_cpu_mean_percent": 84.092,
+        "app_cpu_peak_percent": 113.84,
+        "app_memory_mean_bytes": 308915383,
+        "app_memory_peak_bytes": 326820168.0,
+        "infra_cpu_mean_percent": 9.675,
+        "infra_cpu_peak_percent": 19.28,
+        "infra_memory_mean_bytes": 139167007,
+        "infra_memory_peak_bytes": 141348045.0
+      }
+    },
+    {
+      "version": "microservices",
+      "endpoint": "categories",
+      "run": 2,
+      "url": "http://127.0.0.1:18210/api/categories",
+      "method": "GET",
+      "warmup_seconds": 5.0,
+      "http": {
+        "concurrency": 16,
+        "duration_seconds": 20.224,
+        "requests": 847,
+        "successes": 847,
+        "errors": 0,
+        "throughput_rps": 41.882,
+        "average_ms": 380.231,
+        "p95_ms": 600.371,
+        "error_rate_percent": 0.0,
+        "status_codes": {
+          "200": 847
+        }
+      },
+      "resources": {
+        "samples": 11,
+        "app_cpu_mean_percent": 97.455,
+        "app_cpu_peak_percent": 166.64,
+        "app_memory_mean_bytes": 263571017,
+        "app_memory_peak_bytes": 281259541.0,
+        "infra_cpu_mean_percent": 21.785,
+        "infra_cpu_peak_percent": 27.17,
+        "infra_memory_mean_bytes": 118441425,
+        "infra_memory_peak_bytes": 124675686.0
+      }
+    },
+    {
+      "version": "microservices",
+      "endpoint": "videos-latest",
+      "run": 2,
+      "url": "http://127.0.0.1:18210/api/videos?sort=latest&page=1&page_size=20",
+      "method": "GET",
+      "warmup_seconds": 5.0,
+      "http": {
+        "concurrency": 16,
+        "duration_seconds": 20.306,
+        "requests": 160,
+        "successes": 0,
+        "errors": 160,
+        "throughput_rps": 7.88,
+        "average_ms": 2018.319,
+        "p95_ms": 2070.217,
+        "error_rate_percent": 100.0,
+        "status_codes": {
+          "503": 160
+        }
+      },
+      "resources": {
+        "samples": 11,
+        "app_cpu_mean_percent": 47.843,
+        "app_cpu_peak_percent": 99.42,
+        "app_memory_mean_bytes": 263220220,
+        "app_memory_peak_bytes": 283943895.0,
+        "infra_cpu_mean_percent": 4.915,
+        "infra_cpu_peak_percent": 17.52,
+        "infra_memory_mean_bytes": 132730657,
+        "infra_memory_peak_bytes": 133274010.0
+      }
+    },
+    {
+      "version": "microservices",
+      "endpoint": "login",
+      "run": 2,
+      "url": "http://127.0.0.1:18210/api/auth/login",
+      "method": "POST",
+      "warmup_seconds": 5.0,
+      "http": {
+        "concurrency": 4,
+        "duration_seconds": 31.305,
+        "requests": 28,
+        "successes": 28,
+        "errors": 0,
+        "throughput_rps": 0.894,
+        "average_ms": 4449.456,
+        "p95_ms": 5001.104,
+        "error_rate_percent": 0.0,
+        "status_codes": {
+          "200": 28
+        }
+      },
+      "resources": {
+        "samples": 16,
+        "app_cpu_mean_percent": 80.984,
+        "app_cpu_peak_percent": 138.31,
+        "app_memory_mean_bytes": 269341163,
+        "app_memory_peak_bytes": 283692237.0,
+        "infra_cpu_mean_percent": 10.562,
+        "infra_cpu_peak_percent": 21.22,
+        "infra_memory_mean_bytes": 138792141,
+        "infra_memory_peak_bytes": 143969485.0
+      }
+    },
+    {
+      "version": "monolith",
+      "endpoint": "categories",
+      "run": 2,
+      "url": "http://127.0.0.1:18200/api/categories",
+      "method": "GET",
+      "warmup_seconds": 5.0,
+      "http": {
+        "concurrency": 16,
+        "duration_seconds": 20.294,
+        "requests": 1180,
+        "successes": 1180,
+        "errors": 0,
+        "throughput_rps": 58.144,
+        "average_ms": 273.675,
+        "p95_ms": 422.349,
+        "error_rate_percent": 0.0,
+        "status_codes": {
+          "200": 1180
+        }
+      },
+      "resources": {
+        "samples": 11,
+        "app_cpu_mean_percent": 46.691,
+        "app_cpu_peak_percent": 54.91,
+        "app_memory_mean_bytes": 117879007,
+        "app_memory_peak_bytes": 121215386.0,
+        "infra_cpu_mean_percent": 16.478,
+        "infra_cpu_peak_percent": 27.51,
+        "infra_memory_mean_bytes": 114180394,
+        "infra_memory_peak_bytes": 117440512.0
+      }
+    },
+    {
+      "version": "monolith",
+      "endpoint": "videos-latest",
+      "run": 2,
+      "url": "http://127.0.0.1:18200/api/videos?sort=latest&page=1&page_size=20",
+      "method": "GET",
+      "warmup_seconds": 5.0,
+      "http": {
+        "concurrency": 16,
+        "duration_seconds": 20.417,
+        "requests": 363,
+        "successes": 363,
+        "errors": 0,
+        "throughput_rps": 17.779,
+        "average_ms": 893.926,
+        "p95_ms": 1284.791,
+        "error_rate_percent": 0.0,
+        "status_codes": {
+          "200": 363
+        }
+      },
+      "resources": {
+        "samples": 10,
+        "app_cpu_mean_percent": 50.402,
+        "app_cpu_peak_percent": 51.72,
+        "app_memory_mean_bytes": 120586240,
+        "app_memory_peak_bytes": 128135987.0,
+        "infra_cpu_mean_percent": 20.546,
+        "infra_cpu_peak_percent": 27.99,
+        "infra_memory_mean_bytes": 120261181,
+        "infra_memory_peak_bytes": 130862285.0
+      }
+    },
+    {
+      "version": "monolith",
+      "endpoint": "login",
+      "run": 2,
+      "url": "http://127.0.0.1:18200/api/auth/login",
+      "method": "POST",
+      "warmup_seconds": 5.0,
+      "http": {
+        "concurrency": 4,
+        "duration_seconds": 32.893,
+        "requests": 32,
+        "successes": 32,
+        "errors": 0,
+        "throughput_rps": 0.973,
+        "average_ms": 4072.098,
+        "p95_ms": 4498.474,
+        "error_rate_percent": 0.0,
+        "status_codes": {
+          "200": 32
+        }
+      },
+      "resources": {
+        "samples": 16,
+        "app_cpu_mean_percent": 49.636,
+        "app_cpu_peak_percent": 52.09,
+        "app_memory_mean_bytes": 119400038,
+        "app_memory_peak_bytes": 123941683.0,
+        "infra_cpu_mean_percent": 7.681,
+        "infra_cpu_peak_percent": 14.59,
+        "infra_memory_mean_bytes": 110100480,
+        "infra_memory_peak_bytes": 110624768.0
+      }
+    },
+    {
+      "version": "monolith",
+      "endpoint": "categories",
+      "run": 3,
+      "url": "http://127.0.0.1:18200/api/categories",
+      "method": "GET",
+      "warmup_seconds": 5.0,
+      "http": {
+        "concurrency": 16,
+        "duration_seconds": 20.107,
+        "requests": 1184,
+        "successes": 1184,
+        "errors": 0,
+        "throughput_rps": 58.885,
+        "average_ms": 271.047,
+        "p95_ms": 473.008,
+        "error_rate_percent": 0.0,
+        "status_codes": {
+          "200": 1184
+        }
+      },
+      "resources": {
+        "samples": 10,
+        "app_cpu_mean_percent": 48.485,
+        "app_cpu_peak_percent": 51.51,
+        "app_memory_mean_bytes": 92175073,
+        "app_memory_peak_bytes": 96804536.0,
+        "infra_cpu_mean_percent": 22.519,
+        "infra_cpu_peak_percent": 32.73,
+        "infra_memory_mean_bytes": 114703729,
+        "infra_memory_peak_bytes": 119537664.0
+      }
+    },
+    {
+      "version": "monolith",
+      "endpoint": "videos-latest",
+      "run": 3,
+      "url": "http://127.0.0.1:18200/api/videos?sort=latest&page=1&page_size=20",
+      "method": "GET",
+      "warmup_seconds": 5.0,
+      "http": {
+        "concurrency": 16,
+        "duration_seconds": 20.484,
+        "requests": 334,
+        "successes": 334,
+        "errors": 0,
+        "throughput_rps": 16.306,
+        "average_ms": 977.083,
+        "p95_ms": 1415.445,
+        "error_rate_percent": 0.0,
+        "status_codes": {
+          "200": 334
+        }
+      },
+      "resources": {
+        "samples": 10,
+        "app_cpu_mean_percent": 50.001,
+        "app_cpu_peak_percent": 54.72,
+        "app_memory_mean_bytes": 95701434,
+        "app_memory_peak_bytes": 102571704.0,
+        "infra_cpu_mean_percent": 19.396,
+        "infra_cpu_peak_percent": 31.39,
+        "infra_memory_mean_bytes": 121792102,
+        "infra_memory_peak_bytes": 129708851.0
+      }
+    },
+    {
+      "version": "monolith",
+      "endpoint": "login",
+      "run": 3,
+      "url": "http://127.0.0.1:18200/api/auth/login",
+      "method": "POST",
+      "warmup_seconds": 5.0,
+      "http": {
+        "concurrency": 4,
+        "duration_seconds": 33.431,
+        "requests": 32,
+        "successes": 32,
+        "errors": 0,
+        "throughput_rps": 0.957,
+        "average_ms": 4135.327,
+        "p95_ms": 4496.814,
+        "error_rate_percent": 0.0,
+        "status_codes": {
+          "200": 32
+        }
+      },
+      "resources": {
+        "samples": 17,
+        "app_cpu_mean_percent": 48.834,
+        "app_cpu_peak_percent": 53.31,
+        "app_memory_mean_bytes": 94867138,
+        "app_memory_peak_bytes": 101890130.0,
+        "infra_cpu_mean_percent": 4.718,
+        "infra_cpu_peak_percent": 13.3,
+        "infra_memory_mean_bytes": 110439725,
+        "infra_memory_peak_bytes": 112931635.0
+      }
+    },
+    {
+      "version": "microservices",
+      "endpoint": "categories",
+      "run": 3,
+      "url": "http://127.0.0.1:18210/api/categories",
+      "method": "GET",
+      "warmup_seconds": 5.0,
+      "http": {
+        "concurrency": 16,
+        "duration_seconds": 20.121,
+        "requests": 850,
+        "successes": 850,
+        "errors": 0,
+        "throughput_rps": 42.244,
+        "average_ms": 377.772,
+        "p95_ms": 599.69,
+        "error_rate_percent": 0.0,
+        "status_codes": {
+          "200": 850
+        }
+      },
+      "resources": {
+        "samples": 10,
+        "app_cpu_mean_percent": 97.54,
+        "app_cpu_peak_percent": 139.56,
+        "app_memory_mean_bytes": 267568284,
+        "app_memory_peak_bytes": 281542655.0,
+        "infra_cpu_mean_percent": 18.182,
+        "infra_cpu_peak_percent": 31.28,
+        "infra_memory_mean_bytes": 115815219,
+        "infra_memory_peak_bytes": 118489088.0
+      }
+    },
+    {
+      "version": "microservices",
+      "endpoint": "videos-latest",
+      "run": 3,
+      "url": "http://127.0.0.1:18210/api/videos?sort=latest&page=1&page_size=20",
+      "method": "GET",
+      "warmup_seconds": 5.0,
+      "http": {
+        "concurrency": 16,
+        "duration_seconds": 20.273,
+        "requests": 160,
+        "successes": 0,
+        "errors": 160,
+        "throughput_rps": 7.892,
+        "average_ms": 2018.814,
+        "p95_ms": 2088.848,
+        "error_rate_percent": 100.0,
+        "status_codes": {
+          "503": 160
+        }
+      },
+      "resources": {
+        "samples": 10,
+        "app_cpu_mean_percent": 52.222,
+        "app_cpu_peak_percent": 88.07,
+        "app_memory_mean_bytes": 265324331,
+        "app_memory_peak_bytes": 276069089.0,
+        "infra_cpu_mean_percent": 13.712,
+        "infra_cpu_peak_percent": 18.68,
+        "infra_memory_mean_bytes": 131134915,
+        "infra_memory_peak_bytes": 131910861.0
+      }
+    },
+    {
+      "version": "microservices",
+      "endpoint": "login",
+      "run": 3,
+      "url": "http://127.0.0.1:18210/api/auth/login",
+      "method": "POST",
+      "warmup_seconds": 5.0,
+      "http": {
+        "concurrency": 4,
+        "duration_seconds": 30.385,
+        "requests": 28,
+        "successes": 28,
+        "errors": 0,
+        "throughput_rps": 0.921,
+        "average_ms": 4312.816,
+        "p95_ms": 4687.729,
+        "error_rate_percent": 0.0,
+        "status_codes": {
+          "200": 28
+        }
+      },
+      "resources": {
+        "samples": 15,
+        "app_cpu_mean_percent": 83.023,
+        "app_cpu_peak_percent": 141.13,
+        "app_memory_mean_bytes": 272114560,
+        "app_memory_peak_bytes": 289606206.0,
+        "infra_cpu_mean_percent": 12.154,
+        "infra_cpu_peak_percent": 16.24,
+        "infra_memory_mean_bytes": 138104450,
+        "infra_memory_peak_bytes": 138726605.0
+      }
+    }
+  ],
+  "evidence_directory": "C:\\Users\\lausu\\Desktop\\SE2026-microservices\\.ci-results\\performance\\20260831-113157084"
+}

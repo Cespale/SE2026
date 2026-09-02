@@ -1,0 +1,13 @@
+# 临时 override：让 Compose 前端(5273) 改连 Kind 后端(经 8099 隧道)。
+# 与 docker-compose.microservices.yml 一起使用；Compose 后端(8100) 原样保留，便于回滚。
+# 回滚：docker compose -f docker-compose.microservices.yml -f docker-compose.frontend-kind.yml down frontend-ms
+#       然后 docker compose -f docker-compose.microservices.yml --env-file .env.microservices up -d --no-deps frontend-ms
+services:
+  frontend-ms:
+    environment:
+      # 浏览器里 JS 调用的 API 地址 → 指向 Kind 隧道端口
+      REACT_APP_API_BASE_URL: http://127.0.0.1:8099
+      # dev server 转发 /uploads /avatars → 同一 Kind 隧道
+      STREAMHUB_BACKEND_PROXY_TARGET: http://host.docker.internal:8099
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

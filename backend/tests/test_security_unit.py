@@ -10,10 +10,16 @@ from app.security import create_token, hash_password, parse_token, verify_passwo
 def test_password_hash_and_verify():
     password = "user123"
     password_hash = hash_password(password)
+    second_hash = hash_password(password)
 
     assert password_hash != password
     assert verify_password(password, password_hash) is True
     assert verify_password("wrong-password", password_hash) is False
+    assert isinstance(password_hash, str)
+    assert password_hash.startswith("$2")
+    assert len(password_hash) > len(password)
+    assert second_hash != password_hash
+    assert verify_password(password, second_hash) is True
 
 
 def test_token_can_be_parsed_back_to_user_id():
@@ -27,6 +33,9 @@ def test_token_can_be_parsed_back_to_user_id():
     token = create_token(user)
 
     assert parse_token(token) == str(user.id)
+    assert isinstance(token, str)
+    assert token.count(".") == 1
+    assert uuid.UUID(parse_token(token)) == user.id
 
 
 def test_invalid_token_returns_401():
@@ -34,3 +43,4 @@ def test_invalid_token_returns_401():
         parse_token("invalid-token")
 
     assert error.value.status_code == 401
+    assert error.value.detail == "登录状态已失效，请重新登录"

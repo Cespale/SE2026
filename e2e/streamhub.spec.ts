@@ -1,6 +1,10 @@
 import { expect, test, type Page } from '@playwright/test';
 
-const e2eBackendUrl = process.env.E2E_BACKEND_URL || 'http://127.0.0.1:8001';
+const e2eBackendUrl =
+  process.env.E2E_BACKEND_URL ||
+  (process.env.E2E_USE_MICROSERVICES === 'true'
+    ? 'http://127.0.0.1:8100'
+    : 'http://127.0.0.1:8001');
 
 async function login(page: Page, account: string, password: string) {
   await page.goto('/#/', { waitUntil: 'domcontentloaded' });
@@ -11,6 +15,15 @@ async function login(page: Page, account: string, password: string) {
   await page.getByPlaceholder('请输入密码').press('Enter');
 
   await expect(page.getByPlaceholder('请输入账号')).toHaveCount(0);
+  const storedAuth = await page.evaluate(() =>
+    localStorage.getItem('auth-storage')
+  );
+  const authState = JSON.parse(storedAuth || '{}').state;
+  expect(storedAuth).toBeTruthy();
+  expect(authState.token).toBeTruthy();
+  expect(authState.isLoggedIn).toBe(true);
+  expect(authState.user.account).toBe(account);
+  expect(authState.user.id).toBeTruthy();
 }
 
 async function clearLogin(page: Page) {
@@ -59,20 +72,34 @@ async function closeActiveCreatorRooms(page: Page) {
 }
 
 test('E2E-TC01-02：用户搜索、播放视频并发表评论和弹幕', async ({ page }) => {
+  // 冷启动后的自托管 runner 上，本用例还包含视频元数据请求和两次互动写入。
+  test.setTimeout(60_000);
   await login(page, 'user', 'user123');
 
   const keyword = '视频';
-  await page.getByPlaceholder('搜索视频、直播...').fill(keyword);
-  await page.getByPlaceholder('搜索视频、直播...').press('Enter');
+  const searchInput = page.getByPlaceholder('搜索视频、直播...');
+  await searchInput.fill(keyword);
+  await expect(searchInput).toHaveValue(keyword);
+  await searchInput.press('Enter');
 
   await expect(page).toHaveURL(/#\/search/);
+  await expect(
+    page.getByRole('heading', { name: `"${keyword}" 的搜索结果`, exact: true })
+  ).toBeVisible();
+  await expect(
+    page.getByPlaceholder('搜索视频、直播、创作者...')
+  ).toHaveValue(keyword);
 
   const firstVideoTitle = page.locator('main h3').first();
   await expect(firstVideoTitle).toBeVisible();
+  expect((await firstVideoTitle.textContent())?.trim()).toBeTruthy();
   await firstVideoTitle.click();
 
   await expect(page).toHaveURL(/#\/video\//);
-  await expect(page.locator('video')).toBeVisible();
+  const videoPlayer = page.locator('video');
+  await expect(videoPlayer).toBeVisible();
+  await expect(videoPlayer).toHaveAttribute('preload', 'metadata');
+  await expect(videoPlayer).toHaveAttribute('src', /.+/);
 
   const comment = `E2E-评论-${Date.now()}`;
   const commentInput = page.getByPlaceholder('写下你的评论...');
@@ -86,7 +113,13 @@ test('E2E-TC01-02：用户搜索、播放视频并发表评论和弹幕', async 
   await commentInput.fill(comment);
   await commentInput.press('Enter');
 
-  expect((await commentResponse).ok()).toBeTruthy();
+  const submittedCommentResponse = await commentResponse;
+  expect(submittedCommentResponse.ok()).toBeTruthy();
+  expect(submittedCommentResponse.status()).toBe(200);
+  const submittedComment = await submittedCommentResponse.json();
+  expect(submittedComment.content).toBe(comment);
+  expect(submittedComment.id).toBeTruthy();
+  await expect(commentInput).toHaveValue('');
   await expect(page.getByText(comment, { exact: true })).toBeVisible();
 
   const danmaku = `E2E-弹幕-${Date.now()}`;
@@ -101,22 +134,55 @@ test('E2E-TC01-02：用户搜索、播放视频并发表评论和弹幕', async 
   await danmakuInput.fill(danmaku);
   await danmakuInput.press('Enter');
 
-  expect((await danmakuResponse).ok()).toBeTruthy();
+  const submittedDanmakuResponse = await danmakuResponse;
+  expect(submittedDanmakuResponse.ok()).toBeTruthy();
+  expect(submittedDanmakuResponse.status()).toBe(200);
+  const submittedDanmaku = await submittedDanmakuResponse.json();
+  expect(submittedDanmaku.content).toBe(danmaku);
+  expect(submittedDanmaku.id).toBeTruthy();
   await expect(danmakuInput).toHaveValue('');
 });
 
 test('E2E-TC03-05：创作者投稿，管理员审核，创作者查看结果', async ({ page }) => {
+  // 该代表性用例会真实上传约 38 MiB 视频，再完成三次登录和跨角色审核。
+  // 自托管 runner 的 Docker 资源较紧时，60 秒会在业务步骤已成功后误判超时。
+  test.setTimeout(120_000);
   const title = `E2E-投稿-${Date.now()}`;
 
   await login(page, 'creator', 'creator123');
   await page.goto('/#/upload', { waitUntil: 'domcontentloaded' });
 
-  await page
-    .locator('input[type="file"][accept="video/*"]')
-    .setInputFiles('public/demo-videos/video1.mp4');
+  await expect(
+    page.getByRole('heading', { name: '上传视频', exact: true })
+  ).toBeVisible();
+  const videoFileInput = page.locator('input[type="file"][accept="video/*"]');
+  await expect(videoFileInput).toHaveAttribute('accept', 'video/*');
+  const uploadFileResponse = page.waitForResponse(
+    (response) =>
+      new URL(response.url()).pathname === '/api/videos/upload-file' &&
+      response.request().method() === 'POST'
+  );
+  await videoFileInput.setInputFiles('public/demo-videos/video1.mp4');
+  const uploadedFileResponse = await uploadFileResponse;
+  expect(uploadedFileResponse.ok()).toBeTruthy();
+  const uploadedFile = await uploadedFileResponse.json();
+  expect(uploadedFile.code).toBe(0);
+  expect(uploadedFile.data.videoUrl).toMatch(/^\/uploads\/videos\//);
   await expect(page.getByText('视频已上传', { exact: true })).toBeVisible();
-  await page.getByPlaceholder('输入标题').fill(title);
+  const titleInput = page.getByPlaceholder('输入标题');
+  await titleInput.fill(title);
+  await expect(titleInput).toHaveValue(title);
+  const publishResponse = page.waitForResponse(
+    (response) =>
+      new URL(response.url()).pathname === '/api/videos' &&
+      response.request().method() === 'POST'
+  );
   await page.getByRole('button', { name: '发布视频', exact: true }).click();
+  const publishedResponse = await publishResponse;
+  expect(publishedResponse.status()).toBe(200);
+  const publishedVideo = await publishedResponse.json();
+  expect(publishedVideo.title).toBe(title);
+  expect(publishedVideo.auditStatus).toBe(0);
 
   await expect(page.getByRole('heading', { name: '发布成功！', exact: true })).toBeVisible();
 
@@ -124,12 +190,12 @@ test('E2E-TC03-05：创作者投稿，管理员审核，创作者查看结果', 
   await page.getByRole('button', { name: '内容管理', exact: true }).click();
   await expect(page.getByText(title, { exact: true })).toBeVisible();
   const pendingCreatorRow = page
-  .getByText(title, { exact: true })
-  .locator('xpath=ancestor::tr');
+    .getByText(title, { exact: true })
+    .locator('xpath=ancestor::tr');
 
-await expect(
-  pendingCreatorRow.getByText('审核中', { exact: true })
-).toBeVisible();
+  await expect(
+    pendingCreatorRow.getByText('审核中', { exact: true })
+  ).toBeVisible();
 
   await clearLogin(page);
   await login(page, 'admin', 'admin123');
@@ -147,10 +213,10 @@ await expect(
 
   await clearLogin(page);
   await login(page, 'creator', 'creator123');
-await page.goto('/#/creator', { waitUntil: 'domcontentloaded' });
-await page.getByRole('button', { name: '内容管理', exact: true }).click();
+  await page.goto('/#/creator', { waitUntil: 'domcontentloaded' });
+  await page.getByRole('button', { name: '内容管理', exact: true }).click();
 
-const creatorRow = page
+  const creatorRow = page
     .getByText(title, { exact: true })
     .locator('xpath=ancestor::tr');
 
@@ -171,11 +237,31 @@ test('E2E-TC06-08：创建直播、观众发弹幕、接口结束直播', async 
     await closeActiveCreatorRooms(creator);
     await creator.goto('/#/live/start', { waitUntil: 'domcontentloaded' });
 
-    await creator
-      .getByPlaceholder('直播间的标题...')
-      .fill(title);
+    await expect(
+      creator.getByRole('heading', { name: '开始直播', exact: true })
+    ).toBeVisible();
+    const startButton = creator.getByRole('button', {
+      name: '开始直播',
+      exact: true,
+    });
+    await expect(startButton).toBeDisabled();
+    const liveTitleInput = creator.getByPlaceholder('直播间的标题...');
+    await liveTitleInput.fill(title);
+    await expect(liveTitleInput).toHaveValue(title);
+    await expect(startButton).toBeEnabled();
 
-    await creator.getByRole('button', { name: '开始直播', exact: true }).click();
+    const createRoomResponse = creator.waitForResponse(
+      (response) =>
+        new URL(response.url()).pathname === '/api/live/rooms' &&
+        response.request().method() === 'POST'
+    );
+
+    await startButton.click();
+    const createdRoomResponse = await createRoomResponse;
+    expect(createdRoomResponse.status()).toBe(200);
+    const createdRoom = await createdRoomResponse.json();
+    expect(createdRoom.title).toBe(title);
+    expect(createdRoom.status).toBe(1);
 
     await expect(creator).toHaveURL(/#\/live\//);
     await expect(creator.getByText(title, { exact: true })).toBeVisible();
@@ -185,6 +271,19 @@ test('E2E-TC06-08：创建直播、观众发弹幕、接口结束直播', async 
     expect(roomId).toBeTruthy();
 
     await login(viewer, 'user', 'user123');
+    await expect.poll(
+      async () => {
+        const response = await viewer.request.get(
+          `${e2eBackendUrl}/api/live/rooms/${roomId}`
+        );
+        return response.status();
+      },
+      {
+        message: '等待直播间公开详情在资源压力后恢复就绪',
+        timeout: 15_000,
+        intervals: [500, 1_000, 2_000],
+      }
+    ).toBe(200);
     await viewer.goto(liveUrl, { waitUntil: 'domcontentloaded' });
 
     await expect(viewer.getByText('直播间聊天', { exact: true })).toBeVisible();
@@ -195,6 +294,7 @@ test('E2E-TC06-08：创建直播、观众发弹幕、接口结束直播', async 
 
     await chatInput.fill(message);
     await chatInput.press('Enter');
+    await expect(chatInput).toHaveValue('');
 
     const chatPanel = viewer
       .getByRole('heading', { name: '直播间聊天', exact: true })

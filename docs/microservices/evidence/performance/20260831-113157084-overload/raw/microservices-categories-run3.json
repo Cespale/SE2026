@@ -1,0 +1,33 @@
+{
+  "version": "microservices",
+  "endpoint": "categories",
+  "run": 3,
+  "url": "http://127.0.0.1:18210/api/categories",
+  "method": "GET",
+  "warmup_seconds": 5.0,
+  "http": {
+    "concurrency": 16,
+    "duration_seconds": 20.121,
+    "requests": 850,
+    "successes": 850,
+    "errors": 0,
+    "throughput_rps": 42.244,
+    "average_ms": 377.772,
+    "p95_ms": 599.69,
+    "error_rate_percent": 0.0,
+    "status_codes": {
+      "200": 850
+    }
+  },
+  "resources": {
+    "samples": 10,
+    "app_cpu_mean_percent": 97.54,
+    "app_cpu_peak_percent": 139.56,
+    "app_memory_mean_bytes": 267568284,
+    "app_memory_peak_bytes": 281542655.0,
+    "infra_cpu_mean_percent": 18.182,
+    "infra_cpu_peak_percent": 31.28,
+    "infra_memory_mean_bytes": 115815219,
+    "infra_memory_peak_bytes": 118489088.0
+  }
+}

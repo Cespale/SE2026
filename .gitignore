@@ -3,9 +3,11 @@ dist/
 build/
 
 backend/.venv/
+.venv-ms/
 backend/.env
 .env
 .env.local
+.env.microservices
 
 __pycache__/
 *.pyc
@@ -16,6 +18,10 @@ backend/.pytest_cache/
 reports/
 test-results/
 playwright-report/
+.ci-results/
+.tools/
+work/microservices/*
+!work/microservices/.gitkeep
 
 # E2E 本地运行副本可能含临时 WebSocket Token；正式证据使用 stdout、JUnit 和无 Token 截图。
 0826测试报告/E2E-TC01-08-完整业务流程/证据/e2e-terminal-20260827.stderr.log
@@ -28,3 +34,8 @@ playwright-report/
 
 # Docker 数据卷不要提交
 pgdata/
+
+# 用户运行时上传内容保存在 MinIO 数据卷，不进入 Git。
+public/avatars/
+public/uploads/
+minio-data/

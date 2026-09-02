@@ -22,6 +22,8 @@ NAMESPACE="${NAMESPACE:-streamhub}"
 
 : "${POSTGRES_PASSWORD:?需要设置 POSTGRES_PASSWORD}"
 : "${SECRET_KEY:?需要设置 SECRET_KEY}"
+MINIO_ROOT_USER="${MINIO_ROOT_USER:-streamhub}"
+MINIO_ROOT_PASSWORD="${MINIO_ROOT_PASSWORD:-${SECRET_KEY}}"
 
 echo "==> 版本=${VERSION}  命名空间=${NAMESPACE}"
 
@@ -32,6 +34,8 @@ kubectl create namespace "${NAMESPACE}" --dry-run=client -o yaml | kubectl apply
 kubectl -n "${NAMESPACE}" create secret generic streamhub-secrets \
   --from-literal=POSTGRES_PASSWORD="${POSTGRES_PASSWORD}" \
   --from-literal=SECRET_KEY="${SECRET_KEY}" \
+  --from-literal=MINIO_ROOT_USER="${MINIO_ROOT_USER}" \
+  --from-literal=MINIO_ROOT_PASSWORD="${MINIO_ROOT_PASSWORD}" \
   --from-literal=DATABASE_URL="postgresql://postgres:${POSTGRES_PASSWORD}@streamhub-postgres:5432/streamhub" \
   --dry-run=client -o yaml | kubectl apply -f -
 
@@ -41,12 +45,13 @@ kubectl -n "${NAMESPACE}" create configmap streamhub-db-init \
   --dry-run=client -o yaml | kubectl apply -f -
 
 # 应用各服务清单（替换版本占位符）
-for f in k8s/postgres.yaml k8s/backend.yaml k8s/frontend.yaml; do
+for f in k8s/postgres.yaml k8s/minio.yaml k8s/backend.yaml k8s/frontend.yaml; do
   sed "s/VERSION_PLACEHOLDER/${VERSION}/g" "$f" | kubectl -n "${NAMESPACE}" apply -f -
 done
 
 echo "==> 等待 Deployment 就绪..."
 kubectl -n "${NAMESPACE}" rollout status deploy/streamhub-postgres --timeout=180s
+kubectl -n "${NAMESPACE}" rollout status deploy/streamhub-minio --timeout=180s
 kubectl -n "${NAMESPACE}" rollout status deploy/streamhub-backend --timeout=180s
 kubectl -n "${NAMESPACE}" rollout status deploy/streamhub-frontend --timeout=180s
 

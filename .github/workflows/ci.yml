@@ -1,157 +1,340 @@
-name: StreamHub CI/CD
+name: StreamHub Microservices CI/CD
 
-# ── runner 切换开关 ─────────────────────────────────────────────
-# 在仓库 Settings → Secrets and variables → Actions → Variables 配置
-# （不配置则用默认值，无需任何改动即可保持现状）：
-#   TEST_RUNNER   = ubuntu-latest 或 self-hosted   （默认 self-hosted，控制两个测试 job）
-#   DEPLOY_RUNNER = ubuntu-latest 或 self-hosted   （默认 self-hosted，控制部署 job）
-# 例：测试在自托管上太慢时，把 TEST_RUNNER 改成 ubuntu-latest 即可整体切换，不用改代码。
-# 注意：部署 job 切到 ubuntu-latest 时，下方会自动多跑一个「安装 kubectl」步骤。
+# Runner model integrated from Cespale/SE2026@76b18e947342fcb459e3ef7c008e4c0f53aa108b.
+# Trusted main pushes use the teammate's self-hosted runner. Public pull requests
+# stay on isolated GitHub-hosted runners; business steps remain microservice-aware.
+
 on:
   push:
     branches: [main]
+    paths:
+      - services/**
+      - shared/**
+      - gateway/**
+      - database/**
+      - k8s/microservices/**
+      - backend/docker-init/**
+      - src/**
+      - e2e/**
+      - scripts/**
+      - .github/workflows/ci.yml
+      - docker-compose.microservices.yml
+      - Dockerfile.frontend
+      - package.json
+      - package-lock.json
+      - playwright.config.ts
+      - webpack.config.js
   pull_request:
     branches: [main]
+    paths:
+      - services/**
+      - shared/**
+      - gateway/**
+      - database/**
+      - k8s/microservices/**
+      - backend/docker-init/**
+      - src/**
+      - e2e/**
+      - scripts/**
+      - .github/workflows/ci.yml
+      - docker-compose.microservices.yml
+      - Dockerfile.frontend
+      - package.json
+      - package-lock.json
+      - playwright.config.ts
+      - webpack.config.js
+
+permissions:
+  contents: read
 
 jobs:
-  # ── 1 · 后端单元 + API 集成测试 ──────────────────────────────
-  test-backend:
-    name: 1 · 后端单元/集成测试
-    runs-on: ${{ vars.TEST_RUNNER || 'self-hosted' }}
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: streamhub
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U postgres -d streamhub"
-          --health-interval 5s
-          --health-timeout 5s
-          --health-retries 20
+  contract-tests:
+    name: 1 · 微服务契约与接口清单
+    runs-on: ${{ github.event_name == 'push' && 'self-hosted' || 'ubuntu-latest' }}
+    timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-      - name: 安装后端依赖
-        run: pip install -r backend/requirements.txt pytest httpx
-      - name: 预建应用上传目录（main.py 用绝对路径 /app/...）
-        run: |
-          sudo mkdir -p /app/public/uploads/videos /app/public/uploads/covers /app/public/avatars
-          sudo chmod -R 777 /app
-      - name: 运行后端测试
-        env:
-          DATABASE_URL: postgresql+psycopg2://postgres:postgres@localhost:5432/streamhub
-        run: |
-          cd backend
-          pytest -q
+      - name: 获取代码
+        uses: actions/checkout@v6
 
-  # ── 2 · 前端类型检查 + 编译 + E2E ──────────────────────────
-  test-frontend:
-    name: 2 · 前端类型检查 + 编译 + E2E
-    runs-on: ${{ vars.TEST_RUNNER || 'self-hosted' }}
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: streamhub
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U postgres -d streamhub"
-          --health-interval 5s
-          --health-timeout 5s
-          --health-retries 20
-    env:
-      # E2E 里 playwright 会拉起 FastAPI：后端要连 Postgres，且 security.py 要求 SECRET_KEY
-      DATABASE_URL: postgresql+psycopg2://postgres:postgres@localhost:5432/streamhub
-      SECRET_KEY: streamhub-e2e-secret
+      - name: 准备 Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements-microservices-test.txt
+
+      - name: 安装契约测试依赖
+        run: python -m pip install -r requirements-microservices-test.txt
+
+      - name: 工作区、架构、接口与流水线契约测试
+        run: |
+          mkdir -p .ci-results/contracts
+          python -m pytest -q tests/microservices shared/tests \
+            --junitxml=.ci-results/contracts/contracts.xml
+
+      - name: 保留契约成功或失败记录
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v6
+        with:
+          name: microservices-contracts-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .ci-results/contracts/
+          if-no-files-found: warn
+          retention-days: 30
+
+  service-tests:
+    name: 2 · ${{ matrix.service }} 独立测试
+    runs-on: ${{ github.event_name == 'push' && 'self-hosted' || 'ubuntu-latest' }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - service: user-service
+            test_path: services/user-service/tests
+            requirements: services/user-service/requirements.txt
+          - service: content-service
+            test_path: services/content-service/tests
+            requirements: services/content-service/requirements.txt
+          - service: social-service
+            test_path: services/social-service/tests
+            requirements: services/social-service/requirements.txt
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-      - name: 安装后端依赖（E2E 需要启动 FastAPI）
-        run: pip install -r backend/requirements.txt
-      - name: 预建应用上传目录（main.py 用绝对路径 /app/...）
-        run: |
-          sudo mkdir -p /app/public/uploads/videos /app/public/uploads/covers /app/public/avatars
-          sudo chmod -R 777 /app
-      - name: 安装前端依赖
-        run: npm ci
-      - name: 类型检查
-        run: npm run typecheck
-      - name: 编译
-        run: npm run build
-      - name: 安装 Playwright 浏览器
-        run: npx playwright install --with-deps chromium
-      - name: 前端 E2E 测试
-        run: npm test
+      - name: 获取代码
+        uses: actions/checkout@v6
 
-  # ── 3 · 制作镜像（带版本号）→ 部署 K8s → 健康检查 ──────────
-  # needs 保证：只要 1、2 任一步失败，本 job 不会执行，即「测试失败停流水线」。
+      - name: 准备 Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: |
+            requirements-microservices-test.txt
+            ${{ matrix.requirements }}
+
+      - name: 安装服务测试依赖
+        run: |
+          python -m pip install -r requirements-microservices-test.txt
+          python -m pip install -r "${{ matrix.requirements }}"
+
+      - name: 独立服务单元与 API 行为测试
+        run: |
+          mkdir -p ".ci-results/service-tests/${{ matrix.service }}"
+          python -m pytest -q "${{ matrix.test_path }}" \
+            --junitxml=".ci-results/service-tests/${{ matrix.service }}/junit.xml"
+
+      - name: 保留服务成功或失败记录
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v6
+        with:
+          name: ${{ matrix.service }}-tests-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .ci-results/service-tests/${{ matrix.service }}/
+          if-no-files-found: warn
+          retention-days: 30
+
+  microservices-regression:
+    name: 3 · 85接口 + UC01–UC08 微服务回归
+    needs: [contract-tests, service-tests]
+    runs-on: ${{ github.event_name == 'push' && 'self-hosted' || 'ubuntu-latest' }}
+    timeout-minutes: 45
+    steps:
+      - name: 获取代码
+        uses: actions/checkout@v6
+
+      - name: 准备 Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements-microservices-test.txt
+
+      - name: 准备 Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: 安装回归依赖
+        run: |
+          python -m pip install -r requirements-microservices-test.txt
+          npm ci
+          npx playwright install --with-deps chromium
+
+      - name: 创建一次性微服务环境配置
+        run: |
+          cat > .env.microservices <<'ENV'
+          POSTGRES_PASSWORD=ci-postgres-password
+          POSTGRES_DB=streamhub
+          USER_SERVICE_DB_PASSWORD=ci-user-password
+          CONTENT_SERVICE_DB_PASSWORD=ci-content-password
+          SOCIAL_SERVICE_DB_PASSWORD=ci-social-password
+          USER_DATABASE_URL=postgresql://streamhub_user_service:ci-user-password@postgres-ms:5432/streamhub
+          CONTENT_DATABASE_URL=postgresql://streamhub_content_service:ci-content-password@postgres-ms:5432/streamhub
+          SOCIAL_DATABASE_URL=postgresql://streamhub_social_service:ci-social-password@postgres-ms:5432/streamhub
+          SECRET_KEY=ci-only-microservices-secret
+          APP_VERSION=ci-regression
+          MINIO_ROOT_USER=streamhub-ci
+          MINIO_ROOT_PASSWORD=ci-minio-password
+          MINIO_BUCKET=streamhub-media
+          SERVICE_CONNECT_TIMEOUT_SECONDS=0.5
+          SERVICE_TOTAL_TIMEOUT_SECONDS=1.5
+          USER_SERVICE_URL=http://user-service:8000
+          CONTENT_SERVICE_URL=http://content-service:8000
+          SOCIAL_SERVICE_URL=http://social-service:8000
+          SRS_PUBLIC_RTMP_BASE=rtmp://127.0.0.1:1936/live
+          SRS_PUBLIC_HTTP_BASE=http://127.0.0.1:8081/live
+          ENV
+
+      - name: 自动构建镜像并部署微服务测试栈
+        env:
+          IMAGE_TAG: ci-regression-${{ github.run_id }}
+          APP_VERSION: ${{ github.sha }}
+        run: |
+          mkdir -p .ci-results/microservices-regression
+          docker compose -f docker-compose.microservices.yml \
+            --env-file .env.microservices up -d --build --wait --wait-timeout 240
+          docker compose -f docker-compose.microservices.yml \
+            --env-file .env.microservices ps \
+            > .ci-results/microservices-regression/compose-ps.txt
+
+      - name: 全部公开接口 API 巡检
+        run: |
+          python scripts/public_api_smoke.py \
+            --base-url http://127.0.0.1:8100 \
+            --junit .ci-results/microservices-regression/public-api.xml \
+            --json .ci-results/microservices-regression/public-api.json
+
+      - name: UC01–UC08 Playwright 端到端回归
+        env:
+          E2E_USE_MICROSERVICES: "true"
+          E2E_BASE_URL: http://127.0.0.1:5273
+          E2E_BACKEND_URL: http://127.0.0.1:8100
+          E2E_JUNIT_OUTPUT: .ci-results/microservices-regression/e2e.xml
+          E2E_ARTIFACT_DIR: .ci-results/microservices-regression/playwright-artifacts
+        run: npx playwright test e2e/streamhub.spec.ts
+
+      - name: 收集服务日志与运行状态
+        if: ${{ always() }}
+        run: |
+          docker compose -f docker-compose.microservices.yml \
+            --env-file .env.microservices ps \
+            > .ci-results/microservices-regression/compose-final-ps.txt 2>&1 || true
+          docker compose -f docker-compose.microservices.yml \
+            --env-file .env.microservices logs --no-color --tail 300 \
+            > .ci-results/microservices-regression/service-logs.txt 2>&1 || true
+
+      - name: 保留回归成功或失败记录
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v6
+        with:
+          name: microservices-regression-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .ci-results/microservices-regression/
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: 清理一次性测试栈
+        if: ${{ always() }}
+        run: docker compose -f docker-compose.microservices.yml --env-file .env.microservices down
+
   build-deploy:
-    name: 3 · 制作镜像 + 部署 K8s + 健康检查
-    needs: [test-backend, test-frontend]
-    # 只在 push（推 fork / 合并进 main）时部署。PR 事件——尤其 fork PR——拿不到
-    # secrets，部署 job 会因 POSTGRES_PASSWORD/SECRET_KEY 为空而失败，故 PR 上跳过。
-    if: github.event_name == 'push'
-    runs-on: ${{ vars.DEPLOY_RUNNER || 'self-hosted' }}
-    env:
-      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+    name: 4 · SHA镜像 + Kind部署 + 可观测检查
+    needs: [contract-tests, service-tests, microservices-regression]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ${{ github.event_name == 'push' && 'self-hosted' || 'ubuntu-latest' }}
+    timeout-minutes: 45
+    permissions:
+      contents: read
+      packages: write
     steps:
-      - uses: actions/checkout@v4
+      - name: 获取代码
+        uses: actions/checkout@v6
+
+      - name: 准备部署版本与一次性密钥
+        run: |
+          mkdir -p .ci-results/deployment
+          VERSION="${GITHUB_SHA:0:8}"
+          echo "VERSION=${VERSION}" >> "${GITHUB_ENV}"
+          echo "IMAGE_TAG=${VERSION}" >> "${GITHUB_ENV}"
+          echo "APP_VERSION=${VERSION}" >> "${GITHUB_ENV}"
+          echo "MINIO_ROOT_USER=streamhub-ci" >> "${GITHUB_ENV}"
+          for name in POSTGRES_PASSWORD USER_SERVICE_DB_PASSWORD CONTENT_SERVICE_DB_PASSWORD SOCIAL_SERVICE_DB_PASSWORD SECRET_KEY MINIO_ROOT_PASSWORD; do
+            value="$(openssl rand -hex 24)"
+            echo "::add-mask::${value}"
+            echo "${name}=${value}" >> "${GITHUB_ENV}"
+          done
+
+      - name: 登录 GitHub Container Registry
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 创建 Kind 集群
-        uses: helm/kind-action@v1.10.0
+        uses: helm/kind-action@v1.14.0
         with:
-          # 默认集群名是 chart-testing，这里显式改成 kind，
-          # 否则后续 `kind load docker-image` 会报 no nodes found for cluster "kind"
           cluster_name: kind
 
-      - name: 制作镜像（带版本号，禁止 latest）
+      - name: 制作、发布并载入三个业务服务版本镜像
         run: |
-          VERSION=${GITHUB_SHA:0:8}
-          docker build -f backend/Dockerfile -t streamhub-backend:${VERSION} .
-          docker build -f Dockerfile.frontend -t streamhub-frontend:${VERSION} .
-          kind load docker-image --name kind streamhub-backend:${VERSION}
-          kind load docker-image --name kind streamhub-frontend:${VERSION}
+          OWNER="$(printf '%s' "${GITHUB_REPOSITORY_OWNER}" | tr '[:upper:]' '[:lower:]')"
+          docker build -f services/user-service/Dockerfile \
+            -t "streamhub-user-service:${VERSION}" \
+            -t "ghcr.io/${OWNER}/streamhub-user-service:${VERSION}" .
+          docker build -f services/content-service/Dockerfile \
+            -t "streamhub-content-service:${VERSION}" \
+            -t "ghcr.io/${OWNER}/streamhub-content-service:${VERSION}" .
+          docker build -f services/social-service/Dockerfile \
+            -t "streamhub-social-service:${VERSION}" \
+            -t "ghcr.io/${OWNER}/streamhub-social-service:${VERSION}" .
+          docker build -f gateway/Dockerfile \
+            -t "streamhub-gateway:${VERSION}" \
+            -t "ghcr.io/${OWNER}/streamhub-gateway:${VERSION}" .
+          docker build -f Dockerfile.frontend \
+            -t "streamhub-frontend:${VERSION}" \
+            -t "ghcr.io/${OWNER}/streamhub-frontend:${VERSION}" .
+          for image in user-service content-service social-service gateway frontend; do
+            docker push "ghcr.io/${OWNER}/streamhub-${image}:${VERSION}"
+          done
+          kind load docker-image --name kind \
+            "streamhub-user-service:${VERSION}" \
+            "streamhub-content-service:${VERSION}" \
+            "streamhub-social-service:${VERSION}" \
+            "streamhub-gateway:${VERSION}" \
+            "streamhub-frontend:${VERSION}"
+          docker images --digests --format '{{.Repository}}:{{.Tag}} {{.Digest}} {{.ID}}' \
+            | grep 'streamhub-' > .ci-results/deployment/images.txt
 
-      - name: 预加载 postgres 镜像到 kind
+      - name: 预加载运行时镜像
+        run: |
+          docker pull postgres:16
+          docker pull quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z
+          docker pull ossrs/srs:5
+          kind load docker-image --name kind postgres:16 \
+            quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z ossrs/srs:5
+
+      - name: 自动部署三个业务微服务
+        env:
+          CI: "true"
         run: |
           set -o pipefail
-          # kind load 对 postgres:16（多平台 manifest list）内部用 ctr import --all-platforms，
-          # 而 docker save 只导出当前架构的 layer → 其余平台内容缺失 → "content digest not found"
-          # （后端/前端是本机构建的单平台镜像，所以 kind load 一直正常）。
-          # 节点又不能直连 Docker Hub（ctr pull 卡在 resolving）。
-          # 绕开：手动 docker save，再用不带 --all-platforms 的 ctr import，只导入当前架构内容。
-          docker pull postgres:16
-          docker save postgres:16 | docker exec -i kind-control-plane ctr --namespace=k8s.io images import -
+          bash scripts/deploy-microservices.sh 2>&1 \
+            | tee .ci-results/deployment/deploy.log
 
-      - name: 安装 kubectl（若不存在；托管 runner 上需要，自托管通常已装则跳过）
+      - name: 健康、就绪与版本检查
         run: |
-          if command -v kubectl >/dev/null 2>&1; then
-            echo "kubectl 已存在，跳过安装"
-          else
-            curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-            chmod +x kubectl
-            sudo mv kubectl /usr/local/bin/kubectl
-          fi
+          set -o pipefail
+          bash scripts/health-check-microservices.sh 2>&1 \
+            | tee .ci-results/deployment/health-check.log
 
-      - name: 部署到 Kubernetes
-        run: |
-          export VERSION=${GITHUB_SHA:0:8}
-          bash scripts/deploy.sh
+      - name: 收集部署状态、事件和服务日志
+        if: ${{ always() }}
+        run: bash scripts/collect-deployment-diagnostics.sh .ci-results/deployment/diagnostics
 
-      - name: 健康检查
-        run: bash scripts/health-check.sh
+      - name: 保留部署成功或失败记录
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v6
+        with:
+          name: microservices-deployment-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .ci-results/deployment/
+          if-no-files-found: warn
+          retention-days: 30

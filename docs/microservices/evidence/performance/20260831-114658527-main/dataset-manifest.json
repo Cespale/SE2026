@@ -1,0 +1,32 @@
+{
+  "database_container": "streamhub-perf-postgres",
+  "source_schema": "public",
+  "target_schemas": [
+    "user_service",
+    "content_service",
+    "social_service"
+  ],
+  "tables": {
+    "users": {
+      "source_count": 3,
+      "target_count": 3,
+      "source_sha": "cc1c1fe9e1f374a71a0002792ae572dd",
+      "target_sha": "cc1c1fe9e1f374a71a0002792ae572dd",
+      "equal": true
+    },
+    "categories": {
+      "source_count": 10,
+      "target_count": 10,
+      "source_sha": "128f9eb951bf61eb701d57dc7e41b65a",
+      "target_sha": "128f9eb951bf61eb701d57dc7e41b65a",
+      "equal": true
+    },
+    "videos": {
+      "source_count": 18,
+      "target_count": 18,
+      "source_sha": "37f7ee559818586597fc2791d3c4016b",
+      "target_sha": "37f7ee559818586597fc2791d3c4016b",
+      "equal": true
+    }
+  }
+}

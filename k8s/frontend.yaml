@@ -16,6 +16,9 @@ spec:
         - name: frontend
           image: streamhub-frontend:VERSION_PLACEHOLDER
           imagePullPolicy: IfNotPresent
+          env:
+            - name: STREAMHUB_BACKEND_PROXY_TARGET
+              value: http://streamhub-backend:8000
           ports:
             - containerPort: 3266
           readinessProbe:

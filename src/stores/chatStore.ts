@@ -10,6 +10,7 @@ import {
   recallMessage,
   sendMessageHttp,
 } from '../api/chat';
+import { useAuthStore } from './authStore';
 import { useNotificationStore } from './notificationStore';
 
 interface ChatState {
@@ -29,7 +30,7 @@ interface ChatState {
   selectConversation: (convId: string) => void;
   loadMessages: (convId: string) => Promise<void>;
 
-  sendText: (peerId: string, content: string) => void;
+  sendText: (peerId: string, content: string) => Promise<void>;
   sendTyping: (peerId: string) => void;
   recall: (msgId: string) => Promise<void>;
   markRead: (convId: string) => Promise<void>;
@@ -43,6 +44,62 @@ function sortByLatest(list: Conversation[]) {
   });
 }
 
+type ChatSetState = (
+  partial:
+    | ChatState
+    | Partial<ChatState>
+    | ((state: ChatState) => ChatState | Partial<ChatState>)
+) => void;
+
+function appendIncomingMessage(
+  set: ChatSetState,
+  get: () => ChatState,
+  message: ChatMessage
+) {
+  const convId = message.conversationId;
+  set((state) => {
+    const messages = state.messagesByConv[convId] || [];
+    if (messages.some((item) => item.id === message.id)) return state;
+
+    const conversation = state.conversations.find((item) => item.id === convId);
+    let conversations = state.conversations;
+    if (conversation) {
+      const isActive = state.activeConvId === convId;
+      const isFromMe = message.senderId === state.myUserId;
+      const unreadIncrement = !isActive && !isFromMe ? 1 : 0;
+      conversations = sortByLatest(
+        state.conversations.map((item) =>
+          item.id === convId
+            ? {
+                ...item,
+                lastMessage: message.isRecalled ? '[已撤回]' : message.content,
+                lastMessageType: message.messageType,
+                lastMessageAt: message.createTime,
+                unreadCount: item.unreadCount + unreadIncrement,
+              }
+            : item
+        )
+      );
+    } else {
+      get().loadConversations();
+    }
+
+    return {
+      messagesByConv: {
+        ...state.messagesByConv,
+        [convId]: [...messages, message],
+      },
+      conversations,
+    };
+  });
+  useNotificationStore.getState().refreshUnread();
+}
+
+const pendingPeerOpens: Record<
+  string,
+  Promise<Conversation> | undefined
+> = {};
+
 export const useChatStore = create<ChatState>((set, get) => ({
   ws: null,
   myUserId: null,
@@ -53,9 +110,19 @@ export const useChatStore = create<ChatState>((set, get) => ({
   loadingMessages: false,
 
   connect: (token) => {
-    if (get().ws) return;
+    const current = get().ws;
+    if (
+      current &&
+      (current.readyState === WebSocket.CONNECTING ||
+        current.readyState === WebSocket.OPEN)
+    ) {
+      return;
+    }
     const ws = new WebSocket(buildChatWsUrl(token));
-    set({ ws });
+    set({
+      ws,
+      myUserId: useAuthStore.getState().user?.id ?? null,
+    });
 
     ws.onmessage = (ev) => {
       let data: any;
@@ -68,40 +135,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
       if (t === 'connected') {
         set({ myUserId: data.userId });
       } else if (t === 'message') {
-        const m: ChatMessage = data.data;
-        const convId = m.conversationId;
-        set((s) => {
-          const list = s.messagesByConv[convId] || [];
-          if (list.some((x) => x.id === m.id)) return s;
-          const conv = s.conversations.find((c) => c.id === convId);
-          let conversations = s.conversations;
-          if (conv) {
-            const isActive = s.activeConvId === convId;
-            const isFromMe = m.senderId === s.myUserId;
-            const incUnread = !isActive && !isFromMe ? 1 : 0;
-            conversations = sortByLatest(
-              s.conversations.map((c) =>
-                c.id === convId
-                  ? {
-                      ...c,
-                      lastMessage: m.isRecalled ? '[已撤回]' : m.content,
-                      lastMessageType: m.messageType,
-                      lastMessageAt: m.createTime,
-                      unreadCount: c.unreadCount + incUnread,
-                    }
-                  : c
-              )
-            );
-          } else {
-            // 新会话:先重新拉一下列表
-            get().loadConversations();
-          }
-          return {
-            messagesByConv: { ...s.messagesByConv, [convId]: [...list, m] },
-            conversations,
-          };
-        });
-        useNotificationStore.getState().refreshUnread();
+        appendIncomingMessage(set, get, data.data as ChatMessage);
       } else if (t === 'recall') {
         const { messageId, conversationId } = data;
         set((s) => {
@@ -125,7 +159,11 @@ export const useChatStore = create<ChatState>((set, get) => ({
     };
 
     ws.onclose = () => {
-      set({ ws: null, myUserId: null });
+      if (get().ws !== ws) return;
+      set({
+        ws: null,
+        myUserId: useAuthStore.getState().user?.id ?? null,
+      });
     };
     ws.onerror = () => {};
   },
@@ -141,13 +179,30 @@ export const useChatStore = create<ChatState>((set, get) => ({
     set({ conversations: sortByLatest(list) });
   },
 
-  openConversationWith: async (peerId) => {
-    const conv = await openConversation(peerId);
-    set((s) => {
-      if (s.conversations.find((c) => c.id === conv.id)) return s;
-      return { conversations: sortByLatest([...s.conversations, conv]) };
-    });
-    return conv;
+  openConversationWith: (peerId) => {
+    const pending = pendingPeerOpens[peerId];
+    if (pending) return pending;
+
+    const request = openConversation(peerId)
+      .then((conversation) => {
+        set((state) => {
+          if (state.conversations.some((item) => item.id === conversation.id)) {
+            return state;
+          }
+          return {
+            conversations: sortByLatest([
+              ...state.conversations,
+              conversation,
+            ]),
+          };
+        });
+        return conversation;
+      })
+      .finally(() => {
+        delete pendingPeerOpens[peerId];
+      });
+    pendingPeerOpens[peerId] = request;
+    return request;
   },
 
   selectConversation: (convId) => {
@@ -166,16 +221,21 @@ export const useChatStore = create<ChatState>((set, get) => ({
     }
   },
 
-  sendText: (peerId, content) => {
+  sendText: async (peerId, content) => {
     const ws = get().ws;
     const trimmed = content.trim();
     if (!trimmed) return;
     if (ws && ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify({ type: 'send', peerId, content: trimmed, messageType: 0 }));
     } else {
-      // 兜底:走 HTTP
       const convId = get().activeConvId;
-      if (convId) sendMessageHttp(convId, trimmed).catch(() => {});
+      if (!convId) return;
+      try {
+        const message = await sendMessageHttp(convId, trimmed);
+        appendIncomingMessage(set, get, message);
+      } catch (error) {
+        console.error('发送私信失败:', error);
+      }
     }
   },
 

@@ -1,0 +1,126 @@
+{"version":8,"type":"context-options","origin":"testRunner","browserName":"","playwrightVersion":"1.62.1","options":{},"platform":"win32","wallTime":1788098967361,"monotonicTime":2441.376,"sdkLanguage":"javascript","testTimeout":30000}
+{"type":"before","callId":"hook@1","stepId":"hook@1","startTime":2484.154,"class":"Test","method":"hook","title":"Before Hooks","params":{},"stack":[]}
+{"type":"before","callId":"fixture@32","stepId":"fixture@32","parentId":"hook@1","startTime":2511.509,"class":"Test","method":"fixture","title":"Fixture \"browser\"","params":{},"stack":[]}
+{"type":"before","callId":"pw:api@33","stepId":"pw:api@33","parentId":"fixture@32","startTime":2519.995,"class":"Test","method":"pw:api","title":"Launch browser","params":{"handleSIGINT":"false","tracesDir":"C:\\Users\\lausu\\Desktop\\SE2026-microservices\\.ci-results\\microservices-local\\local-ci-20260830\\playwright-artifacts\\.playwright-artifacts-0\\traces","artifactsDir":"C:\\Users\\lausu\\Desktop\\SE2026-microservices\\.ci-results\\microservices-local\\local-ci-20260830\\playwright-artifacts\\.playwright-artifacts-0","headless":"true","ignoreDefaultArgs":"undefined","ignoreAllDefaultArgs":"false","env":"undefined"},"stack":[]}
+{"type":"after","callId":"pw:api@33","endTime":2864.882,"annotations":[]}
+{"type":"after","callId":"fixture@32","endTime":2865.216,"annotations":[]}
+{"type":"before","callId":"fixture@36","stepId":"fixture@36","parentId":"hook@1","startTime":2867.965,"class":"Test","method":"fixture","title":"Fixture \"context\"","params":{},"stack":[]}
+{"type":"before","callId":"pw:api@37","stepId":"pw:api@37","parentId":"fixture@36","startTime":2871.659,"class":"Test","method":"pw:api","title":"Create context","params":{"recordVideo":"Object","selectorEngines":"[]","testIdAttributeName":"data-testid","acceptDownloads":"accept","bypassCSP":"false","colorScheme":"light","hasTouch":"false","ignoreHTTPSErrors":"false","isMobile":"false","javaScriptEnabled":"true","locale":"en-US","offline":"false","viewport":"Object","baseURL":"http://127.0.0.1:5273","serviceWorkers":"allow","noDefaultViewport":"false","extraHTTPHeaders":"undefined","storageState":"undefined","reducedMotion":"undefined","forcedColors":"undefined","contrast":"undefined","clientCertificates":"undefined"},"stack":[]}
+{"type":"after","callId":"pw:api@37","endTime":2887.711,"annotations":[]}
+{"type":"after","callId":"fixture@36","endTime":2903.5,"annotations":[]}
+{"type":"before","callId":"fixture@38","stepId":"fixture@38","parentId":"hook@1","startTime":2904.315,"class":"Test","method":"fixture","title":"Fixture \"page\"","params":{},"stack":[]}
+{"type":"before","callId":"pw:api@39","stepId":"pw:api@39","parentId":"fixture@38","startTime":2907.346,"class":"Test","method":"pw:api","title":"Create page","params":{},"stack":[]}
+{"type":"after","callId":"pw:api@39","endTime":3112.229,"annotations":[]}
+{"type":"after","callId":"fixture@38","endTime":3112.38,"annotations":[]}
+{"type":"after","callId":"hook@1","endTime":3112.518,"annotations":[]}
+{"type":"before","callId":"pw:api@40","stepId":"pw:api@40","startTime":3116.848,"class":"Test","method":"pw:api","title":"Navigate to \"/#/\"","params":{"url":"/#/","waitUntil":"domcontentloaded"},"stack":[{"file":"C:\\Users\\lausu\\Desktop\\SE2026-microservices\\e2e\\streamhub.spec.ts","line":10,"column":14,"function":"login"}]}
+{"type":"error","message":"\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m","stack":[]}
+{"type":"before","callId":"hook@41","stepId":"hook@41","startTime":32877.263,"class":"Test","method":"hook","title":"After Hooks","params":{},"stack":[]}
+{"type":"before","callId":"fixture@42","stepId":"fixture@42","parentId":"hook@41","startTime":37894.635,"class":"Test","method":"fixture","title":"Fixture \"page\"","params":{},"stack":[]}
+{"type":"after","callId":"fixture@42","endTime":37894.944,"annotations":[]}
+{"type":"before","callId":"fixture@43","stepId":"fixture@43","parentId":"hook@41","startTime":37895.371,"class":"Test","method":"fixture","title":"Fixture \"context\"","params":{},"stack":[]}
+{"type":"after","callId":"pw:api@40","endTime":38079.549,"annotations":[]}
+{"type":"before","callId":"pw:api@44","stepId":"pw:api@44","parentId":"fixture@43","startTime":38089.811,"class":"Test","method":"pw:api","title":"Click getByRole('button', { name: '登录', exact: true })","params":{"selector":"internal:role=button[name=\"登录\"s]","strict":"true"},"stack":[{"file":"C:\\Users\\lausu\\Desktop\\SE2026-microservices\\e2e\\streamhub.spec.ts","line":12,"column":63,"function":"login"}]}
+{"type":"before","callId":"pw:api@45","stepId":"pw:api@45","parentId":"fixture@43","startTime":38453.429,"class":"Test","method":"pw:api","title":"Close context","params":{"reason":"Test timeout of 30000ms exceeded."},"stack":[]}
+{"type":"after","callId":"pw:api@44","endTime":38956.173,"annotations":[]}
+{"type":"before","callId":"pw:api@46","stepId":"pw:api@46","parentId":"fixture@43","startTime":38972.214,"class":"Test","method":"pw:api","title":"Fill \"user\" getByPlaceholder('请输入账号')","params":{"selector":"internal:attr=[placeholder=\"请输入账号\"i]","value":"user","strict":"true"},"stack":[{"file":"C:\\Users\\lausu\\Desktop\\SE2026-microservices\\e2e\\streamhub.spec.ts","line":13,"column":40,"function":"login"}]}
+{"type":"after","callId":"pw:api@46","endTime":39129.472,"annotations":[]}
+{"type":"before","callId":"pw:api@47","stepId":"pw:api@47","parentId":"fixture@43","startTime":39131.514,"class":"Test","method":"pw:api","title":"Fill \"user123\" getByPlaceholder('请输入密码')","params":{"selector":"internal:attr=[placeholder=\"请输入密码\"i]","value":"user123","strict":"true"},"stack":[{"file":"C:\\Users\\lausu\\Desktop\\SE2026-microservices\\e2e\\streamhub.spec.ts","line":14,"column":40,"function":"login"}]}
+{"type":"after","callId":"pw:api@47","endTime":39168.138,"annotations":[]}
+{"type":"before","callId":"pw:api@48","stepId":"pw:api@48","parentId":"fixture@43","startTime":39179.074,"class":"Test","method":"pw:api","title":"Press \"Enter\" getByPlaceholder('请输入密码')","params":{"selector":"internal:attr=[placeholder=\"请输入密码\"i]","key":"Enter","strict":"true"},"stack":[{"file":"C:\\Users\\lausu\\Desktop\\SE2026-microservices\\e2e\\streamhub.spec.ts","line":15,"column":40,"function":"login"}]}
+{"type":"after","callId":"pw:api@48","endTime":39313.917,"annotations":[]}
+{"type":"before","callId":"expect@49","stepId":"expect@49","parentId":"fixture@43","startTime":39331.694,"class":"Test","method":"expect","title":"Expect \"toHaveCount\"","params":{},"stack":[{"file":"C:\\Users\\lausu\\Desktop\\SE2026-microservices\\e2e\\streamhub.spec.ts","line":17,"column":48,"function":"login"}]}
+{"type":"after","callId":"expect@49","endTime":40200.318,"annotations":[]}
+{"type":"before","callId":"pw:api@50","stepId":"pw:api@50","parentId":"fixture@43","startTime":40202.216,"class":"Test","method":"pw:api","title":"Evaluate","params":{"expression":"() => localStorage.getItem('auth-storage')","isFunction":"true","arg":"Object"},"stack":[{"file":"C:\\Users\\lausu\\Desktop\\SE2026-microservices\\e2e\\streamhub.spec.ts","line":18,"column":33,"function":"login"}]}
+{"type":"after","callId":"pw:api@50","endTime":40206.225,"annotations":[]}
+{"type":"before","callId":"expect@51","stepId":"expect@51","parentId":"fixture@43","startTime":40207.465,"class":"Test","method":"expect","title":"Expect \"toBeTruthy\"","params":{},"stack":[{"file":"C:\\Users\\lausu\\Desktop\\SE2026-microservices\\e2e\\streamhub.spec.ts","line":22,"column":22,"function":"login"}]}
+{"type":"after","callId":"expect@51","endTime":40207.855,"annotations":[]}
+{"type":"before","callId":"expect@52","stepId":"expect@52","parentId":"fixture@43","startTime":40208.747,"class":"Test","method":"expect","title":"Expect \"toBeTruthy\"","params":{},"stack":[{"file":"C:\\Users\\lausu\\Desktop\\SE2026-microservices\\e2e\\streamhub.spec.ts","line":23,"column":27,"function":"login"}]}
+{"type":"after","callId":"expect@52","endTime":40208.859,"annotations":[]}
+{"type":"before","callId":"expect@53","stepId":"expect@53","parentId":"fixture@43","startTime":40209.648,"class":"Test","method":"expect","title":"Expect \"toBe\"","params":{"expected":"true"},"stack":[{"file":"C:\\Users\\lausu\\Desktop\\SE2026-microservices\\e2e\\streamhub.spec.ts","line":24,"column":32,"function":"login"}]}
+{"type":"after","callId":"expect@53","endTime":40210.061,"annotations":[]}
+{"type":"before","callId":"expect@54","stepId":"expect@54","parentId":"fixture@43","startTime":40210.989,"class":"Test","method":"expect","title":"Expect \"toBe\"","params":{"expected":"user"},"stack":[{"file":"C:\\Users\\lausu\\Desktop\\SE2026-microservices\\e2e\\streamhub.spec.ts","line":25,"column":34,"function":"login"}]}
+{"type":"after","callId":"expect@54","endTime":40211.114,"annotations":[]}
+{"type":"before","callId":"expect@55","stepId":"expect@55","parentId":"fixture@43","startTime":40212.023,"class":"Test","method":"expect","title":"Expect \"toBeTruthy\"","params":{},"stack":[{"file":"C:\\Users\\lausu\\Desktop\\SE2026-microservices\\e2e\\streamhub.spec.ts","line":26,"column":29,"function":"login"}]}
+{"type":"after","callId":"expect@55","endTime":40212.126,"annotations":[]}
+{"type":"before","callId":"pw:api@56","stepId":"pw:api@56","parentId":"fixture@43","startTime":40213.321,"class":"Test","method":"pw:api","title":"Fill \"视频\" getByPlaceholder('搜索视频、直播...')","params":{"selector":"internal:attr=[placeholder=\"搜索视频、直播...\"i]","value":"视频","strict":"true"},"stack":[{"file":"C:\\Users\\lausu\\Desktop\\SE2026-microservices\\e2e\\streamhub.spec.ts","line":79,"column":21}]}
+{"type":"after","callId":"pw:api@56","endTime":40233.482,"annotations":[]}
+{"type":"before","callId":"expect@57","stepId":"expect@57","parentId":"fixture@43","startTime":40234.475,"class":"Test","method":"expect","title":"Expect \"toHaveValue\"","params":{"expected":"视频"},"stack":[{"file":"C:\\Users\\lausu\\Desktop\\SE2026-microservices\\e2e\\streamhub.spec.ts","line":80,"column":29}]}
+{"type":"after","callId":"expect@57","endTime":40241.253,"annotations":[]}
+{"type":"before","callId":"pw:api@58","stepId":"pw:api@58","parentId":"fixture@43","startTime":40243.183,"class":"Test","method":"pw:api","title":"Press \"Enter\" getByPlaceholder('搜索视频、直播...')","params":{"selector":"internal:attr=[placeholder=\"搜索视频、直播...\"i]","key":"Enter","strict":"true"},"stack":[{"file":"C:\\Users\\lausu\\Desktop\\SE2026-microservices\\e2e\\streamhub.spec.ts","line":81,"column":21}]}
+{"type":"after","callId":"pw:api@58","endTime":40304.104,"annotations":[]}
+{"type":"before","callId":"expect@59","stepId":"expect@59","parentId":"fixture@43","startTime":40305.13,"class":"Test","method":"expect","title":"Expect \"toHaveURL\"","params":{"expected":"Object"},"stack":[{"file":"C:\\Users\\lausu\\Desktop\\SE2026-microservices\\e2e\\streamhub.spec.ts","line":83,"column":22}]}
+{"type":"after","callId":"expect@59","endTime":40311.442,"annotations":[]}
+{"type":"before","callId":"expect@60","stepId":"expect@60","parentId":"fixture@43","startTime":40312.508,"class":"Test","method":"expect","title":"Expect \"toBeVisible\"","params":{},"stack":[{"file":"C:\\Users\\lausu\\Desktop\\SE2026-microservices\\e2e\\streamhub.spec.ts","line":86,"column":5}]}
+{"type":"after","callId":"expect@60","endTime":40319.342,"annotations":[]}
+{"type":"before","callId":"expect@61","stepId":"expect@61","parentId":"fixture@43","startTime":40320.463,"class":"Test","method":"expect","title":"Expect \"toHaveValue\"","params":{"expected":"视频"},"stack":[{"file":"C:\\Users\\lausu\\Desktop\\SE2026-microservices\\e2e\\streamhub.spec.ts","line":89,"column":5}]}
+{"type":"after","callId":"expect@61","endTime":40326.622,"annotations":[]}
+{"type":"before","callId":"expect@62","stepId":"expect@62","parentId":"fixture@43","startTime":40328.699,"class":"Test","method":"expect","title":"Expect \"toBeVisible\"","params":{},"stack":[{"file":"C:\\Users\\lausu\\Desktop\\SE2026-microservices\\e2e\\streamhub.spec.ts","line":92,"column":33}]}
+{"type":"after","callId":"expect@62","endTime":40399.196,"annotations":[]}
+{"type":"before","callId":"pw:api@63","stepId":"pw:api@63","parentId":"fixture@43","startTime":40402.358,"class":"Test","method":"pw:api","title":"Get text content locator('main h3').first()","params":{"selector":"main h3 >> nth=0","strict":"true"},"stack":[{"file":"C:\\Users\\lausu\\Desktop\\SE2026-microservices\\e2e\\streamhub.spec.ts","line":93,"column":33}],"group":"getter"}
+{"type":"after","callId":"pw:api@63","endTime":40421.948,"annotations":[]}
+{"type":"before","callId":"expect@64","stepId":"expect@64","parentId":"fixture@43","startTime":40423.818,"class":"Test","method":"expect","title":"Expect \"toBeTruthy\"","params":{},"stack":[{"file":"C:\\Users\\lausu\\Desktop\\SE2026-microservices\\e2e\\streamhub.spec.ts","line":93,"column":57}]}
+{"type":"after","callId":"expect@64","endTime":40424.005,"annotations":[]}
+{"type":"before","callId":"pw:api@65","stepId":"pw:api@65","parentId":"fixture@43","startTime":40427.398,"class":"Test","method":"pw:api","title":"Click locator('main h3').first()","params":{"selector":"main h3 >> nth=0","strict":"true"},"stack":[{"file":"C:\\Users\\lausu\\Desktop\\SE2026-microservices\\e2e\\streamhub.spec.ts","line":94,"column":25}]}
+{"type":"after","callId":"pw:api@65","endTime":40549.157,"annotations":[]}
+{"type":"before","callId":"expect@66","stepId":"expect@66","parentId":"fixture@43","startTime":40550.251,"class":"Test","method":"expect","title":"Expect \"toHaveURL\"","params":{"expected":"Object"},"stack":[{"file":"C:\\Users\\lausu\\Desktop\\SE2026-microservices\\e2e\\streamhub.spec.ts","line":96,"column":22}]}
+{"type":"after","callId":"expect@66","endTime":40556.769,"annotations":[]}
+{"type":"before","callId":"expect@67","stepId":"expect@67","parentId":"fixture@43","startTime":40558.821,"class":"Test","method":"expect","title":"Expect \"toBeVisible\"","params":{},"stack":[{"file":"C:\\Users\\lausu\\Desktop\\SE2026-microservices\\e2e\\streamhub.spec.ts","line":98,"column":29}]}
+{"type":"after","callId":"expect@67","endTime":40742.975,"annotations":[]}
+{"type":"before","callId":"expect@68","stepId":"expect@68","parentId":"fixture@43","startTime":40744.412,"class":"Test","method":"expect","title":"Expect \"toHaveAttribute\"","params":{"expected":"preload"},"stack":[{"file":"C:\\Users\\lausu\\Desktop\\SE2026-microservices\\e2e\\streamhub.spec.ts","line":99,"column":29}]}
+{"type":"after","callId":"expect@68","endTime":40771.436,"annotations":[]}
+{"type":"before","callId":"expect@69","stepId":"expect@69","parentId":"fixture@43","startTime":40774.506,"class":"Test","method":"expect","title":"Expect \"toHaveAttribute\"","params":{"expected":"src"},"stack":[{"file":"C:\\Users\\lausu\\Desktop\\SE2026-microservices\\e2e\\streamhub.spec.ts","line":100,"column":29}]}
+{"type":"after","callId":"expect@69","endTime":40834.095,"annotations":[]}
+{"type":"before","callId":"pw:api@70","stepId":"pw:api@70","parentId":"fixture@43","startTime":40837.596,"class":"Test","method":"pw:api","title":"Wait for event \"response\"","params":{"waitId":"14c016af4c8b54b507595b593a9054e6","phase":"before","event":"response"},"stack":[{"file":"C:\\Users\\lausu\\Desktop\\SE2026-microservices\\e2e\\streamhub.spec.ts","line":105,"column":32}]}
+{"type":"before","callId":"pw:api@71","stepId":"pw:api@71","parentId":"fixture@43","startTime":40840.738,"class":"Test","method":"pw:api","title":"Fill \"E2E-评论-1788099005754\" getByPlaceholder('写下你的评论...')","params":{"selector":"internal:attr=[placeholder=\"写下你的评论...\"i]","value":"E2E-评论-1788099005754","strict":"true"},"stack":[{"file":"C:\\Users\\lausu\\Desktop\\SE2026-microservices\\e2e\\streamhub.spec.ts","line":111,"column":22}]}
+{"type":"after","callId":"pw:api@71","endTime":40875.503,"annotations":[]}
+{"type":"before","callId":"pw:api@72","stepId":"pw:api@72","parentId":"fixture@43","startTime":40876.958,"class":"Test","method":"pw:api","title":"Press \"Enter\" getByPlaceholder('写下你的评论...')","params":{"selector":"internal:attr=[placeholder=\"写下你的评论...\"i]","key":"Enter","strict":"true"},"stack":[{"file":"C:\\Users\\lausu\\Desktop\\SE2026-microservices\\e2e\\streamhub.spec.ts","line":112,"column":22}]}
+{"type":"after","callId":"pw:api@72","endTime":40897.484,"annotations":[]}
+{"type":"after","callId":"pw:api@70","endTime":40971.43,"annotations":[]}
+{"type":"before","callId":"expect@73","stepId":"expect@73","parentId":"fixture@43","startTime":40972.595,"class":"Test","method":"expect","title":"Expect \"toBeTruthy\"","params":{},"stack":[{"file":"C:\\Users\\lausu\\Desktop\\SE2026-microservices\\e2e\\streamhub.spec.ts","line":115,"column":41}]}
+{"type":"after","callId":"expect@73","endTime":40972.879,"annotations":[]}
+{"type":"before","callId":"expect@74","stepId":"expect@74","parentId":"fixture@43","startTime":40974.078,"class":"Test","method":"expect","title":"Expect \"toBe\"","params":{"expected":"200"},"stack":[{"file":"C:\\Users\\lausu\\Desktop\\SE2026-microservices\\e2e\\streamhub.spec.ts","line":116,"column":45}]}
+{"type":"after","callId":"expect@74","endTime":40974.368,"annotations":[]}
+{"type":"before","callId":"pw:api@75","stepId":"pw:api@75","parentId":"fixture@43","startTime":40975.893,"class":"Test","method":"pw:api","title":"Get response body","params":{},"stack":[{"file":"C:\\Users\\lausu\\Desktop\\SE2026-microservices\\e2e\\streamhub.spec.ts","line":117,"column":59}],"group":"getter"}
+{"type":"after","callId":"pw:api@75","endTime":40981.619,"annotations":[]}
+{"type":"before","callId":"expect@76","stepId":"expect@76","parentId":"fixture@43","startTime":40982.521,"class":"Test","method":"expect","title":"Expect \"toBe\"","params":{"expected":"E2E-评论-1788099005754"},"stack":[{"file":"C:\\Users\\lausu\\Desktop\\SE2026-microservices\\e2e\\streamhub.spec.ts","line":118,"column":36}]}
+{"type":"after","callId":"expect@76","endTime":40982.655,"annotations":[]}
+{"type":"before","callId":"expect@77","stepId":"expect@77","parentId":"fixture@43","startTime":40983.442,"class":"Test","method":"expect","title":"Expect \"toBeTruthy\"","params":{},"stack":[{"file":"C:\\Users\\lausu\\Desktop\\SE2026-microservices\\e2e\\streamhub.spec.ts","line":119,"column":31}]}
+{"type":"after","callId":"expect@77","endTime":40983.53,"annotations":[]}
+{"type":"before","callId":"expect@78","stepId":"expect@78","parentId":"fixture@43","startTime":40984.405,"class":"Test","method":"expect","title":"Expect \"toHaveValue\"","params":{},"stack":[{"file":"C:\\Users\\lausu\\Desktop\\SE2026-microservices\\e2e\\streamhub.spec.ts","line":120,"column":30}]}
+{"type":"after","callId":"expect@78","endTime":40989.453,"annotations":[]}
+{"type":"before","callId":"expect@79","stepId":"expect@79","parentId":"fixture@43","startTime":40990.98,"class":"Test","method":"expect","title":"Expect \"toBeVisible\"","params":{},"stack":[{"file":"C:\\Users\\lausu\\Desktop\\SE2026-microservices\\e2e\\streamhub.spec.ts","line":121,"column":58}]}
+{"type":"after","callId":"expect@79","endTime":40998.279,"annotations":[]}
+{"type":"before","callId":"pw:api@80","stepId":"pw:api@80","parentId":"fixture@43","startTime":40999.875,"class":"Test","method":"pw:api","title":"Wait for event \"response\"","params":{"waitId":"0f42ded7c58b25c7c787faf2d65526ce","phase":"before","event":"response"},"stack":[{"file":"C:\\Users\\lausu\\Desktop\\SE2026-microservices\\e2e\\streamhub.spec.ts","line":126,"column":32}]}
+{"type":"before","callId":"pw:api@81","stepId":"pw:api@81","parentId":"fixture@43","startTime":41001.801,"class":"Test","method":"pw:api","title":"Fill \"E2E-弹幕-1788099005918\" getByPlaceholder('发弹幕...').first()","params":{"selector":"internal:attr=[placeholder=\"发弹幕...\"i] >> nth=0","value":"E2E-弹幕-1788099005918","strict":"true"},"stack":[{"file":"C:\\Users\\lausu\\Desktop\\SE2026-microservices\\e2e\\streamhub.spec.ts","line":132,"column":22}]}
+{"type":"after","callId":"pw:api@81","endTime":41023.19,"annotations":[]}
+{"type":"before","callId":"pw:api@82","stepId":"pw:api@82","parentId":"fixture@43","startTime":41024.721,"class":"Test","method":"pw:api","title":"Press \"Enter\" getByPlaceholder('发弹幕...').first()","params":{"selector":"internal:attr=[placeholder=\"发弹幕...\"i] >> nth=0","key":"Enter","strict":"true"},"stack":[{"file":"C:\\Users\\lausu\\Desktop\\SE2026-microservices\\e2e\\streamhub.spec.ts","line":133,"column":22}]}
+{"type":"after","callId":"pw:api@82","endTime":41043.264,"annotations":[]}
+{"type":"after","callId":"pw:api@80","endTime":41098.687,"annotations":[]}
+{"type":"before","callId":"expect@83","stepId":"expect@83","parentId":"fixture@43","startTime":41099.877,"class":"Test","method":"expect","title":"Expect \"toBeTruthy\"","params":{},"stack":[{"file":"C:\\Users\\lausu\\Desktop\\SE2026-microservices\\e2e\\streamhub.spec.ts","line":136,"column":41}]}
+{"type":"after","callId":"expect@83","endTime":41099.962,"annotations":[]}
+{"type":"before","callId":"expect@84","stepId":"expect@84","parentId":"fixture@43","startTime":41101.026,"class":"Test","method":"expect","title":"Expect \"toBe\"","params":{"expected":"200"},"stack":[{"file":"C:\\Users\\lausu\\Desktop\\SE2026-microservices\\e2e\\streamhub.spec.ts","line":137,"column":45}]}
+{"type":"after","callId":"expect@84","endTime":41101.155,"annotations":[]}
+{"type":"before","callId":"pw:api@85","stepId":"pw:api@85","parentId":"fixture@43","startTime":41102.432,"class":"Test","method":"pw:api","title":"Get response body","params":{},"stack":[{"file":"C:\\Users\\lausu\\Desktop\\SE2026-microservices\\e2e\\streamhub.spec.ts","line":138,"column":59}],"group":"getter"}
+{"type":"after","callId":"pw:api@85","endTime":41111.057,"annotations":[]}
+{"type":"before","callId":"expect@86","stepId":"expect@86","parentId":"fixture@43","startTime":41112.144,"class":"Test","method":"expect","title":"Expect \"toBe\"","params":{"expected":"E2E-弹幕-1788099005918"},"stack":[{"file":"C:\\Users\\lausu\\Desktop\\SE2026-microservices\\e2e\\streamhub.spec.ts","line":139,"column":36}]}
+{"type":"after","callId":"expect@86","endTime":41112.294,"annotations":[]}
+{"type":"before","callId":"expect@87","stepId":"expect@87","parentId":"fixture@43","startTime":41113.024,"class":"Test","method":"expect","title":"Expect \"toBeTruthy\"","params":{},"stack":[{"file":"C:\\Users\\lausu\\Desktop\\SE2026-microservices\\e2e\\streamhub.spec.ts","line":140,"column":31}]}
+{"type":"after","callId":"expect@87","endTime":41113.152,"annotations":[]}
+{"type":"before","callId":"expect@88","stepId":"expect@88","parentId":"fixture@43","startTime":41114.182,"class":"Test","method":"expect","title":"Expect \"toHaveValue\"","params":{},"stack":[{"file":"C:\\Users\\lausu\\Desktop\\SE2026-microservices\\e2e\\streamhub.spec.ts","line":141,"column":30}]}
+{"type":"after","callId":"expect@88","endTime":41162.519,"annotations":[]}
+{"type":"after","callId":"pw:api@45","endTime":44250.68,"annotations":[]}
+{"type":"after","callId":"fixture@43","endTime":44257.868,"attachments":[{"name":"video","contentType":"video/webm","sha1":"fddf058354c5c6938d6fdfda30d911c360d483a2"}],"annotations":[]}
+{"type":"before","callId":"attach@07d6052d85cf2f0c47fb6f725c241278","stepId":"attach@07d6052d85cf2f0c47fb6f725c241278","startTime":44267.021,"class":"Test","method":"test.attach","title":"Attach \"error-context\"","params":{},"stack":[]}
+{"type":"after","callId":"attach@07d6052d85cf2f0c47fb6f725c241278","endTime":44267.04,"attachments":[{"name":"error-context","contentType":"text/markdown","sha1":"c22a9e55ec79b01ad4ad55a4b3a075c3b583321f"}]}
+{"type":"before","callId":"fixture@97","stepId":"fixture@97","parentId":"hook@41","startTime":44269.015,"class":"Test","method":"fixture","title":"Fixture \"baseURL\"","params":{},"stack":[{"file":"project#","line":1,"column":1}],"group":"configuration"}
+{"type":"after","callId":"fixture@97","endTime":44269.087,"annotations":[]}
+{"type":"after","callId":"hook@41","endTime":44278.712,"attachments":[{"name":"screenshot","contentType":"image/png","sha1":"78485ad26ab49de2007fe98b0854715a58aaf5b6"}],"annotations":[]}
+{"type":"before","callId":"hook@119","stepId":"hook@119","startTime":44279.143,"class":"Test","method":"hook","title":"Worker Cleanup","params":{},"stack":[]}
+{"type":"before","callId":"fixture@123","stepId":"fixture@123","parentId":"hook@119","startTime":44281.248,"class":"Test","method":"fixture","title":"Fixture \"video\"","params":{},"stack":[{"file":"project#","line":1,"column":1}],"group":"configuration"}
+{"type":"after","callId":"fixture@123","endTime":44281.304,"annotations":[]}
+{"type":"before","callId":"fixture@124","stepId":"fixture@124","parentId":"hook@119","startTime":44281.738,"class":"Test","method":"fixture","title":"Fixture \"browser\"","params":{},"stack":[]}
+{"type":"after","callId":"fixture@124","endTime":44396.393,"annotations":[]}
+{"type":"before","callId":"fixture@129","stepId":"fixture@129","parentId":"hook@119","startTime":44398.708,"class":"Test","method":"fixture","title":"Fixture \"screenshot\"","params":{},"stack":[{"file":"project#","line":1,"column":1}],"group":"configuration"}
+{"type":"after","callId":"fixture@129","endTime":44398.749,"annotations":[]}
+{"type":"after","callId":"hook@119","endTime":44400.855,"annotations":[]}

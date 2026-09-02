@@ -1,10 +1,15 @@
+import io
 import os, secrets, json
+import tempfile
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
 from uuid import UUID
-from fastapi import Depends, FastAPI, HTTPException, Query, WebSocket, WebSocketDisconnect, Header
+from fastapi import Depends, FastAPI, HTTPException, Query, Request, WebSocket, WebSocketDisconnect, Header
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse, StreamingResponse
+from minio.error import S3Error
 from sqlalchemy import or_, desc
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from pathlib import Path
 import random
@@ -12,6 +17,7 @@ import cv2
 from urllib.parse import quote
 import hashlib
 import re
+from contextlib import asynccontextmanager
 
 
 from .database import Base, engine, get_db, SessionLocal
@@ -21,17 +27,31 @@ from .models import (
 )
 from .schemas import *
 from .security import create_token, get_current_user, hash_password, require_admin, require_creator, verify_password, parse_token
+from .object_storage import MinioObjectStorage, migrate_legacy_media, parse_range_header
 from sqlalchemy import func
-app = FastAPI(title='StreamHub API', description='在线视频与直播网站 Python 后端', version='1.0.0')
 
-from fastapi.staticfiles import StaticFiles
 
-# 确保 uploads 目录存在
-UPLOADS_DIR = Path("/app/public/uploads")
-UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    initialize_application()
+    yield
 
-# 挂载静态文件目录
-app.mount("/uploads", StaticFiles(directory=str(UPLOADS_DIR)), name="uploads")
+
+app = FastAPI(
+    title='StreamHub API',
+    description='在线视频与直播网站 Python 后端',
+    version='1.0.0',
+    lifespan=lifespan,
+)
+
+LEGACY_PUBLIC_ROOT = Path(
+    os.getenv(
+        "LEGACY_PUBLIC_ROOT",
+        str(Path(__file__).resolve().parents[2] / "public"),
+    )
+)
+UPLOADS_DIR = LEGACY_PUBLIC_ROOT / "uploads"
+media_storage = MinioObjectStorage.from_env()
 
 origins = os.getenv('CORS_ORIGINS', 'http://localhost:3000,http://localhost:5173,http://localhost:8080').split(',')
 app.add_middleware(
@@ -41,6 +61,86 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+def _legacy_media_path(object_name: str) -> Optional[Path]:
+    root = LEGACY_PUBLIC_ROOT.resolve()
+    candidate = (root / object_name).resolve()
+    try:
+        candidate.relative_to(root)
+    except ValueError:
+        return None
+    return candidate if candidate.is_file() else None
+
+
+def _media_response(object_name: str, range_header: Optional[str]):
+    try:
+        metadata = media_storage.stat_object(object_name)
+    except (S3Error, KeyError, OSError) as exc:
+        legacy_path = _legacy_media_path(object_name)
+        if legacy_path:
+            return FileResponse(legacy_path)
+        if isinstance(exc, S3Error) and exc.code in {"NoSuchKey", "NoSuchObject"}:
+            raise HTTPException(status_code=404, detail="媒体文件不存在") from exc
+        if isinstance(exc, KeyError):
+            raise HTTPException(status_code=404, detail="媒体文件不存在") from exc
+        raise HTTPException(status_code=503, detail="对象存储暂不可用") from exc
+    except Exception as exc:
+        legacy_path = _legacy_media_path(object_name)
+        if legacy_path:
+            return FileResponse(legacy_path)
+        raise HTTPException(status_code=503, detail="对象存储暂不可用") from exc
+
+    object_size = int(metadata.size)
+    content_type = metadata.content_type or "application/octet-stream"
+    status_code = 200
+    start = 0
+    end = object_size - 1
+
+    if range_header:
+        try:
+            start, end = parse_range_header(range_header, object_size)
+        except ValueError as exc:
+            raise HTTPException(
+                status_code=416,
+                detail="无效的媒体范围",
+                headers={"Content-Range": f"bytes */{object_size}"},
+            ) from exc
+        status_code = 206
+
+    length = end - start + 1
+
+    def iter_object():
+        response = media_storage.get_object(object_name, offset=start, length=length)
+        try:
+            yield from response.stream(64 * 1024)
+        finally:
+            response.close()
+            response.release_conn()
+
+    headers = {
+        "Accept-Ranges": "bytes",
+        "Content-Length": str(length),
+    }
+    if status_code == 206:
+        headers["Content-Range"] = f"bytes {start}-{end}/{object_size}"
+
+    return StreamingResponse(
+        iter_object(),
+        status_code=status_code,
+        media_type=content_type,
+        headers=headers,
+    )
+
+
+@app.get("/uploads/{media_path:path}")
+def get_uploaded_media(media_path: str, request: Request):
+    return _media_response(f"uploads/{media_path}", request.headers.get("range"))
+
+
+@app.get("/avatars/{media_path:path}")
+def get_avatar_media(media_path: str, request: Request):
+    return _media_response(f"avatars/{media_path}", request.headers.get("range"))
 
 class LiveHub:
     def __init__(self):
@@ -731,8 +831,7 @@ def apply_social_migration():
         ))
 
 
-@app.on_event('startup')
-def startup():
+def initialize_application():
     Base.metadata.create_all(bind=engine)
     try:
         apply_social_migration()
@@ -782,11 +881,6 @@ def startup():
         except Exception as e:
             print(f"创建 sensitive_words 表失败: {e}")
         
-        try:
-            cleanup_orphan_uploads(db)
-        except Exception as e:
-            print(f"清理残留文件失败: {e}")
-
         seed_data(db)
 
         # 种子数据也会创建创作者，因此必须在 seed_data 之后补齐直播密钥。
@@ -797,6 +891,10 @@ def startup():
         db.commit()
         if creators:
             print(f"已为 {len(creators)} 位创作者生成 stream_key")
+
+        if os.getenv("MINIO_MIGRATE_ON_STARTUP", "false").lower() in {"1", "true", "yes"}:
+            migrated = migrate_legacy_media(media_storage, LEGACY_PUBLIC_ROOT)
+            print(f"旧媒体复制到 MinIO 完成：新增 {len(migrated)} 个对象，原文件已保留")
     except Exception as e:
         db.rollback()
         print("初始化演示数据失败：", e)
@@ -845,7 +943,7 @@ def update_me(data: ProfileUpdate, user: User = Depends(get_current_user), db: S
 @app.get('/api/categories')
 def list_categories(db: Session = Depends(get_db)):
     rows = db.query(Category).order_by(Category.type, Category.sort_order).all()
-    return [{'id': '0', 'name': '推荐', 'type': 0}] + [CategoryOut(id=str(c.id), name=c.name, type=c.type).dict() for c in rows]
+    return [{'id': '0', 'name': '推荐', 'type': 0}] + [CategoryOut(id=str(c.id), name=c.name, type=c.type).model_dump() for c in rows]
 
 @app.get('/api/videos')
 def list_videos(
@@ -883,7 +981,7 @@ def list_videos(
     items = q.offset((page - 1) * page_size).limit(page_size).all()
 
     return {
-        'items': [video_out(v).dict() for v in items],
+        'items': [video_out(v).model_dump() for v in items],
         'hasMore': page * page_size < total
     }
 
@@ -964,7 +1062,7 @@ def recommended_videos(
     page_items = scored_videos[start:end]
     
     return {
-        'items': [video_out(v[0]).dict() for v in page_items],
+        'items': [video_out(v[0]).model_dump() for v in page_items],
         'hasMore': end < len(scored_videos)
     }
 
@@ -990,7 +1088,7 @@ def related(video_id: UUID, db: Session = Depends(get_db)):
     ).order_by(func.random()).limit(5).all()
 
     return {
-        'items': [video_out(x).dict() for x in items]
+        'items': [video_out(x).model_dump() for x in items]
     }
     
     # 分离同类视频和其他视频
@@ -1022,7 +1120,7 @@ def related(video_id: UUID, db: Session = Depends(get_db)):
             result.extend(other_videos[:need])
     
     return {
-        'items': [video_out(x).dict() for x in result]
+        'items': [video_out(x).model_dump() for x in result]
     }
 
 @app.post('/api/videos')
@@ -1065,12 +1163,12 @@ def create_video(data: VideoCreate, user: User = Depends(require_creator), db: S
 @app.get('/api/creator/videos')
 def creator_videos(user: User = Depends(require_creator), db: Session = Depends(get_db)):
     rows = db.query(Video).filter(Video.uploader_id == user.id).order_by(desc(Video.created_at)).all()
-    return {'items': [video_out(v).dict() for v in rows]}
+    return {'items': [video_out(v).model_dump() for v in rows]}
 
 @app.get('/api/admin/videos/pending')
 def pending_videos(_: User = Depends(require_admin), db: Session = Depends(get_db)):
     rows = db.query(Video).filter(Video.audit_status == 0).order_by(desc(Video.created_at)).all()
-    return {'items': [video_out(v).dict() for v in rows]}
+    return {'items': [video_out(v).model_dump() for v in rows]}
 
 @app.patch('/api/admin/videos/{video_id}/audit')
 def audit_video(
@@ -1336,7 +1434,7 @@ def add_comment(
 @app.get('/api/videos/{video_id}/danmaku')
 def get_danmaku(video_id: UUID, db: Session = Depends(get_db)):
     rows = db.query(Danmaku).filter(Danmaku.target_id == video_id, Danmaku.target_type == 0).order_by(Danmaku.video_time).all()
-    return [danmaku_out(d).dict() for d in rows]
+    return [danmaku_out(d).model_dump() for d in rows]
 
 @app.post('/api/videos/{video_id}/danmaku')
 def add_danmaku(video_id: UUID, data: DanmakuCreate, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
@@ -1361,7 +1459,7 @@ def add_danmaku(video_id: UUID, data: DanmakuCreate, user: User = Depends(get_cu
 def list_rooms(category_id: Optional[str] = None, db: Session = Depends(get_db)):
     q = db.query(LiveRoom).filter(LiveRoom.status == 1)
     if category_id: q = q.filter(LiveRoom.category_id == int(category_id))
-    return {'items': [live_out(r).dict() for r in q.order_by(desc(LiveRoom.start_time)).all()]}
+    return {'items': [live_out(r).model_dump() for r in q.order_by(desc(LiveRoom.start_time)).all()]}
 
 @app.get('/api/live/rooms/{room_id}')
 def room_detail(room_id: UUID, db: Session = Depends(get_db)):
@@ -1639,7 +1737,7 @@ def get_user_videos(
     items = q.offset((page - 1) * page_size).limit(page_size).all()
     
     return {
-        'items': [video_out(v).dict() for v in items],
+        'items': [video_out(v).model_dump() for v in items],
         'total': total,
         'page': page,
         'pageSize': page_size,
@@ -1672,7 +1770,7 @@ def get_user_likes(
     items = q.offset((page - 1) * page_size).limit(page_size).all()
     
     return {
-        'items': [video_out(v).dict() for v in items],
+        'items': [video_out(v).model_dump() for v in items],
         'total': total,
         'page': page,
         'pageSize': page_size,
@@ -1786,7 +1884,20 @@ def get_or_create_conversation(db: Session, user1, user2) -> Conversation:
         return conv
     conv = Conversation(user_a_id=ua, user_b_id=ub)
     db.add(conv)
-    db.commit()
+    try:
+        db.commit()
+    except IntegrityError:
+        # Two clients can create the same user pair after both initial reads
+        # return no row. The unique constraint selects one winner; recover the
+        # losing transaction and return that committed conversation.
+        db.rollback()
+        conv = db.query(Conversation).filter(
+            Conversation.user_a_id == ua,
+            Conversation.user_b_id == ub,
+        ).first()
+        if conv:
+            return conv
+        raise
     db.refresh(conv)
     return conv
 
@@ -2119,9 +2230,39 @@ def upgrade_to_creator(
 import shutil
 from fastapi import UploadFile, File
 
-# 头像上传目录
-AVATAR_UPLOAD_DIR = Path("/app/public/avatars")
-AVATAR_UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+AVATAR_UPLOAD_DIR = LEGACY_PUBLIC_ROOT / "avatars"
+
+
+def _safe_upload_extension(filename: Optional[str], default: str) -> str:
+    candidate = (filename or "").rsplit(".", 1)[-1].lower()
+    return candidate if re.fullmatch(r"[a-z0-9]{1,10}", candidate) else default
+
+
+def _upload_length(file: UploadFile) -> int:
+    if file.size is not None:
+        return int(file.size)
+    current = file.file.tell()
+    file.file.seek(0, os.SEEK_END)
+    length = file.file.tell()
+    file.file.seek(current)
+    return int(length)
+
+
+def _store_upload(
+    file: UploadFile,
+    object_name: str,
+    content_type: str,
+) -> None:
+    try:
+        file.file.seek(0)
+        media_storage.upload_stream(
+            file.file,
+            object_name,
+            _upload_length(file),
+            content_type,
+        )
+    except Exception as exc:
+        raise HTTPException(status_code=503, detail="对象存储上传失败") from exc
 
 @app.post('/api/auth/upload-avatar')
 async def upload_avatar(
@@ -2134,14 +2275,13 @@ async def upload_avatar(
     if not file.content_type or not file.content_type.startswith('image/'):
         raise HTTPException(status_code=400, detail='只支持图片文件')
     
-    # 生成唯一文件名
-    ext = file.filename.split('.')[-1] if '.' in file.filename else 'jpg'
-    filename = f"{user.id}_{int(datetime.now().timestamp())}.{ext}"
-    filepath = AVATAR_UPLOAD_DIR / filename
-    
-    # 保存文件
-    with open(filepath, 'wb') as buffer:
-        shutil.copyfileobj(file.file, buffer)
+    if _upload_length(file) > 5 * 1024 * 1024:
+        raise HTTPException(status_code=400, detail='图片大小不能超过5MB')
+
+    ext = _safe_upload_extension(file.filename, 'jpg')
+    filename = f"{user.id}_{secrets.token_hex(8)}.{ext}"
+    object_name = f"avatars/{filename}"
+    _store_upload(file, object_name, file.content_type)
     
     # 生成访问URL
     avatar_url = f"/avatars/{filename}"
@@ -2193,12 +2333,8 @@ def get_user_stats(
 import shutil
 from fastapi import UploadFile, File
 
-# 视频上传目录
-VIDEO_UPLOAD_DIR = Path("/app/public/uploads/videos")
-VIDEO_UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
-
-COVER_UPLOAD_DIR = Path("/app/public/uploads/covers")
-COVER_UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+VIDEO_UPLOAD_DIR = LEGACY_PUBLIC_ROOT / "uploads" / "videos"
+COVER_UPLOAD_DIR = LEGACY_PUBLIC_ROOT / "uploads" / "covers"
 
 @app.post('/api/videos/upload-file')
 async def upload_video_file(
@@ -2206,80 +2342,82 @@ async def upload_video_file(
     user: User = Depends(require_creator),
     db: Session = Depends(get_db)
 ):
-    # 验证文件类型
     if not file.content_type or not file.content_type.startswith('video/'):
         raise HTTPException(status_code=400, detail='只支持视频文件')
-    
-    if file.size > 500 * 1024 * 1024:
+    if file.size is not None and file.size > 500 * 1024 * 1024:
         raise HTTPException(status_code=400, detail='文件大小不能超过500MB')
-    
-    # 保存文件
-    ext = file.filename.split('.')[-1] if '.' in file.filename else 'mp4'
-    filename = f"{user.id}_{int(datetime.now().timestamp())}.{ext}"
-    filepath = VIDEO_UPLOAD_DIR / filename
-    
-    with open(filepath, 'wb') as buffer:
-        shutil.copyfileobj(file.file, buffer)
-    
+
+    ext = _safe_upload_extension(file.filename, 'mp4')
+    filename = f"{user.id}_{secrets.token_hex(8)}.{ext}"
+    object_name = f"uploads/videos/{filename}"
     video_url = f"/uploads/videos/{filename}"
-    
-    # 生成封面 - 使用 OpenCV
-    cover_dir = Path("/app/public/uploads/covers")
-    cover_dir.mkdir(parents=True, exist_ok=True)
-    
-    cover_filename = f"{user.id}_{int(datetime.now().timestamp())}.jpg"
-    cover_path = cover_dir / cover_filename
-    
-    cover_url = ""
+    temp_path: Optional[Path] = None
+
     try:
-        import cv2
-        cap = cv2.VideoCapture(str(filepath))
-        if cap.isOpened():
-            # 读取第一帧
-            ret, frame = cap.read()
-            if ret:
-                # 保存为图片
-                cv2.imwrite(str(cover_path), frame)
-                cover_url = f"/uploads/covers/{cover_filename}"
-                print(f"封面生成成功: {cover_url}")
-            else:
-                print("无法读取视频帧")
-        else:
-            print("无法打开视频文件")
-        cap.release()
-    except Exception as e:
-        print(f"封面生成失败: {e}")
-    
-    # 获取时长
-    duration = 0
-    try:
-        import cv2
-        cap = cv2.VideoCapture(str(filepath))
-        if cap.isOpened():
-            fps = cap.get(cv2.CAP_PROP_FPS)
-            frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-            if fps > 0:
-                duration = int(frame_count / fps)
-        cap.release()
-    except:
-        pass
-    
-    return {
-        'code': 0,
-        'message': '上传成功',
-        'data': {
-            'videoUrl': video_url,
-            'duration': duration,
-            'coverUrl': cover_url
+        file.file.seek(0)
+        with tempfile.NamedTemporaryFile(delete=False, suffix=f".{ext}") as temp_file:
+            shutil.copyfileobj(file.file, temp_file)
+            temp_path = Path(temp_file.name)
+
+        if temp_path.stat().st_size > 500 * 1024 * 1024:
+            raise HTTPException(status_code=400, detail='文件大小不能超过500MB')
+
+        try:
+            media_storage.upload_path(
+                temp_path,
+                object_name,
+                file.content_type or "video/mp4",
+            )
+        except Exception as exc:
+            raise HTTPException(status_code=503, detail="对象存储上传失败") from exc
+
+        cover_filename = f"{user.id}_{secrets.token_hex(8)}.jpg"
+        cover_object_name = f"uploads/covers/{cover_filename}"
+        cover_url = ""
+        duration = 0
+
+        try:
+            cap = cv2.VideoCapture(str(temp_path))
+            if cap.isOpened():
+                ret, frame = cap.read()
+                if ret:
+                    encoded_ok, encoded_frame = cv2.imencode('.jpg', frame)
+                    if encoded_ok:
+                        cover_bytes = encoded_frame.tobytes()
+                        media_storage.upload_stream(
+                            io.BytesIO(cover_bytes),
+                            cover_object_name,
+                            len(cover_bytes),
+                            "image/jpeg",
+                        )
+                        cover_url = f"/uploads/covers/{cover_filename}"
+
+                fps = cap.get(cv2.CAP_PROP_FPS)
+                frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+                if fps > 0:
+                    duration = int(frame_count / fps)
+            cap.release()
+        except Exception as exc:
+            print(f"视频封面或时长读取失败: {exc}")
+
+        return {
+            'code': 0,
+            'message': '上传成功',
+            'data': {
+                'videoUrl': video_url,
+                'duration': duration,
+                'coverUrl': cover_url
+            }
         }
-    }
+    finally:
+        if temp_path and temp_path.exists():
+            temp_path.unlink()
 
 # ======================================================================
 # 视频封面上传
 # ======================================================================
 
-VIDEO_COVER_UPLOAD_DIR = Path("/app/public/uploads/covers")
-VIDEO_COVER_UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+VIDEO_COVER_UPLOAD_DIR = LEGACY_PUBLIC_ROOT / "uploads" / "covers"
 
 @app.post('/api/videos/upload-cover')
 async def upload_video_cover(
@@ -2290,16 +2428,14 @@ async def upload_video_cover(
     if not file.content_type or not file.content_type.startswith('image/'):
         raise HTTPException(status_code=400, detail='只支持图片文件')
     
-    if file.size > 5 * 1024 * 1024:
+    if _upload_length(file) > 5 * 1024 * 1024:
         raise HTTPException(status_code=400, detail='图片大小不能超过5MB')
-    
-    ext = file.filename.split('.')[-1] if '.' in file.filename else 'jpg'
-    filename = f"cover_{user.id}_{int(datetime.now().timestamp())}.{ext}"
-    filepath = VIDEO_COVER_UPLOAD_DIR / filename
-    
-    with open(filepath, 'wb') as buffer:
-        shutil.copyfileobj(file.file, buffer)
-    
+
+    ext = _safe_upload_extension(file.filename, 'jpg')
+    filename = f"cover_{user.id}_{secrets.token_hex(8)}.{ext}"
+    object_name = f"uploads/covers/{filename}"
+    _store_upload(file, object_name, file.content_type)
+
     cover_url = f"/uploads/covers/{filename}"
     
     return {
@@ -2337,7 +2473,7 @@ def get_feed(
     total = q.count()
     
     return {
-        'items': [video_out(v).dict() for v in items],
+        'items': [video_out(v).model_dump() for v in items],
         'hasMore': page * page_size < total
     }
 
@@ -2441,7 +2577,7 @@ def creator_videos_by_status(
         Video.uploader_id == user.id,
         Video.audit_status == status
     ).order_by(desc(Video.created_at)).all()
-    return {'items': [video_out(v).dict() for v in rows]}
+    return {'items': [video_out(v).model_dump() for v in rows]}
 
 # ======================================================================
 # 删除视频
@@ -2518,7 +2654,7 @@ def update_video(
     db.commit()
     db.refresh(video)
     
-    return {'code': 0, 'message': '更新成功', 'data': video_out(video).dict()}
+    return {'code': 0, 'message': '更新成功', 'data': video_out(video).model_dump()}
 
 # ======================================================================
 # 删除评论
@@ -2656,7 +2792,7 @@ def admin_users(
     users = q.order_by(User.created_at.desc()).offset((page-1)*limit).limit(limit).all()
     
     return {
-        'items': [user_out(u).dict() for u in users],
+        'items': [user_out(u).model_dump() for u in users],
         'total': total,
         'page': page,
         'limit': limit
@@ -2933,7 +3069,7 @@ def admin_videos(
     items = q.order_by(Video.created_at.desc()).offset((page-1)*limit).limit(limit).all()
     
     return {
-        'items': [video_out(v).dict() for v in items],
+        'items': [video_out(v).model_dump() for v in items],
         'total': total,
         'page': page,
         'hasMore': page * limit < total
@@ -3025,7 +3161,7 @@ def admin_live_rooms(
     items = q.order_by(LiveRoom.created_at.desc()).offset((page-1)*limit).limit(limit).all()
     
     return {
-        'items': [live_out(r).dict() for r in items],
+        'items': [live_out(r).model_dump() for r in items],
         'total': total,
         'page': page,
         'hasMore': page * limit < total

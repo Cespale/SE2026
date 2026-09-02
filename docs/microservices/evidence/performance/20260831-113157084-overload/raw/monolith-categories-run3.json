@@ -1,0 +1,33 @@
+{
+  "version": "monolith",
+  "endpoint": "categories",
+  "run": 3,
+  "url": "http://127.0.0.1:18200/api/categories",
+  "method": "GET",
+  "warmup_seconds": 5.0,
+  "http": {
+    "concurrency": 16,
+    "duration_seconds": 20.107,
+    "requests": 1184,
+    "successes": 1184,
+    "errors": 0,
+    "throughput_rps": 58.885,
+    "average_ms": 271.047,
+    "p95_ms": 473.008,
+    "error_rate_percent": 0.0,
+    "status_codes": {
+      "200": 1184
+    }
+  },
+  "resources": {
+    "samples": 10,
+    "app_cpu_mean_percent": 48.485,
+    "app_cpu_peak_percent": 51.51,
+    "app_memory_mean_bytes": 92175073,
+    "app_memory_peak_bytes": 96804536.0,
+    "infra_cpu_mean_percent": 22.519,
+    "infra_cpu_peak_percent": 32.73,
+    "infra_memory_mean_bytes": 114703729,
+    "infra_memory_peak_bytes": 119537664.0
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "version": "monolith",
+  "endpoint": "videos-latest",
+  "run": 2,
+  "url": "http://127.0.0.1:18200/api/videos?sort=latest&page=1&page_size=20",
+  "method": "GET",
+  "warmup_seconds": 5.0,
+  "http": {
+    "concurrency": 16,
+    "duration_seconds": 20.417,
+    "requests": 363,
+    "successes": 363,
+    "errors": 0,
+    "throughput_rps": 17.779,
+    "average_ms": 893.926,
+    "p95_ms": 1284.791,
+    "error_rate_percent": 0.0,
+    "status_codes": {
+      "200": 363
+    }
+  },
+  "resources": {
+    "samples": 10,
+    "app_cpu_mean_percent": 50.402,
+    "app_cpu_peak_percent": 51.72,
+    "app_memory_mean_bytes": 120586240,
+    "app_memory_peak_bytes": 128135987.0,
+    "infra_cpu_mean_percent": 20.546,
+    "infra_cpu_peak_percent": 27.99,
+    "infra_memory_mean_bytes": 120261181,
+    "infra_memory_peak_bytes": 130862285.0
+  }
+}

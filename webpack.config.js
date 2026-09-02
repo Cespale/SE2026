@@ -4,6 +4,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = (env, argv) => {
   const isDev = argv.mode !== 'production';
+  const backendProxyTarget =
+    process.env.STREAMHUB_BACKEND_PROXY_TARGET || 'http://127.0.0.1:8100';
 
   return {
     mode: isDev ? 'development' : 'production',
@@ -78,6 +80,14 @@ module.exports = (env, argv) => {
       historyApiFallback: true,
       allowedHosts: 'all',
 
+      proxy: [
+        {
+          pathFilter: ['/uploads', '/avatars'],
+          target: backendProxyTarget,
+          changeOrigin: true,
+        },
+      ],
+
       hot: false,
       liveReload: false,
 
@@ -86,24 +96,17 @@ module.exports = (env, argv) => {
         reconnect: false,
         webSocketURL: {
           hostname: 'localhost',
-          port: 5173,
+          port: 5273,
           pathname: '/ws',
           protocol: 'ws',
         },
       },
 
-      watchFiles: {
-        paths: ['src/**/*'],
-        options: {
-          ignored: ['**/public/**', '**/node_modules/**'],
-          usePolling: false,
-        },
-      },
     },
     plugins: [
       new webpack.DefinePlugin({
         __STREAMHUB_API_BASE_URL__: JSON.stringify(
-          process.env.REACT_APP_API_BASE_URL || ''
+          process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:8100'
         ),
       }),
       new HtmlWebpackPlugin({

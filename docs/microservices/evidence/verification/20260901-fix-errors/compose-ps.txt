@@ -1,0 +1,9 @@
+NAME                             IMAGE                                              COMMAND                  SERVICE           CREATED         STATUS                   PORTS
+streamhub-ms-content-service-1   streamhub-content-service:fix-errors-20260901-r2   "uvicorn app.main:ap…"   content-service   2 minutes ago   Up 2 minutes (healthy)   8000/tcp
+streamhub-ms-frontend-ms-1       streamhub-frontend:fix-errors-20260901-r2          "docker-entrypoint.s…"   frontend-ms       2 minutes ago   Up 2 minutes (healthy)   127.0.0.1:5273->3266/tcp
+streamhub-ms-gateway-1           streamhub-gateway:fix-errors-20260901-r2           "/streamhub-entrypoi…"   gateway           2 minutes ago   Up 2 minutes (healthy)   127.0.0.1:8100->80/tcp
+streamhub-ms-minio-ms-1          quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z   "/usr/bin/docker-ent…"   minio-ms          3 hours ago     Up 3 hours (healthy)     127.0.0.1:9100->9000/tcp, 127.0.0.1:9101->9001/tcp
+streamhub-ms-postgres-ms-1       postgres:16                                        "docker-entrypoint.s…"   postgres-ms       3 hours ago     Up 3 hours (healthy)     127.0.0.1:5434->5432/tcp
+streamhub-ms-social-service-1    streamhub-social-service:fix-errors-20260901-r2    "uvicorn app.main:ap…"   social-service    2 minutes ago   Up 2 minutes (healthy)   8000/tcp
+streamhub-ms-srs-ms-1            ossrs/srs:5                                        "./objs/srs -c conf/…"   srs-ms            3 hours ago     Up 3 hours               127.0.0.1:1936->1935/tcp, 127.0.0.1:8081->8080/tcp
+streamhub-ms-user-service-1      streamhub-user-service:fix-errors-20260901-r2      "uvicorn app.main:ap…"   user-service      2 minutes ago   Up 2 minutes (healthy)   8000/tcp

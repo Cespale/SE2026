@@ -1,0 +1,105 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service
+  namespace: streamhub-ms
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-service
+  template:
+    metadata:
+      labels:
+        app: user-service
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 100
+        runAsGroup: 101
+      containers:
+        - name: user-service
+          image: streamhub-user-service:replace-me
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          env:
+            - name: APP_VERSION
+              valueFrom:
+                configMapKeyRef:
+                  name: streamhub-ms-config
+                  key: APP_VERSION
+            - name: SERVICE_VERSION
+              valueFrom:
+                configMapKeyRef:
+                  name: streamhub-ms-config
+                  key: APP_VERSION
+            - name: USER_DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: streamhub-ms-secrets
+                  key: USER_DATABASE_URL
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: streamhub-ms-secrets
+                  key: SECRET_KEY
+            - name: CONTENT_SERVICE_URL
+              value: http://content-service:8000
+            - name: SERVICE_CONNECT_TIMEOUT_SECONDS
+              value: "0.5"
+            - name: SERVICE_TOTAL_TIMEOUT_SECONDS
+              value: "1.5"
+            - name: MINIO_ENDPOINT
+              value: minio-ms:9000
+            - name: MINIO_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: streamhub-ms-secrets
+                  key: MINIO_ROOT_USER
+            - name: MINIO_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: streamhub-ms-secrets
+                  key: MINIO_ROOT_PASSWORD
+            - name: MINIO_BUCKET
+              value: streamhub-media
+            - name: MINIO_SECURE
+              value: "false"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-service
+  namespace: streamhub-ms
+spec:
+  type: ClusterIP
+  selector:
+    app: user-service
+  ports:
+    - name: http
+      port: 8000
+      targetPort: 8000

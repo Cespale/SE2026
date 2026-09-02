@@ -1,0 +1,33 @@
+{
+  "version": "microservices",
+  "endpoint": "videos-latest",
+  "run": 1,
+  "url": "http://127.0.0.1:18210/api/videos?sort=latest&page=1&page_size=20",
+  "method": "GET",
+  "warmup_seconds": 5.0,
+  "http": {
+    "concurrency": 16,
+    "duration_seconds": 20.166,
+    "requests": 160,
+    "successes": 0,
+    "errors": 160,
+    "throughput_rps": 7.934,
+    "average_ms": 2011.549,
+    "p95_ms": 2028.656,
+    "error_rate_percent": 100.0,
+    "status_codes": {
+      "503": 160
+    }
+  },
+  "resources": {
+    "samples": 10,
+    "app_cpu_mean_percent": 55.012,
+    "app_cpu_peak_percent": 94.62,
+    "app_memory_mean_bytes": 306286952,
+    "app_memory_peak_bytes": 326222480.0,
+    "infra_cpu_mean_percent": 5.51,
+    "infra_cpu_peak_percent": 15.31,
+    "infra_memory_mean_bytes": 133525668,
+    "infra_memory_peak_bytes": 133693440.0
+  }
+}

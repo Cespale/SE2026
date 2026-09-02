@@ -1,6 +1,12 @@
 node_modules
 dist
 build
+.venv-ms
+work
+.pytest_cache
+test-results
+reports
+.ci-results
 
 backend/.venv
 backend/__pycache__
@@ -17,3 +23,8 @@ backend/app/__pycache__
 .idea
 
 backend/.env
+
+# 用户运行时上传内容由 MinIO 提供，不打进前后端镜像。
+public/avatars
+public/uploads
+minio-data

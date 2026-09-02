@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-ms
+  namespace: streamhub-ms
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend-ms
+  template:
+    metadata:
+      labels:
+        app: frontend-ms
+    spec:
+      containers:
+        - name: frontend
+          image: streamhub-frontend:replace-me
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3266
+          env:
+            - name: REACT_APP_API_BASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: streamhub-ms-config
+                  key: PUBLIC_GATEWAY_URL
+            - name: STREAMHUB_BACKEND_PROXY_TARGET
+              value: http://gateway:80
+          startupProbe:
+            httpGet:
+              path: /
+              port: 3266
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 40
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3266
+            initialDelaySeconds: 20
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3266
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-ms
+  namespace: streamhub-ms
+spec:
+  type: ClusterIP
+  selector:
+    app: frontend-ms
+  ports:
+    - name: http
+      port: 3266
+      targetPort: 3266

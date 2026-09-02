@@ -1,0 +1,63 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: schema-migration
+  namespace: streamhub-ms
+spec:
+  backoffLimit: 3
+  ttlSecondsAfterFinished: 3600
+  template:
+    metadata:
+      labels:
+        app: schema-migration
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: schema-migration
+          image: postgres:16
+          command:
+            - bash
+            - -ec
+            - |
+              until pg_isready -h postgres-ms -U "$POSTGRES_USER" -d "$POSTGRES_DB"; do sleep 2; done
+              bash /schema/01-service-schemas.sh
+              psql --host postgres-ms --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" --file /schema/001-service-tables.sql
+          env:
+            - name: PGHOST
+              value: postgres-ms
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: streamhub-ms-config
+                  key: POSTGRES_DB
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: streamhub-ms-secrets
+                  key: POSTGRES_PASSWORD
+            - name: USER_SERVICE_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: streamhub-ms-secrets
+                  key: USER_SERVICE_DB_PASSWORD
+            - name: CONTENT_SERVICE_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: streamhub-ms-secrets
+                  key: CONTENT_SERVICE_DB_PASSWORD
+            - name: SOCIAL_SERVICE_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: streamhub-ms-secrets
+                  key: SOCIAL_SERVICE_DB_PASSWORD
+          volumeMounts:
+            - name: schema-files
+              mountPath: /schema
+              readOnly: true
+      volumes:
+        - name: schema-files
+          configMap:
+            name: streamhub-schema-files
+            defaultMode: 0555

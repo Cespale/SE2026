@@ -22,5 +22,6 @@ check_http() {
 
 check_http "后端" "streamhub-backend" 8000 18000 "/openapi.json"
 check_http "前端" "streamhub-frontend" 3266 13266 "/"
+check_http "MinIO" "streamhub-minio" 9000 19000 "/minio/health/live"
 
 echo "==> 全部健康检查通过"

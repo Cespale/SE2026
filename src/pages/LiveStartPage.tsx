@@ -192,8 +192,10 @@ export function LiveStartPage() {
 
   // 有正在直播的房间
   if (existingRoom) {
-    const streamKey = userStreamKey || existingRoom.streamKey;
-    const pushUrl = `rtmp://${window.location.hostname}:1935/live`;
+    // The room pull URL is generated from its own streamKey. Prefer the room
+    // value so OBS always publishes the exact stream that viewers request.
+    const streamKey = existingRoom.streamKey || userStreamKey;
+    const pushUrl = `rtmp://${window.location.hostname}:1936/live`;
 
     const handleStopLive = async () => {
       if (!confirm('确定要结束直播吗？')) return;
@@ -383,9 +385,9 @@ export function LiveStartPage() {
                 <div>
                   <label className="block text-xs text-gray-500 mb-1">推流地址</label>
                   <div className="flex gap-2">
-                    <input readOnly value={`rtmp://${window.location.hostname}:1935/live`}
+                    <input readOnly value={`rtmp://${window.location.hostname}:1936/live`}
                       className="flex-1 px-3 py-2 bg-white dark:bg-gray-800 rounded text-sm" />
-                    <button onClick={() => copyToClipboard(`rtmp://${window.location.hostname}:1935/live`, 'server')}
+                    <button onClick={() => copyToClipboard(`rtmp://${window.location.hostname}:1936/live`, 'server')}
                       className="px-3 py-2 bg-blue-500 text-white rounded-lg text-sm">
                       {copied === 'server' ? <Check size={16} /> : <Copy size={16} />}
                     </button>

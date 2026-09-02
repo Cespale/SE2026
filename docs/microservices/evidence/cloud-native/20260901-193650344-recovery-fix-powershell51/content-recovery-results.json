@@ -1,0 +1,6 @@
+{
+    "service":  "content-service",
+    "cross_service_endpoint":  "/api/live/rooms",
+    "status":  200,
+    "body":  "{\"items\":[]}"
+}

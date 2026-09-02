@@ -8,3 +8,4 @@ passlib[bcrypt]==1.7.4
 bcrypt==4.0.1
 opencv-python-headless==4.10.0.84
 python-multipart
+minio==7.2.20

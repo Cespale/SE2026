@@ -7,6 +7,8 @@ os.environ.setdefault(
     "postgresql+psycopg2://postgres:123456@127.0.0.1:5433/streamhub_test",
 )
 os.environ.setdefault("SECRET_KEY", "streamhub-test-secret")
+os.environ.setdefault("MINIO_ACCESS_KEY", "streamhub-test")
+os.environ.setdefault("MINIO_SECRET_KEY", "streamhub-test-secret")
 
 import pytest
 from fastapi.testclient import TestClient

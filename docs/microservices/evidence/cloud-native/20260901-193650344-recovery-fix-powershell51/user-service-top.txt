@@ -1,0 +1,116 @@
+[2026-09-01T11:36:56.3749419Z] baseline
+user-service-55879c4b59-72ms6   4m    107Mi   
+[2026-09-01T11:36:59.1855303Z] load
+user-service-55879c4b59-72ms6   4m    107Mi   
+[2026-09-01T11:37:06.2546166Z] load
+user-service-55879c4b59-72ms6   4m    107Mi   
+[2026-09-01T11:37:13.1154938Z] load
+user-service-55879c4b59-72ms6   38m   107Mi   
+[2026-09-01T11:37:19.8770662Z] load
+user-service-55879c4b59-72ms6   38m   107Mi   
+[2026-09-01T11:37:26.4133596Z] load
+user-service-55879c4b59-72ms6   497m   107Mi   
+[2026-09-01T11:37:32.8898304Z] load
+user-service-55879c4b59-72ms6   497m   107Mi   
+[2026-09-01T11:37:39.5522759Z] load
+user-service-55879c4b59-72ms6   497m   107Mi   
+[2026-09-01T11:37:46.3873856Z] load
+user-service-55879c4b59-72ms6   499m   107Mi   
+[2026-09-01T11:37:53.0947055Z] load
+user-service-55879c4b59-72ms6   499m   107Mi   
+[2026-09-01T11:37:59.6865178Z] load
+user-service-55879c4b59-72ms6   499m   107Mi   
+user-service-55879c4b59-dbhxp   282m   71Mi    
+user-service-55879c4b59-sccjl   366m   76Mi    
+[2026-09-01T11:38:06.4202322Z] load
+user-service-55879c4b59-72ms6   499m   107Mi   
+user-service-55879c4b59-dbhxp   282m   71Mi    
+user-service-55879c4b59-sccjl   366m   76Mi    
+[2026-09-01T11:38:13.0476465Z] load
+user-service-55879c4b59-72ms6   500m   106Mi   
+user-service-55879c4b59-dbhxp   281m   71Mi    
+user-service-55879c4b59-ddv25   425m   76Mi    
+user-service-55879c4b59-sccjl   301m   76Mi    
+[2026-09-01T11:38:19.7654256Z] load
+user-service-55879c4b59-72ms6   500m   106Mi   
+user-service-55879c4b59-dbhxp   281m   71Mi    
+user-service-55879c4b59-ddv25   425m   76Mi    
+user-service-55879c4b59-sccjl   301m   76Mi    
+[2026-09-01T11:38:26.4045184Z] load
+user-service-55879c4b59-72ms6   355m   106Mi   
+user-service-55879c4b59-dbhxp   281m   71Mi    
+user-service-55879c4b59-ddv25   37m    76Mi    
+user-service-55879c4b59-sccjl   328m   77Mi    
+[2026-09-01T11:38:33.1225789Z] load
+user-service-55879c4b59-72ms6   355m   106Mi   
+user-service-55879c4b59-dbhxp   281m   71Mi    
+user-service-55879c4b59-ddv25   37m    76Mi    
+user-service-55879c4b59-sccjl   328m   77Mi    
+[2026-09-01T11:38:39.7533792Z] load
+user-service-55879c4b59-72ms6   355m   106Mi   
+user-service-55879c4b59-dbhxp   281m   71Mi    
+user-service-55879c4b59-ddv25   37m    76Mi    
+user-service-55879c4b59-sccjl   328m   77Mi    
+[2026-09-01T11:38:46.3795029Z] load
+user-service-55879c4b59-72ms6   319m   106Mi   
+user-service-55879c4b59-dbhxp   355m   71Mi    
+user-service-55879c4b59-ddv25   348m   76Mi    
+user-service-55879c4b59-sccjl   407m   76Mi    
+[2026-09-01T11:38:53.0990980Z] load
+user-service-55879c4b59-72ms6   319m   106Mi   
+user-service-55879c4b59-dbhxp   355m   71Mi    
+user-service-55879c4b59-ddv25   348m   76Mi    
+user-service-55879c4b59-sccjl   407m   76Mi    
+[2026-09-01T11:38:59.9009326Z] load
+user-service-55879c4b59-72ms6   307m   107Mi   
+user-service-55879c4b59-dbhxp   337m   71Mi    
+user-service-55879c4b59-ddv25   389m   76Mi    
+user-service-55879c4b59-sccjl   319m   76Mi    
+[2026-09-01T11:39:06.4352106Z] cooldown
+user-service-55879c4b59-72ms6   307m   107Mi   
+user-service-55879c4b59-dbhxp   337m   71Mi    
+user-service-55879c4b59-ddv25   389m   76Mi    
+user-service-55879c4b59-sccjl   319m   76Mi    
+[2026-09-01T11:39:13.0202852Z] cooldown
+user-service-55879c4b59-72ms6   421m   106Mi   
+user-service-55879c4b59-dbhxp   222m   71Mi    
+user-service-55879c4b59-ddv25   123m   77Mi    
+user-service-55879c4b59-sccjl   241m   76Mi    
+[2026-09-01T11:39:19.6107656Z] cooldown
+user-service-55879c4b59-72ms6   421m   106Mi   
+user-service-55879c4b59-dbhxp   222m   71Mi    
+user-service-55879c4b59-ddv25   123m   77Mi    
+user-service-55879c4b59-sccjl   241m   76Mi    
+[2026-09-01T11:39:26.3161874Z] cooldown
+user-service-55879c4b59-72ms6   41m   105Mi   
+user-service-55879c4b59-dbhxp   16m   71Mi    
+user-service-55879c4b59-ddv25   3m    76Mi    
+user-service-55879c4b59-sccjl   4m    76Mi    
+[2026-09-01T11:39:33.0035609Z] cooldown
+user-service-55879c4b59-72ms6   41m   105Mi   
+user-service-55879c4b59-dbhxp   16m   71Mi    
+user-service-55879c4b59-ddv25   3m    76Mi    
+user-service-55879c4b59-sccjl   4m    76Mi    
+[2026-09-01T11:39:39.5645450Z] cooldown
+user-service-55879c4b59-72ms6   41m   105Mi   
+user-service-55879c4b59-dbhxp   16m   71Mi    
+user-service-55879c4b59-ddv25   3m    76Mi    
+user-service-55879c4b59-sccjl   4m    76Mi    
+[2026-09-01T11:39:46.1397174Z] cooldown
+user-service-55879c4b59-72ms6   4m    105Mi   
+user-service-55879c4b59-dbhxp   4m    71Mi    
+user-service-55879c4b59-ddv25   3m    76Mi    
+user-service-55879c4b59-sccjl   4m    76Mi    
+[2026-09-01T11:39:52.6308971Z] cooldown
+user-service-55879c4b59-72ms6   4m    105Mi   
+user-service-55879c4b59-dbhxp   4m    71Mi    
+user-service-55879c4b59-ddv25   3m    76Mi    
+user-service-55879c4b59-sccjl   4m    76Mi    
+[2026-09-01T11:39:59.1864018Z] cooldown
+user-service-55879c4b59-72ms6   4m    105Mi   
+user-service-55879c4b59-dbhxp   3m    71Mi    
+[2026-09-01T11:40:05.8698917Z] cooldown
+user-service-55879c4b59-72ms6   4m    105Mi   
+user-service-55879c4b59-dbhxp   3m    71Mi    
+[2026-09-01T11:40:12.4626905Z] cooldown
+user-service-55879c4b59-72ms6   4m    106Mi   

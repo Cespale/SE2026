@@ -1,48 +1,40 @@
 import React from 'react';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { TopNav } from './components/layout/TopNav';
-import { Sidebar } from './components/layout/Sidebar';
 
-import { HomePage } from './pages/HomePage';
-import { DiscoverPage } from './pages/DiscoverPage';
-import { SearchPage } from './pages/SearchPage';
-import { VideoPage } from './pages/VideoPage';
-import { LivePage } from './pages/LivePage';
-import { LiveStartPage } from './pages/LiveStartPage';
-import { UploadPage } from './pages/UploadPage';
-import { UserPage } from './pages/UserPage';
-import { CreatorPage } from './pages/CreatorPage';
-import { SettingsPage } from './pages/SettingsPage';
-import { AdminPage } from './pages/AdminPage';
-import { ShortVideoPage } from './pages/ShortVideoPage';
-import { SubscriptionPage } from './pages/SubscriptionPage';
-import { ProfilePage } from './pages/ProfilePage';
-import { ExplorePage } from './pages/ExplorePage';
-import { NotificationPage } from './pages/NotificationPage';
-import { MessagePage } from './pages/MessagePage';
+const TopNav = React.lazy(() => import('./components/layout/TopNav').then(({ TopNav }) => ({ default: TopNav })));
+const Sidebar = React.lazy(() => import('./components/layout/Sidebar').then(({ Sidebar }) => ({ default: Sidebar })));
+const AuthModals = React.lazy(() => import('./components/auth/AuthModals').then(({ AuthModals }) => ({ default: AuthModals })));
+const RequireAuth = React.lazy(() => import('./components/auth/RequireAuth').then(({ RequireAuth }) => ({ default: RequireAuth })));
 
-import { LoginModal } from './components/auth/LoginModal';
-import { RegisterModal } from './components/auth/RegisterModal';
-import { RequireAuth } from './components/auth/RequireAuth';
-import { useAuthStore } from './stores/authStore';
+const HomePage = React.lazy(() => import('./pages/HomePage').then(({ HomePage }) => ({ default: HomePage })));
+const DiscoverPage = React.lazy(() => import('./pages/DiscoverPage').then(({ DiscoverPage }) => ({ default: DiscoverPage })));
+const SearchPage = React.lazy(() => import('./pages/SearchPage').then(({ SearchPage }) => ({ default: SearchPage })));
+const VideoPage = React.lazy(() => import('./pages/VideoPage').then(({ VideoPage }) => ({ default: VideoPage })));
+const LivePage = React.lazy(() => import('./pages/LivePage').then(({ LivePage }) => ({ default: LivePage })));
+const LiveStartPage = React.lazy(() => import('./pages/LiveStartPage').then(({ LiveStartPage }) => ({ default: LiveStartPage })));
+const UploadPage = React.lazy(() => import('./pages/UploadPage').then(({ UploadPage }) => ({ default: UploadPage })));
+const UserPage = React.lazy(() => import('./pages/UserPage').then(({ UserPage }) => ({ default: UserPage })));
+const CreatorPage = React.lazy(() => import('./pages/CreatorPage').then(({ CreatorPage }) => ({ default: CreatorPage })));
+const SettingsPage = React.lazy(() => import('./pages/SettingsPage').then(({ SettingsPage }) => ({ default: SettingsPage })));
+const AdminPage = React.lazy(() => import('./pages/AdminPage').then(({ AdminPage }) => ({ default: AdminPage })));
+const ShortVideoPage = React.lazy(() => import('./pages/ShortVideoPage').then(({ ShortVideoPage }) => ({ default: ShortVideoPage })));
+const SubscriptionPage = React.lazy(() => import('./pages/SubscriptionPage').then(({ SubscriptionPage }) => ({ default: SubscriptionPage })));
+const ProfilePage = React.lazy(() => import('./pages/ProfilePage').then(({ ProfilePage }) => ({ default: ProfilePage })));
+const ExplorePage = React.lazy(() => import('./pages/ExplorePage').then(({ ExplorePage }) => ({ default: ExplorePage })));
+const NotificationPage = React.lazy(() => import('./pages/NotificationPage').then(({ NotificationPage }) => ({ default: NotificationPage })));
+const MessagePage = React.lazy(() => import('./pages/MessagePage').then(({ MessagePage }) => ({ default: MessagePage })));
 
 function App() {
-  const {
-    showLoginModal,
-    showRegisterModal,
-    closeLoginModal,
-    closeRegisterModal,
-    openRegisterModal,
-    openLoginModal,
-  } = useAuthStore();
-
   return (
     <HashRouter>
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-        <TopNav />
-        <Sidebar />
+        <React.Suspense fallback={null}>
+          <TopNav />
+          <Sidebar />
+        </React.Suspense>
 
         <main className="pt-16 pl-16 md:pl-56">
+          <React.Suspense fallback={<div className="p-8 text-gray-500">页面加载中...</div>}>
           <Routes>
             <Route path="/" element={<HomePage />} />
 
@@ -150,21 +142,12 @@ function App() {
 
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
+          </React.Suspense>
         </main>
 
-        {showLoginModal && (
-          <LoginModal
-            onClose={closeLoginModal}
-            onRegister={openRegisterModal}
-          />
-        )}
-
-        {showRegisterModal && (
-          <RegisterModal
-            onClose={closeRegisterModal}
-            onLogin={openLoginModal}
-          />
-        )}
+        <React.Suspense fallback={null}>
+          <AuthModals />
+        </React.Suspense>
       </div>
     </HashRouter>
   );

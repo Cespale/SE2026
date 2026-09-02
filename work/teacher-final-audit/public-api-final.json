@@ -1,0 +1,859 @@
+{
+  "total": 85,
+  "passed": 85,
+  "failed": 0,
+  "http_runtime_probes": 83,
+  "websocket_behavior_tests": 2,
+  "results": [
+    {
+      "test_id": "API-U001",
+      "method": "GET",
+      "path": "/api/admin/users",
+      "owner": "user",
+      "status": 401,
+      "duration_ms": 101.237,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-U002",
+      "method": "PATCH",
+      "path": "/api/admin/users/{user_id}/ban",
+      "owner": "user",
+      "status": 401,
+      "duration_ms": 72.51,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-U003",
+      "method": "PATCH",
+      "path": "/api/admin/users/{user_id}/type",
+      "owner": "user",
+      "status": 401,
+      "duration_ms": 7.837,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-U004",
+      "method": "PUT",
+      "path": "/api/auth/change-password",
+      "owner": "user",
+      "status": 401,
+      "duration_ms": 14.044,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-U005",
+      "method": "POST",
+      "path": "/api/auth/login",
+      "owner": "user",
+      "status": 422,
+      "duration_ms": 42.669,
+      "passed": true,
+      "detail": "HTTP 422"
+    },
+    {
+      "test_id": "API-U006",
+      "method": "GET",
+      "path": "/api/auth/me",
+      "owner": "user",
+      "status": 401,
+      "duration_ms": 24.649,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-U007",
+      "method": "PATCH",
+      "path": "/api/auth/me",
+      "owner": "user",
+      "status": 401,
+      "duration_ms": 9.04,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-U008",
+      "method": "POST",
+      "path": "/api/auth/register",
+      "owner": "user",
+      "status": 422,
+      "duration_ms": 11.116,
+      "passed": true,
+      "detail": "HTTP 422"
+    },
+    {
+      "test_id": "API-U009",
+      "method": "POST",
+      "path": "/api/auth/upgrade-to-creator",
+      "owner": "user",
+      "status": 401,
+      "duration_ms": 9.895,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-U010",
+      "method": "POST",
+      "path": "/api/auth/upload-avatar",
+      "owner": "user",
+      "status": 401,
+      "duration_ms": 22.235,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-U011",
+      "method": "GET",
+      "path": "/api/chat/conversations",
+      "owner": "user",
+      "status": 401,
+      "duration_ms": 10.703,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-U012",
+      "method": "POST",
+      "path": "/api/chat/conversations",
+      "owner": "user",
+      "status": 401,
+      "duration_ms": 13.73,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-U013",
+      "method": "GET",
+      "path": "/api/chat/conversations/{conv_id}/messages",
+      "owner": "user",
+      "status": 401,
+      "duration_ms": 35.299,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-U014",
+      "method": "POST",
+      "path": "/api/chat/conversations/{conv_id}/messages",
+      "owner": "user",
+      "status": 401,
+      "duration_ms": 13.42,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-U015",
+      "method": "POST",
+      "path": "/api/chat/conversations/{conv_id}/read",
+      "owner": "user",
+      "status": 401,
+      "duration_ms": 7.77,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-U016",
+      "method": "POST",
+      "path": "/api/chat/messages/{msg_id}/recall",
+      "owner": "user",
+      "status": 401,
+      "duration_ms": 8.261,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-U017",
+      "method": "GET",
+      "path": "/api/creator/fans",
+      "owner": "user",
+      "status": 401,
+      "duration_ms": 8.952,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-U018",
+      "method": "GET",
+      "path": "/api/notifications",
+      "owner": "user",
+      "status": 401,
+      "duration_ms": 7.98,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-U019",
+      "method": "POST",
+      "path": "/api/notifications/read-all",
+      "owner": "user",
+      "status": 401,
+      "duration_ms": 8.503,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-U020",
+      "method": "GET",
+      "path": "/api/notifications/unread-count",
+      "owner": "user",
+      "status": 401,
+      "duration_ms": 8.419,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-U021",
+      "method": "POST",
+      "path": "/api/notifications/{notif_id}/read",
+      "owner": "user",
+      "status": 401,
+      "duration_ms": 6.927,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-U022",
+      "method": "GET",
+      "path": "/api/users/{user_id}",
+      "owner": "user",
+      "status": 404,
+      "duration_ms": 244.271,
+      "passed": true,
+      "detail": "HTTP 404"
+    },
+    {
+      "test_id": "API-U023",
+      "method": "DELETE",
+      "path": "/api/users/{user_id}/follow",
+      "owner": "user",
+      "status": 401,
+      "duration_ms": 9.525,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-U024",
+      "method": "POST",
+      "path": "/api/users/{user_id}/follow",
+      "owner": "user",
+      "status": 401,
+      "duration_ms": 8.241,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-U025",
+      "method": "GET",
+      "path": "/api/users/{user_id}/followers",
+      "owner": "user",
+      "status": 200,
+      "duration_ms": 120.91,
+      "passed": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "test_id": "API-U026",
+      "method": "GET",
+      "path": "/api/users/{user_id}/following",
+      "owner": "user",
+      "status": 200,
+      "duration_ms": 31.59,
+      "passed": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "test_id": "API-U027",
+      "method": "GET",
+      "path": "/api/users/{user_id}/relation",
+      "owner": "user",
+      "status": 401,
+      "duration_ms": 8.675,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-U028",
+      "method": "GET",
+      "path": "/api/users/{user_id}/stats",
+      "owner": "user",
+      "status": 404,
+      "duration_ms": 17.088,
+      "passed": true,
+      "detail": "HTTP 404"
+    },
+    {
+      "test_id": "API-U029",
+      "method": "GET",
+      "path": "/avatars/{avatar_path:path}",
+      "owner": "user",
+      "status": 404,
+      "duration_ms": 330.158,
+      "passed": true,
+      "detail": "HTTP 404"
+    },
+    {
+      "test_id": "API-U030",
+      "method": "WEBSOCKET",
+      "path": "/ws/chat",
+      "owner": "user",
+      "status": null,
+      "duration_ms": 0.0,
+      "passed": true,
+      "detail": "covered by the real service WebSocket behavior suite"
+    },
+    {
+      "test_id": "API-C001",
+      "method": "POST",
+      "path": "/api/admin/cleanup-uploads",
+      "owner": "content",
+      "status": 401,
+      "duration_ms": 55.986,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-C002",
+      "method": "POST",
+      "path": "/api/admin/local-videos/sync",
+      "owner": "content",
+      "status": 401,
+      "duration_ms": 6.941,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-C003",
+      "method": "GET",
+      "path": "/api/admin/videos",
+      "owner": "content",
+      "status": 401,
+      "duration_ms": 21.668,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-C004",
+      "method": "GET",
+      "path": "/api/admin/videos/pending",
+      "owner": "content",
+      "status": 401,
+      "duration_ms": 6.352,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-C005",
+      "method": "PATCH",
+      "path": "/api/admin/videos/{video_id}/audit",
+      "owner": "content",
+      "status": 401,
+      "duration_ms": 48.388,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-C006",
+      "method": "POST",
+      "path": "/api/admin/videos/{video_id}/unapprove",
+      "owner": "content",
+      "status": 401,
+      "duration_ms": 9.704,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-C007",
+      "method": "POST",
+      "path": "/api/admin/videos/{video_id}/warn",
+      "owner": "content",
+      "status": 401,
+      "duration_ms": 10.116,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-C008",
+      "method": "GET",
+      "path": "/api/categories",
+      "owner": "content",
+      "status": 200,
+      "duration_ms": 56.111,
+      "passed": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "test_id": "API-C009",
+      "method": "GET",
+      "path": "/api/creator/videos",
+      "owner": "content",
+      "status": 401,
+      "duration_ms": 7.165,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-C010",
+      "method": "GET",
+      "path": "/api/creator/videos/{status}",
+      "owner": "content",
+      "status": 401,
+      "duration_ms": 6.201,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-C011",
+      "method": "DELETE",
+      "path": "/api/creator/videos/{video_id}",
+      "owner": "content",
+      "status": 401,
+      "duration_ms": 6.807,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-C012",
+      "method": "PUT",
+      "path": "/api/creator/videos/{video_id}",
+      "owner": "content",
+      "status": 401,
+      "duration_ms": 6.164,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-C013",
+      "method": "GET",
+      "path": "/api/creator/week-stats",
+      "owner": "content",
+      "status": 401,
+      "duration_ms": 7.312,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-C014",
+      "method": "GET",
+      "path": "/api/feed",
+      "owner": "content",
+      "status": 401,
+      "duration_ms": 6.349,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-C015",
+      "method": "GET",
+      "path": "/api/users/{user_id}/videos",
+      "owner": "content",
+      "status": 200,
+      "duration_ms": 115.239,
+      "passed": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "test_id": "API-C016",
+      "method": "GET",
+      "path": "/api/videos",
+      "owner": "content",
+      "status": 200,
+      "duration_ms": 315.44,
+      "passed": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "test_id": "API-C017",
+      "method": "POST",
+      "path": "/api/videos",
+      "owner": "content",
+      "status": 401,
+      "duration_ms": 7.727,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-C018",
+      "method": "GET",
+      "path": "/api/videos/recommended",
+      "owner": "content",
+      "status": 200,
+      "duration_ms": 50.25,
+      "passed": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "test_id": "API-C019",
+      "method": "POST",
+      "path": "/api/videos/upload-cover",
+      "owner": "content",
+      "status": 401,
+      "duration_ms": 14.975,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-C020",
+      "method": "POST",
+      "path": "/api/videos/upload-file",
+      "owner": "content",
+      "status": 401,
+      "duration_ms": 6.705,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-C021",
+      "method": "GET",
+      "path": "/api/videos/{video_id}",
+      "owner": "content",
+      "status": 404,
+      "duration_ms": 20.309,
+      "passed": true,
+      "detail": "HTTP 404"
+    },
+    {
+      "test_id": "API-C022",
+      "method": "GET",
+      "path": "/api/videos/{video_id}/related",
+      "owner": "content",
+      "status": 200,
+      "duration_ms": 15.265,
+      "passed": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "test_id": "API-C023",
+      "method": "GET",
+      "path": "/uploads/{media_path:path}",
+      "owner": "content",
+      "status": 404,
+      "duration_ms": 24.295,
+      "passed": true,
+      "detail": "HTTP 404"
+    },
+    {
+      "test_id": "API-S001",
+      "method": "GET",
+      "path": "/api/admin/live-rooms",
+      "owner": "social",
+      "status": 401,
+      "duration_ms": 58.453,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-S002",
+      "method": "POST",
+      "path": "/api/admin/live-rooms/{room_id}/close",
+      "owner": "social",
+      "status": 401,
+      "duration_ms": 47.493,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-S003",
+      "method": "POST",
+      "path": "/api/admin/live-rooms/{room_id}/warn",
+      "owner": "social",
+      "status": 401,
+      "duration_ms": 6.189,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-S004",
+      "method": "GET",
+      "path": "/api/admin/reports",
+      "owner": "social",
+      "status": 401,
+      "duration_ms": 7.735,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-S005",
+      "method": "PATCH",
+      "path": "/api/admin/reports/{report_id}/handle",
+      "owner": "social",
+      "status": 401,
+      "duration_ms": 6.204,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-S006",
+      "method": "PATCH",
+      "path": "/api/admin/reports/{report_id}/ignore",
+      "owner": "social",
+      "status": 401,
+      "duration_ms": 6.119,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-S007",
+      "method": "GET",
+      "path": "/api/admin/sensitive-words",
+      "owner": "social",
+      "status": 401,
+      "duration_ms": 6.555,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-S008",
+      "method": "POST",
+      "path": "/api/admin/sensitive-words",
+      "owner": "social",
+      "status": 401,
+      "duration_ms": 8.47,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-S009",
+      "method": "DELETE",
+      "path": "/api/admin/sensitive-words/{word_id}",
+      "owner": "social",
+      "status": 401,
+      "duration_ms": 5.695,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-S010",
+      "method": "DELETE",
+      "path": "/api/comments/{comment_id}",
+      "owner": "social",
+      "status": 401,
+      "duration_ms": 8.46,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-S011",
+      "method": "GET",
+      "path": "/api/comments/{comment_id}/replies",
+      "owner": "social",
+      "status": 200,
+      "duration_ms": 67.481,
+      "passed": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "test_id": "API-S012",
+      "method": "GET",
+      "path": "/api/creator/active-room",
+      "owner": "social",
+      "status": 401,
+      "duration_ms": 6.658,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-S013",
+      "method": "GET",
+      "path": "/api/creator/comments",
+      "owner": "social",
+      "status": 401,
+      "duration_ms": 24.27,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-S014",
+      "method": "DELETE",
+      "path": "/api/creator/comments/{comment_id}",
+      "owner": "social",
+      "status": 401,
+      "duration_ms": 6.502,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-S015",
+      "method": "GET",
+      "path": "/api/live/rooms",
+      "owner": "social",
+      "status": 200,
+      "duration_ms": 231.314,
+      "passed": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "test_id": "API-S016",
+      "method": "POST",
+      "path": "/api/live/rooms",
+      "owner": "social",
+      "status": 401,
+      "duration_ms": 7.326,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-S017",
+      "method": "GET",
+      "path": "/api/live/rooms/{room_id}",
+      "owner": "social",
+      "status": 404,
+      "duration_ms": 46.24,
+      "passed": true,
+      "detail": "HTTP 404"
+    },
+    {
+      "test_id": "API-S018",
+      "method": "POST",
+      "path": "/api/live/rooms/{room_id}/end",
+      "owner": "social",
+      "status": 401,
+      "duration_ms": 6.559,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-S019",
+      "method": "POST",
+      "path": "/api/live/rooms/{room_id}/stop",
+      "owner": "social",
+      "status": 401,
+      "duration_ms": 5.788,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-S020",
+      "method": "POST",
+      "path": "/api/live/{room_id}/danmaku",
+      "owner": "social",
+      "status": 401,
+      "duration_ms": 7.747,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-S021",
+      "method": "POST",
+      "path": "/api/reports",
+      "owner": "social",
+      "status": 401,
+      "duration_ms": 7.25,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-S022",
+      "method": "GET",
+      "path": "/api/users/{user_id}/likes",
+      "owner": "social",
+      "status": 401,
+      "duration_ms": 21.721,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-S023",
+      "method": "GET",
+      "path": "/api/videos/{video_id}/comments",
+      "owner": "social",
+      "status": 200,
+      "duration_ms": 15.259,
+      "passed": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "test_id": "API-S024",
+      "method": "POST",
+      "path": "/api/videos/{video_id}/comments",
+      "owner": "social",
+      "status": 401,
+      "duration_ms": 7.07,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-S025",
+      "method": "GET",
+      "path": "/api/videos/{video_id}/danmaku",
+      "owner": "social",
+      "status": 200,
+      "duration_ms": 18.844,
+      "passed": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "test_id": "API-S026",
+      "method": "POST",
+      "path": "/api/videos/{video_id}/danmaku",
+      "owner": "social",
+      "status": 401,
+      "duration_ms": 5.924,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-S027",
+      "method": "DELETE",
+      "path": "/api/videos/{video_id}/favorite",
+      "owner": "social",
+      "status": 401,
+      "duration_ms": 5.147,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-S028",
+      "method": "POST",
+      "path": "/api/videos/{video_id}/favorite",
+      "owner": "social",
+      "status": 401,
+      "duration_ms": 5.666,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-S029",
+      "method": "DELETE",
+      "path": "/api/videos/{video_id}/like",
+      "owner": "social",
+      "status": 401,
+      "duration_ms": 5.51,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-S030",
+      "method": "POST",
+      "path": "/api/videos/{video_id}/like",
+      "owner": "social",
+      "status": 401,
+      "duration_ms": 5.567,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-S031",
+      "method": "GET",
+      "path": "/api/videos/{video_id}/like-status",
+      "owner": "social",
+      "status": 401,
+      "duration_ms": 5.712,
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "test_id": "API-S032",
+      "method": "WEBSOCKET",
+      "path": "/ws/live/{room_id}",
+      "owner": "social",
+      "status": null,
+      "duration_ms": 0.0,
+      "passed": true,
+      "detail": "covered by the real service WebSocket behavior suite"
+    }
+  ]
+}

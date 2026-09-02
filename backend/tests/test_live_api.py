@@ -38,9 +38,20 @@ def test_creator_create_then_end_own_room(client):
     room = create_live_room(client, creator_headers)
     room_id = room["id"]
 
+    assert room["title"] == "pytest 直播间"
+    assert room["categoryId"] == "10"
+    assert room["status"] == 1
+    assert room["anchorId"]
+    assert room["streamKey"]
+    assert room["pushUrl"].startswith("rtmp://")
+    assert room["pullUrl"].endswith(".flv")
+    assert room["onlineCount"] == 0
+    assert room["cover"]
+
     room_list = client.get("/api/live/rooms")
 
     assert room_list.status_code == 200
+    assert isinstance(room_list.json()["items"], list)
     assert room_id in [item["id"] for item in room_list.json()["items"]]
 
     end_response = client.post(
@@ -69,6 +80,7 @@ def test_normal_user_cannot_end_live_room(client):
     )
 
     assert response.status_code == 403
+    assert response.json()["detail"] == "需要创作者权限"
 
 
 def test_normal_user_cannot_create_live_room(client):
@@ -85,6 +97,7 @@ def test_normal_user_cannot_create_live_room(client):
     )
 
     assert response.status_code == 403
+    assert response.json()["detail"] == "需要创作者权限"
 
 
 def test_user_can_send_live_websocket_message(client):
@@ -110,6 +123,8 @@ def test_user_can_send_live_websocket_message(client):
 
         assert initial_messages[0]["count"] >= 1
         assert initial_messages[1]["onlineCount"] >= 1
+        assert initial_messages[2]["content"].endswith("进入直播间")
+        assert "timestamp" in initial_messages[2]
         websocket.send_json(
             {
                 "type": "danmaku",
@@ -123,6 +138,12 @@ def test_user_can_send_live_websocket_message(client):
 
         assert message["type"] == "danmaku"
         assert message["content"] == "pytest 直播消息"
+        assert message["color"] == "#FFFFFF"
+        assert message["position"] == 0
+        assert message["username"]
+        assert message["userId"]
+        assert len(message["id"]) == 16
+        assert "timestamp" in message
 
 
 def test_live_websocket_disconnect_during_join_is_not_unhandled():
@@ -138,4 +159,5 @@ def test_live_websocket_disconnect_during_join_is_not_unhandled():
 
     asyncio.run(live_ws(ClosingWebSocket(), room_id))
 
+    assert isinstance(live_hub.rooms, dict)
     assert room_id not in live_hub.rooms or not live_hub.rooms[room_id]

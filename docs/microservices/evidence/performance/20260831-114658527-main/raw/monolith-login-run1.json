@@ -1,0 +1,33 @@
+{
+  "version": "monolith",
+  "endpoint": "login",
+  "run": 1,
+  "url": "http://127.0.0.1:18200/api/auth/login",
+  "method": "POST",
+  "warmup_seconds": 5.0,
+  "http": {
+    "concurrency": 4,
+    "duration_seconds": 31.39,
+    "requests": 28,
+    "successes": 28,
+    "errors": 0,
+    "throughput_rps": 0.892,
+    "average_ms": 4400.015,
+    "p95_ms": 5300.106,
+    "error_rate_percent": 0.0,
+    "status_codes": {
+      "200": 28
+    }
+  },
+  "resources": {
+    "samples": 16,
+    "app_cpu_mean_percent": 49.249,
+    "app_cpu_peak_percent": 54.14,
+    "app_memory_mean_bytes": 91356529,
+    "app_memory_peak_bytes": 97632911.0,
+    "infra_cpu_mean_percent": 8.237,
+    "infra_cpu_peak_percent": 21.5,
+    "infra_memory_mean_bytes": 90332856,
+    "infra_memory_peak_bytes": 94906614.0
+  }
+}

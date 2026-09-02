@@ -1,0 +1,8 @@
+NAME                      IMAGE                                              COMMAND                  SERVICE           CREATED          STATUS                        PORTS
+streamhub-perf-content    streamhub-content-service:perf-local               "uvicorn app.main:ap…"   content-service   10 minutes ago   Up 2 minutes (healthy)        8000/tcp
+streamhub-perf-gateway    streamhub-gateway:perf-local                       "/streamhub-entrypoi…"   gateway           10 minutes ago   Up About a minute (healthy)   127.0.0.1:18210->80/tcp
+streamhub-perf-minio      quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z   "/usr/bin/docker-ent…"   minio-perf        12 minutes ago   Up 12 minutes (healthy)       9000/tcp
+streamhub-perf-monolith   streamhub-monolith:perf-local                      "python -m uvicorn a…"   monolith          12 minutes ago   Exited (0) 2 minutes ago      
+streamhub-perf-postgres   postgres:16                                        "docker-entrypoint.s…"   postgres-perf     12 minutes ago   Up 12 minutes (healthy)       127.0.0.1:55435->5432/tcp
+streamhub-perf-social     streamhub-social-service:perf-local                "uvicorn app.main:ap…"   social-service    10 minutes ago   Up About a minute (healthy)   8000/tcp
+streamhub-perf-user       streamhub-user-service:perf-local                  "uvicorn app.main:ap…"   user-service      10 minutes ago   Up 2 minutes (healthy)        8000/tcp

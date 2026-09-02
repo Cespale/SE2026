@@ -1,0 +1,8 @@
+NAME                              READY   STATUS        RESTARTS   AGE     IP            NODE                          NOMINATED NODE   READINESS GATES
+content-service-db8588cf8-9zz96   1/1     Terminating   0          5m26s   10.244.0.43   streamhub-lab-control-plane   <none>           <none>
+gateway-6f687c5f74-j6b9v          1/1     Running       0          47m     10.244.0.38   streamhub-lab-control-plane   <none>           <none>
+minio-ms-597bf47957-6brbf         1/1     Running       0          127m    10.244.0.7    streamhub-lab-control-plane   <none>           <none>
+postgres-ms-79c9cbd4c5-mjrxc      1/1     Running       0          127m    10.244.0.8    streamhub-lab-control-plane   <none>           <none>
+schema-migration-57vg5            0/1     Completed     0          48m     10.244.0.34   streamhub-lab-control-plane   <none>           <none>
+social-service-58c6f8c7dc-fq7jd   1/1     Running       0          47m     10.244.0.37   streamhub-lab-control-plane   <none>           <none>
+user-service-cf8f7df87-k6c5f      1/1     Running       0          8m4s    10.244.0.42   streamhub-lab-control-plane   <none>           <none>

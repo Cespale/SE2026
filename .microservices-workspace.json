@@ -1,0 +1,10 @@
+{
+  "source": "C:\\Users\\14537\\SE2026",
+  "target": "C:\\Users\\14537\\SE2026-microservices",
+  "source_baseline_tree_sha256": "5f37c423ebad88b0bdc702ad425c4def8129af4e2fd2694f3f8304e8bfcc9902",
+  "source_baseline_frozen_files": {
+    "README.md": "61ce29566ce6aaab238064cb2b2cf886b8a4b09abc4cb1996ebd15c93ba68c92"
+  },
+  "allow_git": false,
+  "allow_remote": false
+}

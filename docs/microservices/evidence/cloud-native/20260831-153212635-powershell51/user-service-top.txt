@@ -1,0 +1,147 @@
+[2026-08-31T07:32:16.3781747Z] baseline
+user-service-cf8f7df87-k6c5f   3m    84Mi   
+[2026-08-31T07:32:19.4144091Z] load
+user-service-cf8f7df87-k6c5f   4m    84Mi   
+[2026-08-31T07:32:25.1553780Z] load
+user-service-cf8f7df87-k6c5f   4m    84Mi   
+[2026-08-31T07:32:30.8630451Z] load
+user-service-cf8f7df87-k6c5f   4m    84Mi   
+[2026-08-31T07:32:36.5818849Z] load
+user-service-cf8f7df87-k6c5f   372m   84Mi   
+[2026-08-31T07:32:42.2567502Z] load
+user-service-cf8f7df87-k6c5f   372m   84Mi   
+[2026-08-31T07:32:48.0721153Z] load
+user-service-cf8f7df87-k6c5f   372m   84Mi   
+[2026-08-31T07:32:53.8774177Z] load
+user-service-cf8f7df87-k6c5f   503m   84Mi   
+[2026-08-31T07:32:59.6433463Z] load
+user-service-cf8f7df87-k6c5f   503m   84Mi   
+[2026-08-31T07:33:05.3688343Z] load
+user-service-cf8f7df87-cn5pv   374m   82Mi   
+user-service-cf8f7df87-hqft5   442m   89Mi   
+user-service-cf8f7df87-k6c5f   499m   84Mi   
+[2026-08-31T07:33:11.0147405Z] load
+user-service-cf8f7df87-cn5pv   374m   82Mi   
+user-service-cf8f7df87-hqft5   442m   89Mi   
+user-service-cf8f7df87-k6c5f   499m   84Mi   
+[2026-08-31T07:33:16.7463730Z] load
+user-service-cf8f7df87-cn5pv   374m   82Mi   
+user-service-cf8f7df87-hqft5   442m   89Mi   
+user-service-cf8f7df87-k6c5f   499m   84Mi   
+[2026-08-31T07:33:22.4034921Z] load
+user-service-cf8f7df87-cn5pv   435m   83Mi   
+user-service-cf8f7df87-hqft5   152m   90Mi   
+user-service-cf8f7df87-k6c5f   132m   84Mi   
+user-service-cf8f7df87-wg27c   361m   71Mi   
+[2026-08-31T07:33:28.0304066Z] load
+user-service-cf8f7df87-cn5pv   435m   83Mi   
+user-service-cf8f7df87-hqft5   152m   90Mi   
+user-service-cf8f7df87-k6c5f   132m   84Mi   
+user-service-cf8f7df87-wg27c   361m   71Mi   
+[2026-08-31T07:33:33.7492638Z] load
+user-service-cf8f7df87-cn5pv   435m   83Mi   
+user-service-cf8f7df87-hqft5   193m   89Mi   
+user-service-cf8f7df87-k6c5f   381m   85Mi   
+user-service-cf8f7df87-wg27c   133m   71Mi   
+[2026-08-31T07:33:39.3886074Z] load
+user-service-cf8f7df87-cn5pv   435m   83Mi   
+user-service-cf8f7df87-hqft5   193m   89Mi   
+user-service-cf8f7df87-k6c5f   381m   85Mi   
+user-service-cf8f7df87-wg27c   133m   71Mi   
+[2026-08-31T07:33:45.0571928Z] load
+user-service-cf8f7df87-cn5pv   435m   83Mi   
+user-service-cf8f7df87-hqft5   193m   89Mi   
+user-service-cf8f7df87-k6c5f   381m   85Mi   
+user-service-cf8f7df87-wg27c   133m   71Mi   
+[2026-08-31T07:33:50.9944411Z] load
+user-service-cf8f7df87-cn5pv   434m   82Mi   
+user-service-cf8f7df87-hqft5   235m   90Mi   
+user-service-cf8f7df87-k6c5f   324m   84Mi   
+user-service-cf8f7df87-wg27c   178m   71Mi   
+[2026-08-31T07:33:56.6555030Z] load
+user-service-cf8f7df87-cn5pv   434m   82Mi   
+user-service-cf8f7df87-hqft5   235m   90Mi   
+user-service-cf8f7df87-k6c5f   324m   84Mi   
+user-service-cf8f7df87-wg27c   178m   71Mi   
+[2026-08-31T07:34:02.3016621Z] load
+user-service-cf8f7df87-cn5pv   434m   82Mi   
+user-service-cf8f7df87-hqft5   235m   90Mi   
+user-service-cf8f7df87-k6c5f   324m   84Mi   
+user-service-cf8f7df87-wg27c   178m   71Mi   
+[2026-08-31T07:34:07.9652582Z] load
+user-service-cf8f7df87-cn5pv   159m   82Mi   
+user-service-cf8f7df87-hqft5   264m   89Mi   
+user-service-cf8f7df87-k6c5f   300m   84Mi   
+user-service-cf8f7df87-wg27c   233m   71Mi   
+[2026-08-31T07:34:13.6256367Z] load
+user-service-cf8f7df87-cn5pv   159m   82Mi   
+user-service-cf8f7df87-hqft5   264m   89Mi   
+user-service-cf8f7df87-k6c5f   300m   84Mi   
+user-service-cf8f7df87-wg27c   233m   71Mi   
+[2026-08-31T07:34:19.3325968Z] load
+user-service-cf8f7df87-cn5pv   204m   82Mi   
+user-service-cf8f7df87-hqft5   432m   90Mi   
+user-service-cf8f7df87-k6c5f   299m   84Mi   
+user-service-cf8f7df87-wg27c   201m   71Mi   
+[2026-08-31T07:34:25.0014456Z] cooldown
+user-service-cf8f7df87-cn5pv   204m   82Mi   
+user-service-cf8f7df87-hqft5   432m   90Mi   
+user-service-cf8f7df87-k6c5f   299m   84Mi   
+user-service-cf8f7df87-wg27c   201m   71Mi   
+[2026-08-31T07:34:30.7116690Z] cooldown
+user-service-cf8f7df87-cn5pv   204m   82Mi   
+user-service-cf8f7df87-hqft5   432m   90Mi   
+user-service-cf8f7df87-k6c5f   299m   84Mi   
+user-service-cf8f7df87-wg27c   201m   71Mi   
+[2026-08-31T07:34:36.3361149Z] cooldown
+user-service-cf8f7df87-cn5pv   85m    82Mi   
+user-service-cf8f7df87-hqft5   180m   90Mi   
+user-service-cf8f7df87-k6c5f   143m   84Mi   
+user-service-cf8f7df87-wg27c   67m    71Mi   
+[2026-08-31T07:34:42.0051534Z] cooldown
+user-service-cf8f7df87-cn5pv   85m    82Mi   
+user-service-cf8f7df87-hqft5   180m   90Mi   
+user-service-cf8f7df87-k6c5f   143m   84Mi   
+user-service-cf8f7df87-wg27c   67m    71Mi   
+[2026-08-31T07:34:47.6661095Z] cooldown
+user-service-cf8f7df87-cn5pv   85m    82Mi   
+user-service-cf8f7df87-hqft5   180m   90Mi   
+user-service-cf8f7df87-k6c5f   143m   84Mi   
+user-service-cf8f7df87-wg27c   67m    71Mi   
+[2026-08-31T07:34:53.2668084Z] cooldown
+user-service-cf8f7df87-cn5pv   3m     82Mi   
+user-service-cf8f7df87-hqft5   180m   90Mi   
+user-service-cf8f7df87-k6c5f   21m    84Mi   
+user-service-cf8f7df87-wg27c   4m     71Mi   
+[2026-08-31T07:34:59.0690806Z] cooldown
+user-service-cf8f7df87-cn5pv   3m     82Mi   
+user-service-cf8f7df87-hqft5   180m   90Mi   
+user-service-cf8f7df87-k6c5f   21m    84Mi   
+user-service-cf8f7df87-wg27c   4m     71Mi   
+[2026-08-31T07:35:04.7389902Z] cooldown
+user-service-cf8f7df87-cn5pv   4m    82Mi   
+user-service-cf8f7df87-hqft5   4m    89Mi   
+user-service-cf8f7df87-k6c5f   4m    84Mi   
+user-service-cf8f7df87-wg27c   3m    71Mi   
+[2026-08-31T07:35:10.4277693Z] cooldown
+user-service-cf8f7df87-cn5pv   4m    82Mi   
+user-service-cf8f7df87-hqft5   4m    89Mi   
+user-service-cf8f7df87-k6c5f   4m    84Mi   
+user-service-cf8f7df87-wg27c   3m    71Mi   
+[2026-08-31T07:35:16.0826491Z] cooldown
+user-service-cf8f7df87-cn5pv   4m    82Mi   
+user-service-cf8f7df87-hqft5   4m    89Mi   
+user-service-cf8f7df87-k6c5f   4m    84Mi   
+user-service-cf8f7df87-wg27c   3m    71Mi   
+[2026-08-31T07:35:21.7533389Z] cooldown
+user-service-cf8f7df87-cn5pv   3m    82Mi   
+user-service-cf8f7df87-hqft5   4m    90Mi   
+user-service-cf8f7df87-k6c5f   4m    84Mi   
+user-service-cf8f7df87-wg27c   3m    71Mi   
+[2026-08-31T07:35:27.4446274Z] cooldown
+user-service-cf8f7df87-cn5pv   3m    82Mi   
+user-service-cf8f7df87-hqft5   4m    90Mi   
+user-service-cf8f7df87-k6c5f   4m    84Mi   
+user-service-cf8f7df87-wg27c   3m    71Mi   
+[2026-08-31T07:35:33.0627212Z] cooldown
+user-service-cf8f7df87-k6c5f   4m    84Mi   

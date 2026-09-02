@@ -29,6 +29,22 @@ spec:
                 secretKeyRef:
                   name: streamhub-secrets
                   key: SECRET_KEY
+            - name: MINIO_ENDPOINT
+              value: streamhub-minio:9000
+            - name: MINIO_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: streamhub-secrets
+                  key: MINIO_ROOT_USER
+            - name: MINIO_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: streamhub-secrets
+                  key: MINIO_ROOT_PASSWORD
+            - name: MINIO_BUCKET
+              value: streamhub-media
+            - name: MINIO_SECURE
+              value: "false"
           readinessProbe:
             httpGet:
               path: /openapi.json

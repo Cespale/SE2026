@@ -1,0 +1,1139 @@
+minio-ms-1         | MinIO Object Storage Server
+minio-ms-1         | Copyright: 2015-2026 MinIO, Inc.
+minio-ms-1         | License: GNU AGPLv3 - https://www.gnu.org/licenses/agpl-3.0.html
+content-service-1  | INFO:     172.21.0.8:38400 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_6f73fbf6fb6ff39c.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:38390 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_49d6acef6441378a.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:38408 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_5fa330a1ac05c707.jpg HTTP/1.1" 200 OK
+frontend-ms-1      | <i> [webpack-dev-server] On Your Network (IPv4): http://172.21.0.9:3266/
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:28:57 +0000] "OPTIONS /api/videos?page=1 HTTP/1.1" 204 0 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+social-service-1   | INFO:     Started server process [1]
+social-service-1   | INFO:     Waiting for application startup.
+social-service-1   | INFO:     Application startup complete.
+social-service-1   | INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+social-service-1   | INFO:     127.0.0.1:60784 - "GET /ready HTTP/1.1" 200 OK
+social-service-1   | INFO:     127.0.0.1:33966 - "GET /ready HTTP/1.1" 200 OK
+social-service-1   | INFO:     127.0.0.1:33972 - "GET /ready HTTP/1.1" 200 OK
+social-service-1   | INFO:     127.0.0.1:44836 - "GET /ready HTTP/1.1" 200 OK
+social-service-1   | INFO:     127.0.0.1:44878 - "GET /ready HTTP/1.1" 200 OK
+social-service-1   | INFO:     127.0.0.1:55656 - "GET /ready HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:38404 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_53357890e0850cc6.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:38416 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_489919231decdf3a.jpg HTTP/1.1" 200 OK
+social-service-1   | INFO:     127.0.0.1:39430 - "GET /ready HTTP/1.1" 200 OK
+content-service-1  | INFO:     127.0.0.1:48476 - "GET /ready HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:38418 - "GET /api/categories HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:38420 - "GET /api/videos/recommended?page=1 HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:38436 - "GET /api/videos/recommended?page=1 HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:38438 - "GET /api/categories HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:38442 - "GET /api/categories HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:38452 - "POST /api/videos/upload-file HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:54072 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_a73176c7c4795fc7.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:54076 - "POST /api/videos HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:54078 - "GET /api/categories HTTP/1.1" 200 OK
+minio-ms-1         | Version: RELEASE.2025-09-07T16-13-09Z (go1.24.6 linux/amd64)
+minio-ms-1         | 
+minio-ms-1         | API: http://172.21.0.3:9000  http://127.0.0.1:9000 
+user-service-1     | INFO:     Started server process [1]
+social-service-1   | INFO:     127.0.0.1:39462 - "GET /ready HTTP/1.1" 200 OK
+postgres-ms-1      | 
+postgres-ms-1      | PostgreSQL Database directory appears to contain a database; Skipping initialization
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:28:57 +0000] "OPTIONS /api/videos?page=1 HTTP/1.1" 204 0 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+content-service-1  | INFO:     172.21.0.8:54100 - "GET /api/categories HTTP/1.1" 200 OK
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:28:57 +0000] "GET /api/categories HTTP/1.1" 200 398 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+content-service-1  | INFO:     172.21.0.8:54086 - "GET /api/creator/videos HTTP/1.1" 200 OK
+minio-ms-1         | WebUI: http://172.21.0.3:9001 http://127.0.0.1:9001    
+minio-ms-1         | 
+frontend-ms-1      | <i> [webpack-dev-server] On Your Network (IPv6): http://[fd33:6db0:7acf:2::9]:3266/
+postgres-ms-1      | 
+minio-ms-1         | Docs: https://docs.min.io
+minio-ms-1         | INFO: Exiting on signal: TERMINATED
+minio-ms-1         | MinIO Object Storage Server
+postgres-ms-1      | 2026-09-01 08:22:44.909 UTC [1] LOG:  starting PostgreSQL 16.15 (Debian 16.15-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit
+postgres-ms-1      | 2026-09-01 08:22:44.916 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+postgres-ms-1      | 2026-09-01 08:22:44.916 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+postgres-ms-1      | 2026-09-01 08:22:44.936 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+postgres-ms-1      | 2026-09-01 08:22:44.966 UTC [29] LOG:  database system was shut down at 2026-09-01 08:05:17 UTC
+postgres-ms-1      | 2026-09-01 08:22:45.020 UTC [1] LOG:  database system is ready to accept connections
+postgres-ms-1      | 2026-09-01 08:24:54.645 UTC [1] LOG:  received fast shutdown request
+postgres-ms-1      | 2026-09-01 08:24:54.654 UTC [1] LOG:  aborting any active transactions
+postgres-ms-1      | 2026-09-01 08:24:54.660 UTC [1] LOG:  background worker "logical replication launcher" (PID 32) exited with exit code 1
+postgres-ms-1      | 2026-09-01 08:24:54.664 UTC [27] LOG:  shutting down
+postgres-ms-1      | 2026-09-01 08:24:54.672 UTC [27] LOG:  checkpoint starting: shutdown immediate
+minio-ms-1         | Copyright: 2015-2026 MinIO, Inc.
+minio-ms-1         | License: GNU AGPLv3 - https://www.gnu.org/licenses/agpl-3.0.html
+minio-ms-1         | Version: RELEASE.2025-09-07T16-13-09Z (go1.24.6 linux/amd64)
+postgres-ms-1      | 2026-09-01 08:24:54.721 UTC [27] LOG:  checkpoint complete: wrote 3 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.019 s, sync=0.006 s, total=0.057 s; sync files=2, longest=0.003 s, average=0.003 s; distance=0 kB, estimate=0 kB; lsn=0/1BA89E8, redo lsn=0/1BA89E8
+minio-ms-1         | 
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:28:57 +0000] "GET /api/videos?page=1 HTTP/1.1" 200 14343 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:28:57 +0000] "GET /api/categories HTTP/1.1" 200 398 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:28:57 +0000] "GET /api/videos?page=1 HTTP/1.1" 200 14423 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:28:57 +0000] "GET /api/videos?page=1 HTTP/1.1" 200 14639 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:28:58 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_e60dceb5e5f91b0c.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:28:58 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_53357890e0850cc6.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:28:58 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_47070585f29498fb.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:28:58 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_6f73fbf6fb6ff39c.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:28:58 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_49d6acef6441378a.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:28:58 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_0a162bb2e1521798.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:28:58 +0000] "GET /api/videos?page=1 HTTP/1.1" 200 14198 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:28:58 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_5fa330a1ac05c707.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:28:58 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_8e003357751e1bd5.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:28:58 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_f45e9b2755ce8c82.jpg HTTP/1.1" 404 34 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:28:58 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_6d3de4f7b011f085.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:28:58 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_fc74bfbeebd211be.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:28:58 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_b1cfe1302c26ff61.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:28:58 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_3abad10835e73c89.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:28:58 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_c1183b2b57772faf.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:28:58 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_180b383eab1fd1c5.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:28:59 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_3e9d9e97ea1d3800.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:28:59 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_e43ece296b836946.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:28:59 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_489919231decdf3a.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:28:59 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_7f040918da42c90c.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:28:59 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_9e733019881df399.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:28:59 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_a73176c7c4795fc7.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 127.0.0.1 - - [01/Sep/2026:11:28:59 +0000] "GET /health HTTP/1.1" 200 35 "-" "Wget"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:28:59 +0000] "OPTIONS /api/auth/login HTTP/1.1" 204 0 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:00 +0000] "POST /api/auth/login HTTP/1.1" 200 431 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:00 +0000] "OPTIONS /api/categories HTTP/1.1" 204 0 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:00 +0000] "OPTIONS /api/notifications/unread-count HTTP/1.1" 204 0 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+postgres-ms-1      | 2026-09-01 08:24:54.735 UTC [1] LOG:  database system is shut down
+minio-ms-1         | API: http://172.21.0.2:9000  http://127.0.0.1:9000 
+minio-ms-1         | WebUI: http://172.21.0.2:9001 http://127.0.0.1:9001    
+minio-ms-1         | 
+minio-ms-1         | Docs: https://docs.min.io
+social-service-1   | INFO:     172.21.0.8:50784 - "GET /api/admin/live-rooms HTTP/1.1" 401 Unauthorized
+postgres-ms-1      | 
+social-service-1   | INFO:     172.21.0.8:50794 - "POST /api/admin/live-rooms/00000000-0000-0000-0000-000000000000/close HTTP/1.1" 401 Unauthorized
+social-service-1   | INFO:     172.21.0.8:50798 - "POST /api/admin/live-rooms/00000000-0000-0000-0000-000000000000/warn HTTP/1.1" 401 Unauthorized
+social-service-1   | INFO:     172.21.0.8:50812 - "GET /api/admin/reports HTTP/1.1" 401 Unauthorized
+social-service-1   | INFO:     172.21.0.8:50824 - "PATCH /api/admin/reports/00000000-0000-0000-0000-000000000000/handle HTTP/1.1" 401 Unauthorized
+social-service-1   | INFO:     172.21.0.8:50828 - "PATCH /api/admin/reports/00000000-0000-0000-0000-000000000000/ignore HTTP/1.1" 401 Unauthorized
+social-service-1   | INFO:     172.21.0.8:50844 - "GET /api/admin/sensitive-words HTTP/1.1" 401 Unauthorized
+social-service-1   | INFO:     172.21.0.8:50854 - "POST /api/admin/sensitive-words HTTP/1.1" 401 Unauthorized
+social-service-1   | INFO:     172.21.0.8:50864 - "DELETE /api/admin/sensitive-words/00000000-0000-0000-0000-000000000000 HTTP/1.1" 401 Unauthorized
+user-service-1     | INFO:     Waiting for application startup.
+user-service-1     | INFO:     Application startup complete.
+user-service-1     | INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+user-service-1     | INFO:     127.0.0.1:41924 - "GET /ready HTTP/1.1" 200 OK
+user-service-1     | INFO:     127.0.0.1:47470 - "GET /ready HTTP/1.1" 200 OK
+social-service-1   | INFO:     172.21.0.8:50878 - "DELETE /api/comments/00000000-0000-0000-0000-000000000000 HTTP/1.1" 401 Unauthorized
+social-service-1   | INFO:     172.21.0.8:50886 - "GET /api/comments/00000000-0000-0000-0000-000000000000/replies HTTP/1.1" 200 OK
+social-service-1   | INFO:     172.21.0.8:50896 - "GET /api/creator/active-room HTTP/1.1" 401 Unauthorized
+social-service-1   | INFO:     172.21.0.8:50904 - "GET /api/creator/comments HTTP/1.1" 401 Unauthorized
+social-service-1   | INFO:     172.21.0.8:50910 - "DELETE /api/creator/comments/00000000-0000-0000-0000-000000000000 HTTP/1.1" 401 Unauthorized
+frontend-ms-1      | <i> [webpack-dev-server] Content not from webpack is served from '/app/public' directory
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:00 +0000] "OPTIONS /api/videos/recommended?page=1 HTTP/1.1" 204 0 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+user-service-1     | INFO:     127.0.0.1:47482 - "GET /ready HTTP/1.1" 200 OK
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:00 +0000] "OPTIONS /api/videos/recommended?page=1 HTTP/1.1" 204 0 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+social-service-1   | INFO:     172.21.0.8:50918 - "GET /api/live/rooms HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:54114 - "GET /api/creator/videos HTTP/1.1" 200 OK
+srs-ms-1           | [2026-09-01 11:22:31.798][INFO][1][2u8e3fp1] Process: cpu=2.00%,20MB, threads=2
+postgres-ms-1      | PostgreSQL Database directory appears to contain a database; Skipping initialization
+postgres-ms-1      | 
+srs-ms-1           | [2026-09-01 11:22:36.647][INFO][1][f43vs1u5] Hybrid cpu=0.00%,20MB, cid=1,0, timer=62,0,0, clock=0,47,1,0,0,0,0,0,0
+srs-ms-1           | [2026-09-01 11:22:36.802][INFO][1][2u8e3fp1] Process: cpu=0.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:22:41.648][INFO][1][f43vs1u5] Hybrid cpu=1.00%,20MB, cid=1,0, timer=61,0,0, clock=0,46,1,0,0,0,0,0,0
+content-service-1  | INFO:     172.21.0.7:56150 - "POST /internal/videos/batch HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:54120 - "GET /api/creator/videos HTTP/1.1" 200 OK
+srs-ms-1           | [2026-09-01 11:22:41.808][INFO][1][2u8e3fp1] Process: cpu=1.00%,20MB, threads=2
+content-service-1  | INFO:     172.21.0.7:56150 - "POST /internal/videos/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     127.0.0.1:60758 - "GET /ready HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:54134 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_47070585f29498fb.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:54148 - "GET /api/creator/videos HTTP/1.1" 200 OK
+social-service-1   | INFO:     172.21.0.8:50932 - "POST /api/live/rooms HTTP/1.1" 401 Unauthorized
+content-service-1  | INFO:     172.21.0.8:54154 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_00655fe284bde671.jpg HTTP/1.1" 200 OK
+social-service-1   | INFO:     172.21.0.8:50946 - "GET /api/live/rooms/00000000-0000-0000-0000-000000000000 HTTP/1.1" 404 Not Found
+content-service-1  | INFO:     172.21.0.8:54152 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_489919231decdf3a.jpg HTTP/1.1" 200 OK
+user-service-1     | INFO:     127.0.0.1:33948 - "GET /ready HTTP/1.1" 200 OK
+user-service-1     | INFO:     127.0.0.1:33968 - "GET /ready HTTP/1.1" 200 OK
+postgres-ms-1      | 2026-09-01 08:43:05.087 UTC [1] LOG:  starting PostgreSQL 16.15 (Debian 16.15-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit
+postgres-ms-1      | 2026-09-01 08:43:05.091 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+postgres-ms-1      | 2026-09-01 08:43:05.092 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+postgres-ms-1      | 2026-09-01 08:43:05.118 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+postgres-ms-1      | 2026-09-01 08:43:05.146 UTC [29] LOG:  database system was shut down at 2026-09-01 08:24:54 UTC
+user-service-1     | INFO:     127.0.0.1:44818 - "GET /ready HTTP/1.1" 200 OK
+user-service-1     | INFO:     127.0.0.1:44852 - "GET /ready HTTP/1.1" 200 OK
+user-service-1     | INFO:     127.0.0.1:55638 - "GET /ready HTTP/1.1" 200 OK
+user-service-1     | INFO:     127.0.0.1:55666 - "GET /ready HTTP/1.1" 200 OK
+social-service-1   | INFO:     172.21.0.8:50956 - "POST /api/live/rooms/00000000-0000-0000-0000-000000000000/end HTTP/1.1" 401 Unauthorized
+social-service-1   | INFO:     172.21.0.8:50966 - "POST /api/live/rooms/00000000-0000-0000-0000-000000000000/stop HTTP/1.1" 401 Unauthorized
+social-service-1   | INFO:     172.21.0.8:50980 - "POST /api/live/00000000-0000-0000-0000-000000000000/danmaku HTTP/1.1" 401 Unauthorized
+social-service-1   | INFO:     172.21.0.8:50982 - "POST /api/reports HTTP/1.1" 401 Unauthorized
+content-service-1  | INFO:     172.21.0.8:54162 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_b5674fe6f3c82be2.jpg HTTP/1.1" 200 OK
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:00 +0000] "GET /api/notifications/unread-count HTTP/1.1" 200 39 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:00 +0000] "GET /api/categories HTTP/1.1" 200 398 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+user-service-1     | INFO:     127.0.0.1:39440 - "GET /ready HTTP/1.1" 200 OK
+srs-ms-1           | [2026-09-01 11:22:46.649][INFO][1][f43vs1u5] Hybrid cpu=1.00%,20MB, cid=1,0, timer=61,0,0, clock=0,46,1,0,0,0,0,0,0
+srs-ms-1           | [2026-09-01 11:22:46.813][INFO][1][2u8e3fp1] Process: cpu=1.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:22:51.649][INFO][1][f43vs1u5] Hybrid cpu=1.00%,20MB, cid=1,0, timer=61,0,0, clock=0,46,1,0,0,0,0,0,0
+srs-ms-1           | [2026-09-01 11:22:51.817][INFO][1][2u8e3fp1] Process: cpu=1.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:22:56.649][INFO][1][f43vs1u5] Hybrid cpu=1.00%,20MB, cid=1,0, timer=61,0,0, clock=0,46,1,1,0,0,0,0,0
+srs-ms-1           | [2026-09-01 11:22:56.822][INFO][1][2u8e3fp1] Process: cpu=1.00%,20MB, threads=2
+postgres-ms-1      | 2026-09-01 08:43:05.207 UTC [1] LOG:  database system is ready to accept connections
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:00 +0000] "GET /api/videos/recommended?page=1 HTTP/1.1" 200 14619 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+user-service-1     | INFO:     172.21.0.8:40238 - "GET /api/admin/users HTTP/1.1" 401 Unauthorized
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:00 +0000] "GET /api/videos/recommended?page=1 HTTP/1.1" 200 14498 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+frontend-ms-1      | <i> [webpack-dev-server] 404s will fallback to '/index.html'
+content-service-1  | INFO:     172.21.0.8:54184 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_5fa330a1ac05c707.jpg HTTP/1.1" 200 OK
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:01 +0000] "OPTIONS /api/creator/videos HTTP/1.1" 204 0 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+postgres-ms-1      | 2026-09-01 08:48:05.207 UTC [27] LOG:  checkpoint starting: time
+social-service-1   | INFO:     172.21.0.8:50988 - "GET /api/users/00000000-0000-0000-0000-000000000000/likes HTTP/1.1" 401 Unauthorized
+social-service-1   | INFO:     172.21.0.8:51000 - "GET /api/videos/00000000-0000-0000-0000-000000000000/comments HTTP/1.1" 200 OK
+postgres-ms-1      | 2026-09-01 08:48:05.261 UTC [27] LOG:  checkpoint complete: wrote 3 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.019 s, sync=0.005 s, total=0.054 s; sync files=2, longest=0.003 s, average=0.003 s; distance=0 kB, estimate=0 kB; lsn=0/1BA8AD0, redo lsn=0/1BA8A98
+frontend-ms-1      | <i> [webpack-dev-middleware] wait until bundle finished: /
+frontend-ms-1      | <i> [webpack-dev-middleware] wait until bundle finished: /
+frontend-ms-1      | <i> [webpack-dev-middleware] wait until bundle finished: /
+srs-ms-1           | [2026-09-01 11:23:01.650][INFO][1][f43vs1u5] Hybrid cpu=1.00%,20MB, cid=1,0, timer=61,0,0, clock=0,46,1,1,0,0,0,0,0
+user-service-1     | INFO:     172.21.0.8:40244 - "PATCH /api/admin/users/00000000-0000-0000-0000-000000000000/ban HTTP/1.1" 401 Unauthorized
+user-service-1     | INFO:     172.21.0.8:40254 - "PATCH /api/admin/users/00000000-0000-0000-0000-000000000000/type HTTP/1.1" 401 Unauthorized
+frontend-ms-1      | <i> [webpack-dev-middleware] wait until bundle finished: /
+frontend-ms-1      | assets by chunk 1.3 MiB (id hint: vendors)
+frontend-ms-1      |   asset vendors-node_modules_framer-motion_dist_es_render_components_motion_proxy_mjs-node_modules_lu-8d84ec.bundle.js 817 KiB [emitted] (id hint: vendors)
+content-service-1  | INFO:     172.21.0.8:54170 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_3abad10835e73c89.jpg HTTP/1.1" 200 OK
+social-service-1   | INFO:     172.21.0.8:51006 - "POST /api/videos/00000000-0000-0000-0000-000000000000/comments HTTP/1.1" 401 Unauthorized
+social-service-1   | INFO:     172.21.0.8:51014 - "GET /api/videos/00000000-0000-0000-0000-000000000000/danmaku HTTP/1.1" 200 OK
+social-service-1   | INFO:     172.21.0.8:51022 - "POST /api/videos/00000000-0000-0000-0000-000000000000/danmaku HTTP/1.1" 401 Unauthorized
+social-service-1   | INFO:     172.21.0.8:51024 - "DELETE /api/videos/00000000-0000-0000-0000-000000000000/favorite HTTP/1.1" 401 Unauthorized
+social-service-1   | INFO:     172.21.0.8:51032 - "POST /api/videos/00000000-0000-0000-0000-000000000000/favorite HTTP/1.1" 401 Unauthorized
+social-service-1   | INFO:     172.21.0.8:51048 - "DELETE /api/videos/00000000-0000-0000-0000-000000000000/like HTTP/1.1" 401 Unauthorized
+social-service-1   | INFO:     172.21.0.8:51052 - "POST /api/videos/00000000-0000-0000-0000-000000000000/like HTTP/1.1" 401 Unauthorized
+social-service-1   | INFO:     172.21.0.8:51054 - "GET /api/videos/00000000-0000-0000-0000-000000000000/like-status HTTP/1.1" 401 Unauthorized
+social-service-1   | INFO:     127.0.0.1:46962 - "GET /ready HTTP/1.1" 200 OK
+frontend-ms-1      |   asset vendors-node_modules_flv_js_dist_flv_js-node_modules_lucide-react_dist_esm_icons_alert-circle-428215.bundle.js 458 KiB [emitted] (id hint: vendors)
+frontend-ms-1      |   asset vendors-node_modules_framer-motion_dist_es_components_AnimatePresence_index_mjs-node_modules_-a0fd59.bundle.js 21.7 KiB [emitted] (id hint: vendors)
+content-service-1  | INFO:     172.21.0.8:54190 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_180b383eab1fd1c5.jpg HTTP/1.1" 200 OK
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:01 +0000] "OPTIONS /api/creator/videos HTTP/1.1" 204 0 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+content-service-1  | INFO:     172.21.0.8:54196 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_b1cfe1302c26ff61.jpg HTTP/1.1" 200 OK
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:01 +0000] "GET /api/categories HTTP/1.1" 200 398 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+content-service-1  | INFO:     172.21.0.8:54202 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_f45e9b2755ce8c82.jpg HTTP/1.1" 404 Not Found
+content-service-1  | INFO:     172.21.0.8:54216 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_49d6acef6441378a.jpg HTTP/1.1" 200 OK
+srs-ms-1           | [2026-09-01 11:23:01.825][INFO][1][2u8e3fp1] Process: cpu=1.00%,20MB, threads=2
+frontend-ms-1      |   asset vendors-node_modules_zustand_esm_middleware_mjs.bundle.js 20.6 KiB [emitted] (id hint: vendors)
+social-service-1   | INFO:     127.0.0.1:46992 - "GET /ready HTTP/1.1" 200 OK
+social-service-1   | INFO:     127.0.0.1:51250 - "GET /ready HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:54220 - "GET /api/categories HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:54246 - "GET /api/categories HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:54252 - "GET /api/categories HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:54280 - "GET /api/categories HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:54268 - "GET /api/videos?page=1 HTTP/1.1" 200 OK
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:01 +0000] "GET /api/categories HTTP/1.1" 200 398 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+user-service-1     | INFO:     172.21.0.8:40266 - "PUT /api/auth/change-password HTTP/1.1" 401 Unauthorized
+user-service-1     | INFO:     172.21.0.8:40276 - "POST /api/auth/login HTTP/1.1" 422 Unprocessable Entity
+srs-ms-1           | [2026-09-01 11:23:06.651][INFO][1][f43vs1u5] Hybrid cpu=1.00%,20MB, cid=1,0, timer=61,0,0, clock=0,46,1,0,0,0,0,0,0
+srs-ms-1           | [2026-09-01 11:23:06.829][INFO][1][2u8e3fp1] Process: cpu=1.00%,20MB, threads=2
+content-service-1  | INFO:     172.21.0.8:54282 - "GET /api/videos?page=1 HTTP/1.1" 200 OK
+social-service-1   | INFO:     172.21.0.8:52562 - "GET /api/videos/76ad3f2b-1cdb-4893-9f1f-6df151dc5dd8/comments HTTP/1.1" 200 OK
+social-service-1   | INFO:     172.21.0.8:52544 - "GET /api/videos/76ad3f2b-1cdb-4893-9f1f-6df151dc5dd8/like-status HTTP/1.1" 200 OK
+frontend-ms-1      |   asset vendors-node_modules_zustand_esm_index_mjs.bundle.js 16 KiB [emitted] (id hint: vendors)
+srs-ms-1           | [2026-09-01 11:23:11.652][INFO][1][f43vs1u5] Hybrid cpu=2.99%,20MB, cid=1,0, timer=61,0,0, clock=0,46,1,0,0,0,0,0,0
+frontend-ms-1      | + 33 assets
+user-service-1     | INFO:     172.21.0.8:40284 - "GET /api/auth/me HTTP/1.1" 401 Unauthorized
+social-service-1   | INFO:     172.21.0.8:52548 - "GET /api/videos/76ad3f2b-1cdb-4893-9f1f-6df151dc5dd8/danmaku HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.8:40296 - "PATCH /api/auth/me HTTP/1.1" 401 Unauthorized
+srs-ms-1           | [2026-09-01 11:23:11.846][INFO][1][2u8e3fp1] Process: cpu=2.99%,20MB, threads=2
+user-service-1     | INFO:     172.21.0.8:40306 - "POST /api/auth/register HTTP/1.1" 422 Unprocessable Entity
+frontend-ms-1      | orphan modules 1.23 MiB [orphan] 1371 modules
+social-service-1   | INFO:     172.21.0.8:52566 - "GET /api/videos/76ad3f2b-1cdb-4893-9f1f-6df151dc5dd8/comments HTTP/1.1" 200 OK
+social-service-1   | INFO:     172.21.0.8:52576 - "GET /api/videos/76ad3f2b-1cdb-4893-9f1f-6df151dc5dd8/like-status HTTP/1.1" 200 OK
+srs-ms-1           | [2026-09-01 11:23:16.653][INFO][1][f43vs1u5] Hybrid cpu=1.99%,20MB, cid=1,0, timer=61,0,0, clock=0,34,10,1,1,0,0,0,0
+srs-ms-1           | [2026-09-01 11:23:16.873][INFO][1][2u8e3fp1] Process: cpu=1.99%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:23:21.655][INFO][1][f43vs1u5] Hybrid cpu=2.00%,20MB, cid=1,0, timer=61,0,0, clock=0,34,10,1,1,0,0,0,0
+srs-ms-1           | [2026-09-01 11:23:21.881][INFO][1][2u8e3fp1] Process: cpu=2.00%,20MB, threads=2
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:01 +0000] "GET /api/creator/videos HTTP/1.1" 200 29758 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:01 +0000] "OPTIONS /api/creator/fans?page=1&limit=100 HTTP/1.1" 204 0 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:01 +0000] "GET /api/creator/fans?page=1&limit=100 HTTP/1.1" 200 22 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:01 +0000] "OPTIONS /api/creator/comments?page=1&limit=100 HTTP/1.1" 204 0 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:01 +0000] "GET /api/creator/videos HTTP/1.1" 200 29758 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:01 +0000] "GET /api/creator/fans?page=1&limit=100 HTTP/1.1" 200 22 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:01 +0000] "GET /api/creator/comments?page=1&limit=100 HTTP/1.1" 200 11271 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+srs-ms-1           | [2026-09-01 11:23:26.656][INFO][1][f43vs1u5] Hybrid cpu=2.00%,20MB, cid=1,0, timer=61,0,0, clock=0,34,10,1,1,0,0,0,0
+srs-ms-1           | [2026-09-01 11:23:26.886][INFO][1][2u8e3fp1] Process: cpu=2.00%,20MB, threads=2
+social-service-1   | INFO:     172.21.0.8:52586 - "GET /api/videos/76ad3f2b-1cdb-4893-9f1f-6df151dc5dd8/danmaku HTTP/1.1" 200 OK
+social-service-1   | INFO:     127.0.0.1:59006 - "GET /ready HTTP/1.1" 200 OK
+frontend-ms-1      | runtime modules 7.29 KiB 13 modules
+content-service-1  | INFO:     172.21.0.8:54284 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_b1cfe1302c26ff61.jpg HTTP/1.1" 200 OK
+frontend-ms-1      | cacheable modules 3.34 MiB
+content-service-1  | INFO:     172.21.0.8:54300 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_6d3de4f7b011f085.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:54310 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_e43ece296b836946.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:54332 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_fc74bfbeebd211be.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:54326 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_3e9d9e97ea1d3800.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:54338 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_8e003357751e1bd5.jpg HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.8:40312 - "POST /api/auth/upgrade-to-creator HTTP/1.1" 401 Unauthorized
+user-service-1     | INFO:     172.21.0.8:40324 - "POST /api/auth/upload-avatar HTTP/1.1" 401 Unauthorized
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:01 +0000] "GET /api/creator/comments?page=1&limit=100 HTTP/1.1" 200 11271 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:02 +0000] "GET /api/creator/videos HTTP/1.1" 200 29758 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:02 +0000] "GET /api/creator/videos HTTP/1.1" 200 29758 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:29:02 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_f45e9b2755ce8c82.jpg HTTP/1.1" 404 34 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+srs-ms-1           | [2026-09-01 11:23:31.656][INFO][1][f43vs1u5] Hybrid cpu=0.00%,20MB, cid=1,0, timer=61,0,0, clock=0,37,9,1,0,0,1,0,0
+srs-ms-1           | [2026-09-01 11:23:31.892][INFO][1][2u8e3fp1] Process: cpu=0.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:23:36.657][INFO][1][f43vs1u5] Hybrid cpu=1.00%,20MB, cid=1,0, timer=61,0,0, clock=0,37,9,1,0,0,1,0,0
+srs-ms-1           | [2026-09-01 11:23:36.895][INFO][1][2u8e3fp1] Process: cpu=1.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:23:41.658][INFO][1][f43vs1u5] Hybrid cpu=3.00%,20MB, cid=1,0, timer=61,0,0, clock=0,38,9,1,0,0,0,0,0
+srs-ms-1           | [2026-09-01 11:23:41.901][INFO][1][2u8e3fp1] Process: cpu=3.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:23:46.659][INFO][1][f43vs1u5] Hybrid cpu=2.00%,20MB, cid=1,0, timer=61,0,0, clock=0,38,9,1,0,0,0,0,0
+srs-ms-1           | [2026-09-01 11:23:46.906][INFO][1][2u8e3fp1] Process: cpu=2.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:23:51.660][INFO][1][f43vs1u5] Hybrid cpu=1.00%,20MB, cid=1,0, timer=61,0,0, clock=0,38,9,1,0,0,0,0,0
+srs-ms-1           | [2026-09-01 11:23:51.914][INFO][1][2u8e3fp1] Process: cpu=1.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:23:56.661][INFO][1][f43vs1u5] Hybrid cpu=1.00%,20MB, cid=1,0, timer=61,0,0, clock=0,37,10,1,1,0,0,0,0
+srs-ms-1           | [2026-09-01 11:23:56.918][INFO][1][2u8e3fp1] Process: cpu=1.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:24:01.662][INFO][1][f43vs1u5] Hybrid cpu=2.00%,20MB, cid=1,0, timer=61,0,0, clock=0,37,10,1,1,0,0,0,0
+srs-ms-1           | [2026-09-01 11:24:01.919][INFO][1][2u8e3fp1] Process: cpu=2.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:24:06.662][INFO][1][f43vs1u5] Hybrid cpu=1.00%,20MB, cid=1,0, timer=61,0,0, clock=0,37,10,1,1,0,0,0,0
+frontend-ms-1      |   modules by path ./node_modules/ 2.54 MiB 361 modules
+frontend-ms-1      |   modules by path ./src/ 819 KiB
+frontend-ms-1      |     modules by path ./src/pages/*.tsx 531 KiB 17 modules
+frontend-ms-1      |     modules by path ./src/components/ 95.7 KiB 12 modules
+content-service-1  | INFO:     172.21.0.8:54334 - "GET /api/videos?page=1 HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:54342 - "GET /api/videos?page=1 HTTP/1.1" 200 OK
+content-service-1  | INFO:     127.0.0.1:54336 - "GET /ready HTTP/1.1" 200 OK
+srs-ms-1           | [2026-09-01 11:24:06.925][INFO][1][2u8e3fp1] Process: cpu=1.00%,20MB, threads=2
+user-service-1     | INFO:     172.21.0.8:40328 - "GET /api/chat/conversations HTTP/1.1" 401 Unauthorized
+user-service-1     | INFO:     172.21.0.8:40344 - "POST /api/chat/conversations HTTP/1.1" 401 Unauthorized
+user-service-1     | INFO:     172.21.0.8:40352 - "GET /api/chat/conversations/00000000-0000-0000-0000-000000000000/messages HTTP/1.1" 401 Unauthorized
+user-service-1     | INFO:     172.21.0.8:40366 - "POST /api/chat/conversations/00000000-0000-0000-0000-000000000000/messages HTTP/1.1" 401 Unauthorized
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:29:02 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_b5674fe6f3c82be2.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+frontend-ms-1      |     modules by path ./src/stores/*.ts 110 KiB 5 modules
+user-service-1     | INFO:     172.21.0.8:40380 - "POST /api/chat/conversations/00000000-0000-0000-0000-000000000000/read HTTP/1.1" 401 Unauthorized
+user-service-1     | INFO:     172.21.0.8:40394 - "POST /api/chat/messages/00000000-0000-0000-0000-000000000000/recall HTTP/1.1" 401 Unauthorized
+srs-ms-1           | [2026-09-01 11:24:11.663][INFO][1][f43vs1u5] Hybrid cpu=2.00%,20MB, cid=1,0, timer=59,0,0, clock=0,36,9,1,1,1,1,1,1
+content-service-1  | INFO:     172.21.0.8:42014 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_7f040918da42c90c.jpg HTTP/1.1" 200 OK
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:29:02 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_00655fe284bde671.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 127.0.0.1 - - [01/Sep/2026:11:29:04 +0000] "GET /health HTTP/1.1" 200 35 "-" "Wget"
+frontend-ms-1      |     modules by path ./src/api/*.ts 3.58 KiB 3 modules
+frontend-ms-1      |     modules by path ./src/*.tsx 18.1 KiB 2 modules
+frontend-ms-1      |     modules by path ./src/styles/*.css 46.5 KiB
+frontend-ms-1      |       ./src/styles/index.css 1.23 KiB [built] [code generated]
+frontend-ms-1      |       ./node_modules/css-loader/dist/cjs.js!./node_modules/postcss-loader/dist/cjs.js!./src/styles/index.css 45.3 KiB [built] [code generated]
+frontend-ms-1      |     ./src/api.ts 14.5 KiB [built] [code generated]
+frontend-ms-1      | webpack 5.107.1 compiled successfully in 22420 ms
+user-service-1     | INFO:     172.21.0.8:40398 - "GET /api/creator/fans HTTP/1.1" 401 Unauthorized
+frontend-ms-1      | <e> [webpack-dev-middleware] Stream error: Error [ERR_STREAM_PREMATURE_CLOSE]: Premature close
+frontend-ms-1      | <e>     at onclose (node:internal/streams/end-of-stream:171:30)
+frontend-ms-1      | <e>     at process.processTicksAndRejections (node:internal/process/task_queues:84:11) {
+content-service-1  | INFO:     172.21.0.8:42002 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_0a162bb2e1521798.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42026 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_49d6acef6441378a.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42028 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_53357890e0850cc6.jpg HTTP/1.1" 200 OK
+srs-ms-1           | [2026-09-01 11:24:11.929][INFO][1][2u8e3fp1] Process: cpu=2.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:24:16.664][INFO][1][f43vs1u5] Hybrid cpu=2.00%,20MB, cid=1,0, timer=59,0,0, clock=0,36,9,1,1,1,1,1,1
+srs-ms-1           | [2026-09-01 11:24:16.933][INFO][1][2u8e3fp1] Process: cpu=2.00%,20MB, threads=2
+user-service-1     | INFO:     172.21.0.8:40412 - "GET /api/notifications HTTP/1.1" 401 Unauthorized
+user-service-1     | INFO:     172.21.0.8:40420 - "POST /api/notifications/read-all HTTP/1.1" 401 Unauthorized
+user-service-1     | INFO:     172.21.0.8:40426 - "GET /api/notifications/unread-count HTTP/1.1" 401 Unauthorized
+user-service-1     | INFO:     172.21.0.8:40428 - "POST /api/notifications/00000000-0000-0000-0000-000000000000/read HTTP/1.1" 401 Unauthorized
+content-service-1  | INFO:     172.21.0.8:42030 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_489919231decdf3a.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42050 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_3abad10835e73c89.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42038 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_e60dceb5e5f91b0c.jpg HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.8:40440 - "GET /api/users/00000000-0000-0000-0000-000000000000 HTTP/1.1" 404 Not Found
+user-service-1     | INFO:     172.21.0.8:40454 - "DELETE /api/users/00000000-0000-0000-0000-000000000000/follow HTTP/1.1" 401 Unauthorized
+user-service-1     | INFO:     172.21.0.8:40464 - "POST /api/users/00000000-0000-0000-0000-000000000000/follow HTTP/1.1" 401 Unauthorized
+frontend-ms-1      | <e>   code: 'ERR_STREAM_PREMATURE_CLOSE'
+content-service-1  | INFO:     172.21.0.8:42064 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_c1183b2b57772faf.jpg HTTP/1.1" 200 OK
+frontend-ms-1      | <e> }
+srs-ms-1           | [2026-09-01 11:24:21.665][INFO][1][f43vs1u5] Hybrid cpu=3.00%,20MB, cid=1,0, timer=59,0,0, clock=0,36,9,1,1,1,1,1,1
+frontend-ms-1      | <e> [webpack-dev-middleware] Stream error: Error [ERR_STREAM_PREMATURE_CLOSE]: Premature close
+user-service-1     | INFO:     172.21.0.8:40480 - "GET /api/users/00000000-0000-0000-0000-000000000000/followers HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42080 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_9e733019881df399.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42088 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_47070585f29498fb.jpg HTTP/1.1" 200 OK
+social-service-1   | INFO:     172.21.0.8:52592 - "POST /api/videos/76ad3f2b-1cdb-4893-9f1f-6df151dc5dd8/comments HTTP/1.1" 200 OK
+social-service-1   | INFO:     172.21.0.8:52608 - "POST /api/videos/76ad3f2b-1cdb-4893-9f1f-6df151dc5dd8/danmaku HTTP/1.1" 200 OK
+social-service-1   | INFO:     172.21.0.8:52614 - "GET /api/videos/76ad3f2b-1cdb-4893-9f1f-6df151dc5dd8/danmaku HTTP/1.1" 200 OK
+gateway-1          | 127.0.0.1 - - [01/Sep/2026:11:29:09 +0000] "GET /health HTTP/1.1" 200 35 "-" "Wget"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:13 +0000] "OPTIONS /api/videos?page=1 HTTP/1.1" 204 0 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:13 +0000] "OPTIONS /api/categories HTTP/1.1" 204 0 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+content-service-1  | INFO:     172.21.0.8:42100 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_5fa330a1ac05c707.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42110 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_6f73fbf6fb6ff39c.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42124 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_f45e9b2755ce8c82.jpg HTTP/1.1" 404 Not Found
+content-service-1  | INFO:     172.21.0.8:42138 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_180b383eab1fd1c5.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42156 - "GET /api/categories HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.8:40486 - "GET /api/users/00000000-0000-0000-0000-000000000000/following HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.8:40488 - "GET /api/users/00000000-0000-0000-0000-000000000000/relation HTTP/1.1" 401 Unauthorized
+user-service-1     | INFO:     172.21.0.8:40490 - "GET /api/users/00000000-0000-0000-0000-000000000000/stats HTTP/1.1" 404 Not Found
+content-service-1  | INFO:     172.21.0.8:42140 - "GET /api/videos/recommended?page=1 HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42170 - "GET /api/videos/recommended?page=1 HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42202 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_3abad10835e73c89.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42190 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_6d3de4f7b011f085.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42186 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_b1cfe1302c26ff61.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42214 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_f45e9b2755ce8c82.jpg HTTP/1.1" 404 Not Found
+content-service-1  | INFO:     172.21.0.8:42222 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_fc74bfbeebd211be.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42228 - "GET /api/admin/videos/pending HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42246 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_00655fe284bde671.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42238 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_a73176c7c4795fc7.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42254 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_b5674fe6f3c82be2.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42234 - "GET /api/admin/videos/pending HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42264 - "PATCH /api/admin/videos/64ccd947-6206-468a-955a-f669e49011ac/audit HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42268 - "GET /api/admin/videos/pending HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42270 - "GET /api/categories HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42274 - "GET /api/videos?page=1 HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42290 - "GET /api/categories HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42306 - "GET /api/videos?page=1 HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42328 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_53357890e0850cc6.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42316 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_47070585f29498fb.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42330 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_6f73fbf6fb6ff39c.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42346 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_0a162bb2e1521798.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42364 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_e60dceb5e5f91b0c.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42356 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_49d6acef6441378a.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42376 - "GET /api/videos?page=1 HTTP/1.1" 200 OK
+content-service-1  | INFO:     127.0.0.1:60562 - "GET /ready HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42378 - "GET /api/videos?page=1 HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42386 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_5fa330a1ac05c707.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42392 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_8e003357751e1bd5.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42396 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_f45e9b2755ce8c82.jpg HTTP/1.1" 404 Not Found
+content-service-1  | INFO:     172.21.0.8:42408 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_6d3de4f7b011f085.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42420 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_fc74bfbeebd211be.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42434 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_b1cfe1302c26ff61.jpg HTTP/1.1" 200 OK
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:13 +0000] "OPTIONS /api/videos?page=1 HTTP/1.1" 204 0 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:13 +0000] "OPTIONS /api/categories HTTP/1.1" 204 0 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+social-service-1   | INFO:     127.0.0.1:59038 - "GET /ready HTTP/1.1" 200 OK
+frontend-ms-1      | <e>     at onclose (node:internal/streams/end-of-stream:171:30)
+social-service-1   | INFO:     127.0.0.1:48470 - "GET /ready HTTP/1.1" 200 OK
+social-service-1   | INFO:     172.21.0.8:48560 - "GET /api/creator/comments?page=1&limit=100 HTTP/1.1" 200 OK
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:13 +0000] "OPTIONS /api/videos?page=1 HTTP/1.1" 204 0 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:13 +0000] "OPTIONS /api/videos?page=1 HTTP/1.1" 204 0 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:13 +0000] "GET /api/categories HTTP/1.1" 200 398 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:13 +0000] "GET /api/videos?page=1 HTTP/1.1" 200 14658 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:13 +0000] "GET /api/categories HTTP/1.1" 200 398 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+content-service-1  | INFO:     172.21.0.8:42440 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_3abad10835e73c89.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42450 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_c1183b2b57772faf.jpg HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.8:40492 - "GET /avatars/api-smoke-missing.bin HTTP/1.1" 404 Not Found
+user-service-1     | INFO:     172.21.0.6:52808 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:52808 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     127.0.0.1:46944 - "GET /ready HTTP/1.1" 200 OK
+user-service-1     | INFO:     127.0.0.1:46968 - "GET /ready HTTP/1.1" 200 OK
+user-service-1     | INFO:     127.0.0.1:51244 - "GET /ready HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:60602 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:60602 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:60602 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:60602 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.8:32826 - "POST /api/auth/login HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:60602 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.8:32834 - "GET /api/notifications/unread-count HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:60602 - "POST /internal/users/batch HTTP/1.1" 200 OK
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:14 +0000] "GET /api/videos?page=1 HTTP/1.1" 200 14559 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:14 +0000] "GET /api/videos?page=1 HTTP/1.1" 200 14611 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:14 +0000] "GET /api/videos?page=1 HTTP/1.1" 200 14259 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+user-service-1     | INFO:     172.21.0.6:60602 - "POST /internal/users/batch HTTP/1.1" 200 OK
+social-service-1   | INFO:     172.21.0.8:48572 - "GET /api/creator/comments?page=1&limit=100 HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:60602 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.7:37848 - "POST /internal/auth/introspect HTTP/1.1" 200 OK
+frontend-ms-1      | <e>     at process.processTicksAndRejections (node:internal/process/task_queues:84:11) {
+frontend-ms-1      | <e>   code: 'ERR_STREAM_PREMATURE_CLOSE'
+frontend-ms-1      | <e> }
+frontend-ms-1      | <e> [webpack-dev-middleware] Stream error: Error [ERR_STREAM_PREMATURE_CLOSE]: Premature close
+frontend-ms-1      | <e>     at onclose (node:internal/streams/end-of-stream:171:30)
+srs-ms-1           | [2026-09-01 11:24:21.941][INFO][1][2u8e3fp1] Process: cpu=3.00%,20MB, threads=2
+social-service-1   | INFO:     127.0.0.1:60534 - "GET /ready HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42456 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_180b383eab1fd1c5.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42470 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_3e9d9e97ea1d3800.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42484 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_e43ece296b836946.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42490 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_489919231decdf3a.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42496 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_7f040918da42c90c.jpg HTTP/1.1" 200 OK
+frontend-ms-1      | <e>     at process.processTicksAndRejections (node:internal/process/task_queues:84:11) {
+frontend-ms-1      | <e>   code: 'ERR_STREAM_PREMATURE_CLOSE'
+frontend-ms-1      | <e> }
+frontend-ms-1      | <e> [webpack-dev-middleware] Stream error: Error [ERR_STREAM_PREMATURE_CLOSE]: Premature close
+frontend-ms-1      | <e>     at ServerResponse.onclose (node:internal/streams/end-of-stream:171:30)
+frontend-ms-1      | <e>     at ServerResponse.emit (node:events:531:35)
+user-service-1     | INFO:     172.21.0.7:37876 - "POST /internal/users/batch HTTP/1.1" 200 OK
+social-service-1   | INFO:     127.0.0.1:60576 - "GET /ready HTTP/1.1" 200 OK
+social-service-1   | INFO:     172.21.0.8:33556 - "GET /api/creator/comments?page=1&limit=100 HTTP/1.1" 200 OK
+social-service-1   | INFO:     172.21.0.8:33564 - "GET /api/creator/comments?page=1&limit=100 HTTP/1.1" 200 OK
+social-service-1   | INFO:     127.0.0.1:36838 - "GET /ready HTTP/1.1" 200 OK
+social-service-1   | INFO:     127.0.0.1:36870 - "GET /ready HTTP/1.1" 200 OK
+social-service-1   | INFO:     127.0.0.1:55950 - "GET /ready HTTP/1.1" 200 OK
+social-service-1   | INFO:     172.21.0.8:45018 - "GET /api/live/rooms HTTP/1.1" 200 OK
+social-service-1   | INFO:     172.21.0.8:45026 - "GET /api/live/rooms HTTP/1.1" 200 OK
+social-service-1   | INFO:     172.21.0.8:45040 - "GET /api/live/rooms HTTP/1.1" 200 OK
+social-service-1   | INFO:     172.21.0.8:45050 - "POST /api/live/rooms HTTP/1.1" 200 OK
+social-service-1   | INFO:     ('172.21.0.8', 45060) - "WebSocket /ws/live/a3448f27-8b9a-4b7f-91d9-6d642ecdbe99?token=eyJzdWIiOiAiMzkzMWVhODMtNWU5OS00N2QzLWEzOGItYmE5NmU5ZWQ1OWUyIiwgImV4cCI6IDE3ODg4NjY5NTUuODI3NTQzfQ.W0s0Fv2rk6Q7NDaIjwxZ3bAUtuRLrT5tziXHibJULXM" [accepted]
+social-service-1   | INFO:     connection open
+social-service-1   | INFO:     172.21.0.8:45054 - "GET /api/live/rooms/a3448f27-8b9a-4b7f-91d9-6d642ecdbe99 HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.7:37864 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     127.0.0.1:58996 - "GET /ready HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.7:37848 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.7:37848 - "POST /internal/auth/introspect HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:60602 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:42792 - "POST /internal/users/batch HTTP/1.1" 200 OK
+social-service-1   | INFO:     ('172.21.0.8', 45074) - "WebSocket /ws/live/a3448f27-8b9a-4b7f-91d9-6d642ecdbe99?token=eyJzdWIiOiAiMzkzMWVhODMtNWU5OS00N2QzLWEzOGItYmE5NmU5ZWQ1OWUyIiwgImV4cCI6IDE3ODg4NjY5NTUuODI3NTQzfQ.W0s0Fv2rk6Q7NDaIjwxZ3bAUtuRLrT5tziXHibJULXM" [accepted]
+user-service-1     | INFO:     172.21.0.7:37864 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:60602 - "POST /internal/users/batch HTTP/1.1" 200 OK
+frontend-ms-1      | <e>     at emitCloseNT (node:_http_server:1066:10)
+frontend-ms-1      | <e>     at Socket.onServerResponseClose (node:_http_server:285:5)
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:29:14 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_3e9d9e97ea1d3800.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:14 +0000] "OPTIONS /api/auth/login HTTP/1.1" 204 0 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:29:14 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_47070585f29498fb.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:29:14 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_53357890e0850cc6.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:29:14 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_7f040918da42c90c.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:29:14 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_49d6acef6441378a.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:29:14 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_0a162bb2e1521798.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 127.0.0.1 - - [01/Sep/2026:11:29:15 +0000] "GET /health HTTP/1.1" 200 35 "-" "Wget"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:29:15 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_f45e9b2755ce8c82.jpg HTTP/1.1" 404 34 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:29:15 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_180b383eab1fd1c5.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:29:15 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_a73176c7c4795fc7.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:29:15 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_c1183b2b57772faf.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:29:15 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_3abad10835e73c89.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:29:15 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_6d3de4f7b011f085.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:29:15 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_6f73fbf6fb6ff39c.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+social-service-1   | INFO:     connection open
+social-service-1   | INFO:     172.21.0.8:45070 - "GET /api/live/rooms/a3448f27-8b9a-4b7f-91d9-6d642ecdbe99 HTTP/1.1" 200 OK
+social-service-1   | INFO:     connection closed
+social-service-1   | INFO:     127.0.0.1:47016 - "GET /ready HTTP/1.1" 200 OK
+social-service-1   | INFO:     172.21.0.8:54870 - "GET /api/live/rooms/a3448f27-8b9a-4b7f-91d9-6d642ecdbe99 HTTP/1.1" 200 OK
+social-service-1   | INFO:     ('172.21.0.8', 54886) - "WebSocket /ws/live/a3448f27-8b9a-4b7f-91d9-6d642ecdbe99?token=eyJzdWIiOiAiMWNiZWViNTUtZWQ5Mi00OWY5LTlkODktMTU1NGFlNjQzYTRiIiwgImV4cCI6IDE3ODg4NjY5NjQuMTA4MjM1fQ.7mx-TDPjFqgINiSKLtK78nbTj2MILXdIhfDBc2vF0Jc" [accepted]
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:29:15 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_e43ece296b836946.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:29:15 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_8e003357751e1bd5.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:15 +0000] "POST /api/auth/login HTTP/1.1" 200 431 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:29:15 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_5fa330a1ac05c707.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+srs-ms-1           | [2026-09-01 11:24:26.665][INFO][1][f43vs1u5] Hybrid cpu=2.00%,20MB, cid=1,0, timer=61,0,0, clock=0,38,9,1,0,0,1,0,0
+srs-ms-1           | [2026-09-01 11:24:26.946][INFO][1][2u8e3fp1] Process: cpu=2.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:24:31.666][INFO][1][f43vs1u5] Hybrid cpu=0.00%,20MB, cid=1,0, timer=61,0,0, clock=0,38,9,1,0,0,1,0,0
+srs-ms-1           | [2026-09-01 11:24:31.959][INFO][1][2u8e3fp1] Process: cpu=0.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:24:36.667][INFO][1][f43vs1u5] Hybrid cpu=1.00%,20MB, cid=1,0, timer=61,0,0, clock=0,45,3,1,0,0,0,0,0
+srs-ms-1           | [2026-09-01 11:24:36.970][INFO][1][2u8e3fp1] Process: cpu=1.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:24:41.668][INFO][1][f43vs1u5] Hybrid cpu=1.00%,20MB, cid=1,0, timer=61,0,0, clock=0,45,3,1,0,0,0,0,0
+srs-ms-1           | [2026-09-01 11:24:41.976][INFO][1][2u8e3fp1] Process: cpu=1.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:24:46.669][INFO][1][f43vs1u5] Hybrid cpu=2.00%,20MB, cid=1,0, timer=61,0,0, clock=0,45,3,1,0,0,0,0,0
+srs-ms-1           | [2026-09-01 11:24:46.981][INFO][1][2u8e3fp1] Process: cpu=2.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:24:51.669][INFO][1][f43vs1u5] Hybrid cpu=2.00%,20MB, cid=1,0, timer=61,0,0, clock=0,38,8,1,1,0,0,0,0
+srs-ms-1           | [2026-09-01 11:24:51.986][INFO][1][2u8e3fp1] Process: cpu=2.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:24:56.669][INFO][1][f43vs1u5] Hybrid cpu=1.00%,20MB, cid=1,0, timer=61,0,0, clock=0,38,8,1,1,0,0,0,0
+srs-ms-1           | [2026-09-01 11:24:56.991][INFO][1][2u8e3fp1] Process: cpu=1.00%,20MB, threads=2
+social-service-1   | INFO:     connection open
+social-service-1   | INFO:     172.21.0.8:54884 - "GET /api/live/rooms/a3448f27-8b9a-4b7f-91d9-6d642ecdbe99 HTTP/1.1" 200 OK
+social-service-1   | INFO:     172.21.0.8:54892 - "GET /api/live/rooms/a3448f27-8b9a-4b7f-91d9-6d642ecdbe99 HTTP/1.1" 200 OK
+social-service-1   | INFO:     172.21.0.8:54896 - "POST /api/live/a3448f27-8b9a-4b7f-91d9-6d642ecdbe99/danmaku HTTP/1.1" 200 OK
+social-service-1   | INFO:     172.21.0.8:54908 - "POST /api/live/rooms/a3448f27-8b9a-4b7f-91d9-6d642ecdbe99/end HTTP/1.1" 200 OK
+social-service-1   | INFO:     connection closed
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:29:15 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_b1cfe1302c26ff61.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:29:15 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_489919231decdf3a.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:29:15 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_9e733019881df399.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:15 +0000] "OPTIONS /api/videos/recommended?page=1 HTTP/1.1" 204 0 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:15 +0000] "OPTIONS /api/notifications/unread-count HTTP/1.1" 204 0 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+frontend-ms-1      | <e>     at Socket.emit (node:events:531:35)
+frontend-ms-1      | <e>     at TCP.<anonymous> (node:net:347:12) {
+frontend-ms-1      | <e>   code: 'ERR_STREAM_PREMATURE_CLOSE'
+content-service-1  | INFO:     172.21.0.8:42504 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_a73176c7c4795fc7.jpg HTTP/1.1" 200 OK
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:15 +0000] "OPTIONS /api/videos/recommended?page=1 HTTP/1.1" 204 0 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+content-service-1  | INFO:     172.21.0.8:42514 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_9e733019881df399.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42528 - "GET /api/categories HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42536 - "GET /api/videos/recommended?page=1 HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42552 - "GET /api/videos/recommended?page=1 HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42560 - "GET /api/categories HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42580 - "GET /api/categories HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:42568 - "GET /api/creator/videos HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:35778 - "GET /api/creator/videos HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.7:40046 - "POST /internal/videos/batch HTTP/1.1" 200 OK
+frontend-ms-1      | <e> }
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_6f73fbf6fb6ff39c.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_6f73fbf6fb6ff39c.jpg [200]
+content-service-1  | INFO:     172.21.0.7:40046 - "POST /internal/videos/batch HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:35788 - "GET /api/creator/videos HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:35794 - "GET /api/creator/videos HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:35802 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_b5674fe6f3c82be2.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:35814 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_f45e9b2755ce8c82.jpg HTTP/1.1" 404 Not Found
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:15 +0000] "GET /api/categories HTTP/1.1" 200 398 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+content-service-1  | INFO:     172.21.0.8:35808 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_00655fe284bde671.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     127.0.0.1:36832 - "GET /ready HTTP/1.1" 200 OK
+content-service-1  | INFO:     127.0.0.1:36856 - "GET /ready HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:50892 - "GET /api/categories HTTP/1.1" 200 OK
+social-service-1   | INFO:     172.21.0.8:54918 - "GET /api/live/rooms/a3448f27-8b9a-4b7f-91d9-6d642ecdbe99 HTTP/1.1" 200 OK
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:16 +0000] "GET /api/notifications/unread-count HTTP/1.1" 200 39 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:16 +0000] "GET /api/videos/recommended?page=1 HTTP/1.1" 200 14360 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:16 +0000] "GET /api/videos/recommended?page=1 HTTP/1.1" 200 14527 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:29:16 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_fc74bfbeebd211be.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:29:16 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_e60dceb5e5f91b0c.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:16 +0000] "GET /api/auth/me HTTP/1.1" 200 269 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+social-service-1   | INFO:     ('172.21.0.8', 54928) - "WebSocket /ws/live/a3448f27-8b9a-4b7f-91d9-6d642ecdbe99?token=eyJzdWIiOiAiMWNiZWViNTUtZWQ5Mi00OWY5LTlkODktMTU1NGFlNjQzYTRiIiwgImV4cCI6IDE3ODg4NjY5NjQuMTA4MjM1fQ.7mx-TDPjFqgINiSKLtK78nbTj2MILXdIhfDBc2vF0Jc" [accepted]
+social-service-1   | INFO:     connection open
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_0a162bb2e1521798.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_0a162bb2e1521798.jpg [200]
+user-service-1     | INFO:     172.21.0.6:42792 - "POST /internal/users/batch HTTP/1.1" 200 OK
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:16 +0000] "GET /api/live/rooms HTTP/1.1" 200 12 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+user-service-1     | INFO:     172.21.0.8:51936 - "GET /api/users/3931ea83-5e99-47d3-a38b-ba96e9ed59e2/relation HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.8:51942 - "GET /api/users/3931ea83-5e99-47d3-a38b-ba96e9ed59e2/relation HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.7:37848 - "POST /internal/auth/introspect HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.7:37848 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.7:37848 - "POST /internal/auth/introspect HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.7:37848 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.7:37864 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.7:37848 - "POST /internal/notifications HTTP/1.1" 200 OK
+user-service-1     | INFO:     127.0.0.1:59030 - "GET /ready HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:55794 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:55794 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:55794 - "POST /internal/users/batch HTTP/1.1" 200 OK
+social-service-1   | INFO:     172.21.0.8:54930 - "GET /api/live/rooms/a3448f27-8b9a-4b7f-91d9-6d642ecdbe99 HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:55794 - "POST /internal/users/batch HTTP/1.1" 200 OK
+social-service-1   | INFO:     172.21.0.8:54932 - "GET /api/live/rooms HTTP/1.1" 200 OK
+srs-ms-1           | [2026-09-01 11:25:01.670][INFO][1][f43vs1u5] Hybrid cpu=2.00%,20MB, cid=1,0, timer=62,0,0, clock=0,45,2,0,0,0,0,0,0
+social-service-1   | INFO:     connection closed
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:17 +0000] "OPTIONS /api/auth/me HTTP/1.1" 204 0 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+social-service-1   | INFO:     connection closed
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_9e733019881df399.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_9e733019881df399.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_180b383eab1fd1c5.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_180b383eab1fd1c5.jpg [200]
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:17 +0000] "OPTIONS /api/live/rooms HTTP/1.1" 204 0 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:17 +0000] "OPTIONS /api/auth/me HTTP/1.1" 204 0 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:17 +0000] "OPTIONS /api/live/rooms HTTP/1.1" 204 0 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+content-service-1  | INFO:     172.21.0.8:50890 - "GET /api/videos?page=1 HTTP/1.1" 200 OK
+social-service-1   | INFO:     127.0.0.1:47040 - "GET /ready HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:50904 - "GET /api/categories HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:50910 - "GET /api/videos?page=1 HTTP/1.1" 200 OK
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:17 +0000] "GET /api/auth/me HTTP/1.1" 200 269 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+srs-ms-1           | [2026-09-01 11:25:01.996][INFO][1][2u8e3fp1] Process: cpu=2.00%,20MB, threads=2
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:17 +0000] "GET /api/live/rooms HTTP/1.1" 200 12 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+srs-ms-1           | [2026-09-01 11:25:06.671][INFO][1][f43vs1u5] Hybrid cpu=0.00%,20MB, cid=1,0, timer=62,0,0, clock=0,45,2,0,0,0,0,0,0
+srs-ms-1           | [2026-09-01 11:25:07.000][INFO][1][2u8e3fp1] Process: cpu=0.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:25:11.671][INFO][1][f43vs1u5] Hybrid cpu=1.00%,20MB, cid=1,0, timer=61,0,0, clock=0,44,3,1,1,0,0,0,0
+srs-ms-1           | [2026-09-01 11:25:12.007][INFO][1][2u8e3fp1] Process: cpu=1.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:25:16.672][INFO][1][f43vs1u5] Hybrid cpu=2.00%,20MB, cid=1,0, timer=61,0,0, clock=0,44,3,1,1,0,0,0,0
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_c1183b2b57772faf.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_c1183b2b57772faf.jpg [200]
+social-service-1   | INFO:     172.21.0.8:49400 - "GET /health HTTP/1.1" 200 OK
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_5fa330a1ac05c707.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_5fa330a1ac05c707.jpg [200]
+social-service-1   | INFO:     172.21.0.8:49402 - "GET /ready HTTP/1.1" 200 OK
+srs-ms-1           | [2026-09-01 11:25:17.012][INFO][1][2u8e3fp1] Process: cpu=2.00%,20MB, threads=2
+user-service-1     | INFO:     127.0.0.1:48456 - "GET /ready HTTP/1.1" 200 OK
+srs-ms-1           | [2026-09-01 11:25:21.672][INFO][1][f43vs1u5] Hybrid cpu=3.00%,20MB, cid=1,0, timer=61,0,0, clock=0,45,2,1,1,0,1,0,0
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_47070585f29498fb.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_47070585f29498fb.jpg [200]
+user-service-1     | INFO:     172.21.0.8:36550 - "POST /api/auth/login HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.8:36564 - "GET /api/notifications/unread-count HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:55794 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:55794 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:55794 - "POST /internal/auth/introspect HTTP/1.1" 200 OK
+user-service-1     | INFO:     127.0.0.1:54320 - "GET /ready HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:60288 - "POST /internal/auth/introspect HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:50920 - "GET /api/videos?page=1 HTTP/1.1" 200 OK
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_7f040918da42c90c.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_7f040918da42c90c.jpg [200]
+content-service-1  | INFO:     172.21.0.8:50922 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_3e9d9e97ea1d3800.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:50926 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_53357890e0850cc6.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:50942 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_49d6acef6441378a.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:50958 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_47070585f29498fb.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:50964 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_7f040918da42c90c.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:50946 - "GET /api/videos?page=1 HTTP/1.1" 200 OK
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_fc74bfbeebd211be.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_fc74bfbeebd211be.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_6d3de4f7b011f085.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_6d3de4f7b011f085.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_49d6acef6441378a.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_49d6acef6441378a.jpg [200]
+user-service-1     | INFO:     172.21.0.6:60288 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:60288 - "POST /internal/auth/introspect HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:60288 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:60288 - "POST /internal/auth/introspect HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.8:60472 - "GET /api/creator/fans?page=1&limit=100 HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:60288 - "POST /internal/users/batch HTTP/1.1" 200 OK
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_f45e9b2755ce8c82.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_f45e9b2755ce8c82.jpg [404]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_b1cfe1302c26ff61.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_b1cfe1302c26ff61.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_e43ece296b836946.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_e43ece296b836946.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_8e003357751e1bd5.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_8e003357751e1bd5.jpg [200]
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:17 +0000] "GET /api/auth/me HTTP/1.1" 200 269 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:17 +0000] "GET /api/live/rooms HTTP/1.1" 200 12 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:17 +0000] "POST /api/live/rooms HTTP/1.1" 200 649 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:18 +0000] "OPTIONS /api/live/rooms/a3448f27-8b9a-4b7f-91d9-6d642ecdbe99 HTTP/1.1" 204 0 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:18 +0000] "GET /api/live/rooms/a3448f27-8b9a-4b7f-91d9-6d642ecdbe99 HTTP/1.1" 200 649 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:18 +0000] "GET /api/live/rooms/a3448f27-8b9a-4b7f-91d9-6d642ecdbe99 HTTP/1.1" 200 649 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:18 +0000] "GET /ws/live/a3448f27-8b9a-4b7f-91d9-6d642ecdbe99?token=eyJzdWIiOiAiMzkzMWVhODMtNWU5OS00N2QzLWEzOGItYmE5NmU5ZWQ1OWUyIiwgImV4cCI6IDE3ODg4NjY5NTUuODI3NTQzfQ.W0s0Fv2rk6Q7NDaIjwxZ3bAUtuRLrT5tziXHibJULXM HTTP/1.1" 101 173 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 127.0.0.1 - - [01/Sep/2026:11:29:20 +0000] "GET /health HTTP/1.1" 200 35 "-" "Wget"
+srs-ms-1           | [2026-09-01 11:25:22.018][INFO][1][2u8e3fp1] Process: cpu=3.00%,20MB, threads=2
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:21 +0000] "OPTIONS /api/categories HTTP/1.1" 204 0 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_3abad10835e73c89.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_3abad10835e73c89.jpg [200]
+user-service-1     | INFO:     172.21.0.7:42038 - "POST /internal/auth/introspect HTTP/1.1" 200 OK
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_e60dceb5e5f91b0c.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_e60dceb5e5f91b0c.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_3e9d9e97ea1d3800.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_3e9d9e97ea1d3800.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_489919231decdf3a.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_489919231decdf3a.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_53357890e0850cc6.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_53357890e0850cc6.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_6f73fbf6fb6ff39c.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_6f73fbf6fb6ff39c.jpg [200]
+srs-ms-1           | [2026-09-01 11:25:26.672][INFO][1][f43vs1u5] Hybrid cpu=0.00%,20MB, cid=1,0, timer=61,0,0, clock=0,45,2,1,1,0,1,0,0
+srs-ms-1           | [2026-09-01 11:25:27.023][INFO][1][2u8e3fp1] Process: cpu=0.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:25:31.673][INFO][1][f43vs1u5] Hybrid cpu=1.00%,20MB, cid=1,0, timer=61,0,0, clock=0,45,2,1,1,0,1,0,0
+srs-ms-1           | [2026-09-01 11:25:32.028][INFO][1][2u8e3fp1] Process: cpu=1.00%,20MB, threads=2
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:21 +0000] "OPTIONS /api/videos?page=1 HTTP/1.1" 204 0 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:21 +0000] "OPTIONS /api/videos?page=1 HTTP/1.1" 204 0 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:21 +0000] "OPTIONS /api/videos?page=1 HTTP/1.1" 204 0 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:21 +0000] "OPTIONS /api/categories HTTP/1.1" 204 0 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:21 +0000] "OPTIONS /api/videos?page=1 HTTP/1.1" 204 0 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+user-service-1     | INFO:     172.21.0.8:60478 - "GET /api/creator/fans?page=1&limit=100 HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.7:42038 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.7:42038 - "POST /internal/auth/introspect HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:60288 - "POST /internal/auth/introspect HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:60288 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.7:42038 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:60288 - "POST /internal/auth/introspect HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:50968 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_0a162bb2e1521798.jpg HTTP/1.1" 200 OK
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_3abad10835e73c89.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_3abad10835e73c89.jpg [200]
+content-service-1  | INFO:     172.21.0.8:50974 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_a73176c7c4795fc7.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:50986 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_180b383eab1fd1c5.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:51002 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_f45e9b2755ce8c82.jpg HTTP/1.1" 404 Not Found
+content-service-1  | INFO:     172.21.0.8:51020 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_c1183b2b57772faf.jpg HTTP/1.1" 200 OK
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_fc74bfbeebd211be.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_fc74bfbeebd211be.jpg [200]
+content-service-1  | INFO:     172.21.0.8:51012 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_3abad10835e73c89.jpg HTTP/1.1" 200 OK
+social-service-1   | INFO:     172.21.0.8:49412 - "GET /version HTTP/1.1" 200 OK
+social-service-1   | INFO:     127.0.0.1:60542 - "GET /ready HTTP/1.1" 200 OK
+srs-ms-1           | [2026-09-01 11:25:36.673][INFO][1][f43vs1u5] Hybrid cpu=0.00%,20MB, cid=1,0, timer=61,0,0, clock=0,44,3,1,1,0,1,0,0
+user-service-1     | INFO:     172.21.0.6:60288 - "POST /internal/users/batch HTTP/1.1" 200 OK
+srs-ms-1           | [2026-09-01 11:25:37.032][INFO][1][2u8e3fp1] Process: cpu=0.00%,20MB, threads=2
+user-service-1     | INFO:     172.21.0.6:60288 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     127.0.0.1:54334 - "GET /ready HTTP/1.1" 200 OK
+srs-ms-1           | [2026-09-01 11:25:41.673][INFO][1][f43vs1u5] Hybrid cpu=1.00%,20MB, cid=1,0, timer=61,0,0, clock=0,44,3,1,1,0,1,0,0
+user-service-1     | INFO:     172.21.0.6:60288 - "POST /internal/users/batch HTTP/1.1" 200 OK
+srs-ms-1           | [2026-09-01 11:25:42.037][INFO][1][2u8e3fp1] Process: cpu=1.00%,20MB, threads=2
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:21 +0000] "GET /api/categories HTTP/1.1" 200 398 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_e43ece296b836946.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_e43ece296b836946.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_b1cfe1302c26ff61.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_b1cfe1302c26ff61.jpg [200]
+content-service-1  | INFO:     172.21.0.8:51026 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_6d3de4f7b011f085.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:51038 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_6f73fbf6fb6ff39c.jpg HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:60288 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:60288 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:60288 - "POST /internal/users/batch HTTP/1.1" 200 OK
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_9e733019881df399.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_9e733019881df399.jpg [200]
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:21 +0000] "GET /api/categories HTTP/1.1" 200 398 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_e60dceb5e5f91b0c.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_e60dceb5e5f91b0c.jpg [200]
+content-service-1  | INFO:     172.21.0.8:51042 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_e43ece296b836946.jpg HTTP/1.1" 200 OK
+srs-ms-1           | [2026-09-01 11:25:46.674][INFO][1][f43vs1u5] Hybrid cpu=1.00%,20MB, cid=1,0, timer=61,0,0, clock=0,44,3,1,1,0,1,0,0
+srs-ms-1           | [2026-09-01 11:25:47.042][INFO][1][2u8e3fp1] Process: cpu=1.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:25:51.674][INFO][1][f43vs1u5] Hybrid cpu=2.00%,20MB, cid=1,0, timer=61,0,0, clock=0,43,4,1,0,0,1,0,0
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:21 +0000] "GET /api/videos?page=1 HTTP/1.1" 200 14393 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:21 +0000] "GET /api/videos?page=1 HTTP/1.1" 200 14456 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:22 +0000] "GET /api/videos?page=1 HTTP/1.1" 200 14218 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:22 +0000] "GET /api/videos?page=1 HTTP/1.1" 200 14303 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+srs-ms-1           | [2026-09-01 11:25:52.047][INFO][1][2u8e3fp1] Process: cpu=2.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:25:56.675][INFO][1][f43vs1u5] Hybrid cpu=1.00%,20MB, cid=1,0, timer=61,0,0, clock=0,43,4,1,0,0,1,0,0
+srs-ms-1           | [2026-09-01 11:25:57.052][INFO][1][2u8e3fp1] Process: cpu=1.00%,20MB, threads=2
+content-service-1  | INFO:     172.21.0.8:51056 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_8e003357751e1bd5.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:51072 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_b1cfe1302c26ff61.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:51078 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_5fa330a1ac05c707.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:51088 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_489919231decdf3a.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:51092 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_9e733019881df399.jpg HTTP/1.1" 200 OK
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:29:22 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_9e733019881df399.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+srs-ms-1           | [2026-09-01 11:26:01.676][INFO][1][f43vs1u5] Hybrid cpu=1.00%,20MB, cid=1,0, timer=61,0,0, clock=0,46,1,0,0,1,1,0,0
+srs-ms-1           | [2026-09-01 11:26:02.057][INFO][1][2u8e3fp1] Process: cpu=1.00%,20MB, threads=2
+user-service-1     | INFO:     172.21.0.8:35744 - "POST /api/auth/login HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:60288 - "POST /internal/users/batch HTTP/1.1" 200 OK
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_47070585f29498fb.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_47070585f29498fb.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_6d3de4f7b011f085.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_6d3de4f7b011f085.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_3e9d9e97ea1d3800.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_3e9d9e97ea1d3800.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_8e003357751e1bd5.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_8e003357751e1bd5.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_7f040918da42c90c.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_7f040918da42c90c.jpg [200]
+content-service-1  | INFO:     172.21.0.8:51096 - "GET /api/categories HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:51104 - "GET /api/videos/recommended?page=1 HTTP/1.1" 200 OK
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_0a162bb2e1521798.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_0a162bb2e1521798.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_f45e9b2755ce8c82.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_f45e9b2755ce8c82.jpg [404]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_c1183b2b57772faf.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_c1183b2b57772faf.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_180b383eab1fd1c5.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_180b383eab1fd1c5.jpg [200]
+content-service-1  | INFO:     172.21.0.8:51132 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_fc74bfbeebd211be.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:51116 - "GET /api/videos/recommended?page=1 HTTP/1.1" 200 OK
+content-service-1  | INFO:     127.0.0.1:55946 - "GET /ready HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:51140 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_e60dceb5e5f91b0c.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.7:53504 - "GET /api/categories HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.7:53504 - "GET /api/categories HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.8:35758 - "GET /api/notifications/unread-count HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:60288 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:60288 - "POST /internal/auth/introspect HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:60288 - "POST /internal/users/batch HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.7:53504 - "GET /api/categories HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.7:53504 - "GET /api/categories HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.7:53504 - "GET /api/categories HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.7:53504 - "GET /api/categories HTTP/1.1" 200 OK
+srs-ms-1           | [2026-09-01 11:26:06.676][INFO][1][f43vs1u5] Hybrid cpu=0.00%,20MB, cid=1,0, timer=61,0,0, clock=0,46,1,0,0,1,1,0,0
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_6f73fbf6fb6ff39c.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_6f73fbf6fb6ff39c.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_5fa330a1ac05c707.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_5fa330a1ac05c707.jpg [200]
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:29:22 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_49d6acef6441378a.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+user-service-1     | INFO:     172.21.0.6:60288 - "POST /internal/auth/introspect HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:60288 - "POST /internal/users/batch HTTP/1.1" 200 OK
+srs-ms-1           | [2026-09-01 11:26:07.062][INFO][1][2u8e3fp1] Process: cpu=0.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:26:11.677][INFO][1][f43vs1u5] Hybrid cpu=1.00%,20MB, cid=1,0, timer=61,0,0, clock=0,45,2,0,0,0,0,0,0
+srs-ms-1           | [2026-09-01 11:26:12.066][INFO][1][2u8e3fp1] Process: cpu=1.00%,20MB, threads=2
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_49d6acef6441378a.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_49d6acef6441378a.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_53357890e0850cc6.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_53357890e0850cc6.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_489919231decdf3a.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_489919231decdf3a.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_a73176c7c4795fc7.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_a73176c7c4795fc7.jpg [200]
+content-service-1  | INFO:     172.21.0.7:53504 - "GET /api/categories HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:38024 - "GET /api/categories HTTP/1.1" 200 OK
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_47070585f29498fb.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_47070585f29498fb.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_489919231decdf3a.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_489919231decdf3a.jpg [200]
+srs-ms-1           | [2026-09-01 11:26:16.678][INFO][1][f43vs1u5] Hybrid cpu=1.00%,20MB, cid=1,0, timer=61,0,0, clock=0,45,2,0,0,0,0,0,0
+srs-ms-1           | [2026-09-01 11:26:17.071][INFO][1][2u8e3fp1] Process: cpu=1.00%,20MB, threads=2
+content-service-1  | INFO:     172.21.0.8:38040 - "GET /api/categories HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:38030 - "GET /api/videos?page=1 HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:38042 - "GET /api/videos?page=1 HTTP/1.1" 200 OK
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_b5674fe6f3c82be2.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_b5674fe6f3c82be2.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_5fa330a1ac05c707.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_5fa330a1ac05c707.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_3abad10835e73c89.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_3abad10835e73c89.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_00655fe284bde671.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_00655fe284bde671.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_180b383eab1fd1c5.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_180b383eab1fd1c5.jpg [200]
+user-service-1     | INFO:     172.21.0.6:60288 - "POST /internal/auth/introspect HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:60288 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:60288 - "POST /internal/auth/introspect HTTP/1.1" 200 OK
+srs-ms-1           | [2026-09-01 11:26:21.679][INFO][1][f43vs1u5] Hybrid cpu=1.00%,20MB, cid=1,0, timer=61,0,0, clock=0,45,2,0,0,0,0,0,0
+srs-ms-1           | [2026-09-01 11:26:22.074][INFO][1][2u8e3fp1] Process: cpu=1.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:26:26.680][INFO][1][f43vs1u5] Hybrid cpu=1.00%,20MB, cid=1,0, timer=61,0,0, clock=0,47,1,1,0,0,0,0,0
+srs-ms-1           | [2026-09-01 11:26:27.078][INFO][1][2u8e3fp1] Process: cpu=1.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:26:31.682][INFO][1][f43vs1u5] Hybrid cpu=0.00%,20MB, cid=1,0, timer=61,0,0, clock=0,47,1,1,0,0,0,0,0
+srs-ms-1           | [2026-09-01 11:26:32.083][INFO][1][2u8e3fp1] Process: cpu=0.00%,20MB, threads=2
+user-service-1     | INFO:     172.21.0.6:60288 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     127.0.0.1:60546 - "GET /ready HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:38048 - "GET /api/videos?page=1 HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:38050 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_9e733019881df399.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:38064 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_fc74bfbeebd211be.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:38088 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_49d6acef6441378a.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:38080 - "GET /api/videos?page=1 HTTP/1.1" 200 OK
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:29:22 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_fc74bfbeebd211be.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:29:22 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_180b383eab1fd1c5.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:29:22 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_6f73fbf6fb6ff39c.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_b1cfe1302c26ff61.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_b1cfe1302c26ff61.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_f45e9b2755ce8c82.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_f45e9b2755ce8c82.jpg [404]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_49d6acef6441378a.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_49d6acef6441378a.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_6d3de4f7b011f085.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_6d3de4f7b011f085.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_e43ece296b836946.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_e43ece296b836946.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_b1cfe1302c26ff61.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_b1cfe1302c26ff61.jpg [200]
+user-service-1     | INFO:     172.21.0.6:60288 - "POST /internal/notifications HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:60288 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:60288 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:60288 - "POST /internal/users/batch HTTP/1.1" 200 OK
+srs-ms-1           | [2026-09-01 11:26:36.683][INFO][1][f43vs1u5] Hybrid cpu=1.00%,20MB, cid=1,0, timer=59,0,0, clock=0,39,5,1,0,1,1,1,1
+user-service-1     | INFO:     172.21.0.6:60288 - "POST /internal/users/batch HTTP/1.1" 200 OK
+srs-ms-1           | [2026-09-01 11:26:37.112][INFO][1][2u8e3fp1] Process: cpu=1.00%,20MB, threads=2
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:29:22 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_47070585f29498fb.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+user-service-1     | INFO:     172.21.0.8:35774 - "POST /api/auth/login HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.8:35790 - "GET /api/notifications/unread-count HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:60288 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:60288 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:60288 - "POST /internal/auth/introspect HTTP/1.1" 200 OK
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:29:22 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_5fa330a1ac05c707.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:29:22 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_0a162bb2e1521798.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:29:22 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_a73176c7c4795fc7.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:29:22 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_53357890e0850cc6.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:29:23 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_6d3de4f7b011f085.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:29:23 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_3abad10835e73c89.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:23 +0000] "OPTIONS /api/auth/login HTTP/1.1" 204 0 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_fc74bfbeebd211be.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_fc74bfbeebd211be.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_3e9d9e97ea1d3800.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_3e9d9e97ea1d3800.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_8e003357751e1bd5.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_8e003357751e1bd5.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_7f040918da42c90c.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_7f040918da42c90c.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_0a162bb2e1521798.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_0a162bb2e1521798.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_53357890e0850cc6.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_53357890e0850cc6.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_49d6acef6441378a.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_49d6acef6441378a.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_489919231decdf3a.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_489919231decdf3a.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_3abad10835e73c89.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_3abad10835e73c89.jpg [200]
+content-service-1  | INFO:     172.21.0.8:38120 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_180b383eab1fd1c5.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:38104 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_6f73fbf6fb6ff39c.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:38136 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_47070585f29498fb.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:38148 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_5fa330a1ac05c707.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:38160 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_0a162bb2e1521798.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:38162 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_a73176c7c4795fc7.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:38164 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_53357890e0850cc6.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:38174 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_6d3de4f7b011f085.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     127.0.0.1:47008 - "GET /ready HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:38188 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_3abad10835e73c89.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:38198 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_7f040918da42c90c.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:38210 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_8e003357751e1bd5.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:38216 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_c1183b2b57772faf.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:38226 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_3e9d9e97ea1d3800.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:38228 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_e60dceb5e5f91b0c.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:38244 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_b1cfe1302c26ff61.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:38248 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_f45e9b2755ce8c82.jpg HTTP/1.1" 404 Not Found
+content-service-1  | INFO:     172.21.0.8:38262 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_e43ece296b836946.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:38276 - "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_489919231decdf3a.jpg HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:38282 - "GET /api/categories HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:38298 - "GET /api/videos/recommended?page=1 HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:38300 - "GET /api/videos/recommended?page=1 HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.7:48352 - "GET /api/categories HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.7:48352 - "GET /api/categories HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.7:48352 - "GET /api/categories HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.7:48352 - "GET /api/categories HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.7:48352 - "GET /api/categories HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.7:48352 - "GET /api/categories HTTP/1.1" 200 OK
+content-service-1  | INFO:     127.0.0.1:47034 - "GET /ready HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:60288 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:60288 - "POST /internal/auth/introspect HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.8:59050 - "GET /api/creator/fans?page=1&limit=100 HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:60288 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.7:36182 - "POST /internal/auth/introspect HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.7:36182 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.8:59054 - "GET /api/creator/fans?page=1&limit=100 HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.7:36182 - "POST /internal/auth/introspect HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:60288 - "POST /internal/auth/introspect HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:60288 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.7:36182 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:60288 - "POST /internal/auth/introspect HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:60288 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     127.0.0.1:36830 - "GET /ready HTTP/1.1" 200 OK
+user-service-1     | INFO:     127.0.0.1:36842 - "GET /ready HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:47296 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:47296 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:47296 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:47296 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     127.0.0.1:55934 - "GET /ready HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.8:37218 - "POST /api/auth/login HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:47296 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.8:37234 - "GET /api/notifications/unread-count HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:47296 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.8:37236 - "GET /api/auth/me HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.8:37242 - "GET /api/auth/me HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:47576 - "GET /health HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.8:37254 - "GET /api/auth/me HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:47588 - "GET /ready HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.7:48006 - "POST /internal/auth/introspect HTTP/1.1" 200 OK
+content-service-1  | INFO:     172.21.0.8:47602 - "GET /version HTTP/1.1" 200 OK
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_e60dceb5e5f91b0c.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_e60dceb5e5f91b0c.jpg [200]
+content-service-1  | INFO:     127.0.0.1:60534 - "GET /ready HTTP/1.1" 200 OK
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_c1183b2b57772faf.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_c1183b2b57772faf.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_9e733019881df399.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_9e733019881df399.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_47070585f29498fb.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_47070585f29498fb.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_5fa330a1ac05c707.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_5fa330a1ac05c707.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_6f73fbf6fb6ff39c.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_6f73fbf6fb6ff39c.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_f45e9b2755ce8c82.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_f45e9b2755ce8c82.jpg [404]
+srs-ms-1           | [2026-09-01 11:26:41.684][INFO][1][f43vs1u5] Hybrid cpu=1.00%,20MB, cid=1,0, timer=59,0,0, clock=0,39,5,1,0,1,1,1,1
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_180b383eab1fd1c5.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_180b383eab1fd1c5.jpg [200]
+srs-ms-1           | [2026-09-01 11:26:42.119][INFO][1][2u8e3fp1] Process: cpu=1.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:26:46.684][INFO][1][f43vs1u5] Hybrid cpu=0.00%,20MB, cid=1,0, timer=61,0,0, clock=0,42,4,1,1,1,1,0,0
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_6d3de4f7b011f085.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_6d3de4f7b011f085.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_b1cfe1302c26ff61.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_b1cfe1302c26ff61.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_3abad10835e73c89.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_3abad10835e73c89.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_f45e9b2755ce8c82.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_f45e9b2755ce8c82.jpg [404]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_fc74bfbeebd211be.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_fc74bfbeebd211be.jpg [200]
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:29:23 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_7f040918da42c90c.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:29:23 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_8e003357751e1bd5.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:29:23 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_c1183b2b57772faf.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:29:23 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_3e9d9e97ea1d3800.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:29:23 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_e60dceb5e5f91b0c.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:29:23 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_b1cfe1302c26ff61.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:29:23 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_f45e9b2755ce8c82.jpg HTTP/1.1" 404 34 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_00655fe284bde671.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_00655fe284bde671.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_a73176c7c4795fc7.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_a73176c7c4795fc7.jpg [200]
+srs-ms-1           | [2026-09-01 11:26:47.124][INFO][1][2u8e3fp1] Process: cpu=0.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:26:51.684][INFO][1][f43vs1u5] Hybrid cpu=1.00%,20MB, cid=1,0, timer=61,0,0, clock=0,42,4,1,1,1,1,0,0
+user-service-1     | INFO:     172.21.0.7:48006 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.7:48006 - "POST /internal/users/batch HTTP/1.1" 200 OK
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_b5674fe6f3c82be2.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_b5674fe6f3c82be2.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_47070585f29498fb.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_47070585f29498fb.jpg [200]
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:29:23 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_e43ece296b836946.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+srs-ms-1           | [2026-09-01 11:26:52.128][INFO][1][2u8e3fp1] Process: cpu=1.00%,20MB, threads=2
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_53357890e0850cc6.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_53357890e0850cc6.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_0a162bb2e1521798.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_0a162bb2e1521798.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_49d6acef6441378a.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_49d6acef6441378a.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_6f73fbf6fb6ff39c.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_6f73fbf6fb6ff39c.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_e60dceb5e5f91b0c.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_e60dceb5e5f91b0c.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_5fa330a1ac05c707.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_5fa330a1ac05c707.jpg [200]
+user-service-1     | INFO:     172.21.0.7:48006 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     127.0.0.1:55954 - "GET /ready HTTP/1.1" 200 OK
+gateway-1          | 172.21.0.9 - - [01/Sep/2026:11:29:23 +0000] "GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_489919231decdf3a.jpg HTTP/1.1" 200 602084 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:24 +0000] "POST /api/auth/login HTTP/1.1" 200 408 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_8e003357751e1bd5.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_8e003357751e1bd5.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_f45e9b2755ce8c82.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_f45e9b2755ce8c82.jpg [404]
+srs-ms-1           | [2026-09-01 11:26:56.684][INFO][1][f43vs1u5] Hybrid cpu=1.00%,20MB, cid=1,0, timer=61,0,0, clock=0,42,4,1,1,1,1,0,0
+srs-ms-1           | [2026-09-01 11:26:57.134][INFO][1][2u8e3fp1] Process: cpu=1.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:27:01.686][INFO][1][f43vs1u5] Hybrid cpu=0.00%,20MB, cid=1,0, timer=61,0,0, clock=0,46,1,1,0,0,0,0,0
+user-service-1     | INFO:     172.21.0.6:59884 - "POST /internal/users/batch HTTP/1.1" 200 OK
+srs-ms-1           | [2026-09-01 11:27:02.139][INFO][1][2u8e3fp1] Process: cpu=0.00%,20MB, threads=2
+user-service-1     | INFO:     172.21.0.6:59884 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:59884 - "POST /internal/users/batch HTTP/1.1" 200 OK
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_6d3de4f7b011f085.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_6d3de4f7b011f085.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_fc74bfbeebd211be.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_fc74bfbeebd211be.jpg [200]
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:24 +0000] "OPTIONS /api/notifications/unread-count HTTP/1.1" 204 0 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:24 +0000] "OPTIONS /api/videos/recommended?page=1 HTTP/1.1" 204 0 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+srs-ms-1           | [2026-09-01 11:27:06.686][INFO][1][f43vs1u5] Hybrid cpu=1.00%,20MB, cid=1,0, timer=61,0,0, clock=0,46,1,1,0,0,0,0,0
+srs-ms-1           | [2026-09-01 11:27:07.143][INFO][1][2u8e3fp1] Process: cpu=1.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:27:11.687][INFO][1][f43vs1u5] Hybrid cpu=1.00%,20MB, cid=1,0, timer=61,0,0, clock=0,46,1,1,0,0,0,0,0
+srs-ms-1           | [2026-09-01 11:27:12.148][INFO][1][2u8e3fp1] Process: cpu=1.00%,20MB, threads=2
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_b1cfe1302c26ff61.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_b1cfe1302c26ff61.jpg [200]
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:24 +0000] "OPTIONS /api/videos/recommended?page=1 HTTP/1.1" 204 0 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_3abad10835e73c89.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_3abad10835e73c89.jpg [200]
+srs-ms-1           | [2026-09-01 11:27:16.687][INFO][1][f43vs1u5] Hybrid cpu=1.00%,20MB, cid=1,0, timer=61,0,0, clock=0,47,1,1,0,0,0,0,0
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_c1183b2b57772faf.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_c1183b2b57772faf.jpg [200]
+srs-ms-1           | [2026-09-01 11:27:17.153][INFO][1][2u8e3fp1] Process: cpu=1.00%,20MB, threads=2
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_180b383eab1fd1c5.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_180b383eab1fd1c5.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_3e9d9e97ea1d3800.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_3e9d9e97ea1d3800.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_e43ece296b836946.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_e43ece296b836946.jpg [200]
+user-service-1     | INFO:     172.21.0.6:59884 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.8:47926 - "POST /api/auth/login HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.8:47930 - "GET /api/notifications/unread-count HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.6:59884 - "POST /internal/users/batch HTTP/1.1" 200 OK
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:24 +0000] "GET /api/categories HTTP/1.1" 200 398 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+user-service-1     | INFO:     172.21.0.6:59884 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.7:50110 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.7:50110 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.7:50110 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.8:47944 - "GET /api/users/3931ea83-5e99-47d3-a38b-ba96e9ed59e2/relation HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.8:47952 - "GET /api/users/3931ea83-5e99-47d3-a38b-ba96e9ed59e2/relation HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.7:50110 - "POST /internal/auth/introspect HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.7:50110 - "POST /internal/auth/introspect HTTP/1.1" 200 OK
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:24 +0000] "GET /api/notifications/unread-count HTTP/1.1" 200 37 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:24 +0000] "GET /api/videos/recommended?page=1 HTTP/1.1" 200 14249 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:24 +0000] "GET /api/videos/recommended?page=1 HTTP/1.1" 200 14143 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_489919231decdf3a.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_489919231decdf3a.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_7f040918da42c90c.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_7f040918da42c90c.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_9e733019881df399.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_9e733019881df399.jpg [200]
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:24 +0000] "GET /api/live/rooms/a3448f27-8b9a-4b7f-91d9-6d642ecdbe99 HTTP/1.1" 200 649 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:25 +0000] "OPTIONS /api/live/rooms/a3448f27-8b9a-4b7f-91d9-6d642ecdbe99 HTTP/1.1" 204 0 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:25 +0000] "OPTIONS /api/live/rooms/a3448f27-8b9a-4b7f-91d9-6d642ecdbe99 HTTP/1.1" 204 0 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_a73176c7c4795fc7.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_a73176c7c4795fc7.jpg [200]
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:25 +0000] "GET /ws/live/a3448f27-8b9a-4b7f-91d9-6d642ecdbe99?token=eyJzdWIiOiAiMWNiZWViNTUtZWQ5Mi00OWY5LTlkODktMTU1NGFlNjQzYTRiIiwgImV4cCI6IDE3ODg4NjY5NjQuMTA4MjM1fQ.7mx-TDPjFqgINiSKLtK78nbTj2MILXdIhfDBc2vF0Jc HTTP/1.1" 499 0 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+srs-ms-1           | [2026-09-01 11:27:21.687][INFO][1][f43vs1u5] Hybrid cpu=0.00%,20MB, cid=1,0, timer=61,0,0, clock=0,47,1,1,0,0,0,0,0
+srs-ms-1           | [2026-09-01 11:27:22.158][INFO][1][2u8e3fp1] Process: cpu=0.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:27:26.688][INFO][1][f43vs1u5] Hybrid cpu=1.00%,20MB, cid=1,0, timer=61,0,0, clock=0,47,1,1,0,0,0,0,0
+srs-ms-1           | [2026-09-01 11:27:27.162][INFO][1][2u8e3fp1] Process: cpu=1.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:27:31.688][INFO][1][f43vs1u5] Hybrid cpu=1.00%,20MB, cid=1,0, timer=62,0,0, clock=0,47,1,0,0,0,0,0,0
+srs-ms-1           | [2026-09-01 11:27:32.166][INFO][1][2u8e3fp1] Process: cpu=1.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:27:36.689][INFO][1][f43vs1u5] Hybrid cpu=2.00%,20MB, cid=1,0, timer=62,0,0, clock=0,47,1,0,0,0,0,0,0
+srs-ms-1           | [2026-09-01 11:27:37.171][INFO][1][2u8e3fp1] Process: cpu=2.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:27:41.689][INFO][1][f43vs1u5] Hybrid cpu=1.00%,20MB, cid=1,0, timer=62,0,0, clock=0,47,1,0,0,0,0,0,0
+srs-ms-1           | [2026-09-01 11:27:42.176][INFO][1][2u8e3fp1] Process: cpu=1.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:27:46.690][INFO][1][f43vs1u5] Hybrid cpu=1.00%,20MB, cid=1,0, timer=62,0,0, clock=0,46,2,0,0,0,0,0,0
+srs-ms-1           | [2026-09-01 11:27:47.180][INFO][1][2u8e3fp1] Process: cpu=1.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:27:51.690][INFO][1][f43vs1u5] Hybrid cpu=1.00%,20MB, cid=1,0, timer=62,0,0, clock=0,46,2,0,0,0,0,0,0
+srs-ms-1           | [2026-09-01 11:27:52.187][INFO][1][2u8e3fp1] Process: cpu=1.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:27:56.691][INFO][1][f43vs1u5] Hybrid cpu=1.00%,20MB, cid=1,0, timer=61,0,0, clock=0,45,2,0,0,0,0,0,0
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_f45e9b2755ce8c82.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_f45e9b2755ce8c82.jpg [404]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_b5674fe6f3c82be2.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_b5674fe6f3c82be2.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_00655fe284bde671.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_00655fe284bde671.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_3e9d9e97ea1d3800.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_3e9d9e97ea1d3800.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_53357890e0850cc6.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_53357890e0850cc6.jpg [200]
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:25 +0000] "GET /api/live/rooms/a3448f27-8b9a-4b7f-91d9-6d642ecdbe99 HTTP/1.1" 200 649 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:25 +0000] "OPTIONS /api/users/3931ea83-5e99-47d3-a38b-ba96e9ed59e2/relation HTTP/1.1" 204 0 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+srs-ms-1           | [2026-09-01 11:27:57.192][INFO][1][2u8e3fp1] Process: cpu=1.00%,20MB, threads=2
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_49d6acef6441378a.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_49d6acef6441378a.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_47070585f29498fb.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_47070585f29498fb.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_7f040918da42c90c.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_7f040918da42c90c.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_0a162bb2e1521798.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_0a162bb2e1521798.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_a73176c7c4795fc7.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_a73176c7c4795fc7.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_f45e9b2755ce8c82.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_f45e9b2755ce8c82.jpg [404]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_180b383eab1fd1c5.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_180b383eab1fd1c5.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_c1183b2b57772faf.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_c1183b2b57772faf.jpg [200]
+srs-ms-1           | [2026-09-01 11:28:01.692][INFO][1][f43vs1u5] Hybrid cpu=2.00%,20MB, cid=1,0, timer=61,0,0, clock=0,45,2,0,0,0,0,0,0
+user-service-1     | INFO:     172.21.0.8:47960 - "GET /api/notifications/unread-count HTTP/1.1" 200 OK
+srs-ms-1           | [2026-09-01 11:28:02.197][INFO][1][2u8e3fp1] Process: cpu=2.00%,20MB, threads=2
+user-service-1     | INFO:     172.21.0.7:50110 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.8:47966 - "GET /api/notifications/unread-count HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.7:50110 - "POST /internal/users/batch HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.8:47982 - "GET /api/users/3931ea83-5e99-47d3-a38b-ba96e9ed59e2/relation HTTP/1.1" 200 OK
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_3abad10835e73c89.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_3abad10835e73c89.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_6d3de4f7b011f085.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_6d3de4f7b011f085.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_6f73fbf6fb6ff39c.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_6f73fbf6fb6ff39c.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_e43ece296b836946.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_e43ece296b836946.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_8e003357751e1bd5.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_8e003357751e1bd5.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_b1cfe1302c26ff61.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_b1cfe1302c26ff61.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_5fa330a1ac05c707.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_5fa330a1ac05c707.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_489919231decdf3a.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_489919231decdf3a.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_9e733019881df399.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_9e733019881df399.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_fc74bfbeebd211be.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_fc74bfbeebd211be.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_e60dceb5e5f91b0c.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_e60dceb5e5f91b0c.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_9e733019881df399.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_9e733019881df399.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_fc74bfbeebd211be.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_fc74bfbeebd211be.jpg [200]
+srs-ms-1           | [2026-09-01 11:28:06.692][INFO][1][f43vs1u5] Hybrid cpu=1.00%,20MB, cid=1,0, timer=61,0,0, clock=0,45,2,0,0,1,0,0,0
+srs-ms-1           | [2026-09-01 11:28:07.201][INFO][1][2u8e3fp1] Process: cpu=1.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:28:11.693][INFO][1][f43vs1u5] Hybrid cpu=1.00%,20MB, cid=1,0, timer=61,0,0, clock=0,45,2,0,0,1,0,0,0
+srs-ms-1           | [2026-09-01 11:28:12.204][INFO][1][2u8e3fp1] Process: cpu=1.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:28:16.694][INFO][1][f43vs1u5] Hybrid cpu=1.00%,20MB, cid=1,0, timer=61,0,0, clock=0,45,2,1,1,0,0,0,0
+srs-ms-1           | [2026-09-01 11:28:17.211][INFO][1][2u8e3fp1] Process: cpu=1.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:28:21.699][INFO][1][f43vs1u5] Hybrid cpu=1.01%,20MB, cid=1,0, timer=61,0,0, clock=0,45,2,1,1,0,0,0,0
+srs-ms-1           | [2026-09-01 11:28:22.224][INFO][1][2u8e3fp1] Process: cpu=1.01%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:28:26.700][INFO][1][f43vs1u5] Hybrid cpu=1.00%,20MB, cid=1,0, timer=61,0,0, clock=0,45,2,1,1,0,0,0,0
+srs-ms-1           | [2026-09-01 11:28:27.227][INFO][1][2u8e3fp1] Process: cpu=1.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:28:31.701][INFO][1][f43vs1u5] Hybrid cpu=1.00%,20MB, cid=1,0, timer=58,0,0, clock=0,38,4,1,1,1,1,0,1
+srs-ms-1           | [2026-09-01 11:28:32.231][INFO][1][2u8e3fp1] Process: cpu=1.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:28:36.701][INFO][1][f43vs1u5] Hybrid cpu=2.00%,20MB, cid=1,0, timer=58,0,0, clock=0,38,4,1,1,1,1,0,1
+srs-ms-1           | [2026-09-01 11:28:37.245][INFO][1][2u8e3fp1] Process: cpu=2.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:28:41.702][INFO][1][f43vs1u5] Hybrid cpu=1.00%,20MB, cid=1,0, timer=60,0,0, clock=0,39,5,1,1,1,1,0,0
+srs-ms-1           | [2026-09-01 11:28:42.253][INFO][1][2u8e3fp1] Process: cpu=1.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:28:46.702][INFO][1][f43vs1u5] Hybrid cpu=1.00%,20MB, cid=1,0, timer=60,0,0, clock=0,39,5,1,1,1,1,0,0
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_49d6acef6441378a.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_49d6acef6441378a.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_180b383eab1fd1c5.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_180b383eab1fd1c5.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_6f73fbf6fb6ff39c.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_6f73fbf6fb6ff39c.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_47070585f29498fb.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_47070585f29498fb.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_5fa330a1ac05c707.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_5fa330a1ac05c707.jpg [200]
+srs-ms-1           | [2026-09-01 11:28:47.269][INFO][1][2u8e3fp1] Process: cpu=1.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:28:51.703][INFO][1][f43vs1u5] Hybrid cpu=2.00%,20MB, cid=1,0, timer=60,0,0, clock=0,39,5,1,1,1,1,0,0
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_0a162bb2e1521798.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_0a162bb2e1521798.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_a73176c7c4795fc7.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_a73176c7c4795fc7.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_53357890e0850cc6.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_53357890e0850cc6.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_6d3de4f7b011f085.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_6d3de4f7b011f085.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_3abad10835e73c89.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_3abad10835e73c89.jpg [200]
+srs-ms-1           | [2026-09-01 11:28:52.278][INFO][1][2u8e3fp1] Process: cpu=2.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:28:56.703][INFO][1][f43vs1u5] Hybrid cpu=1.00%,20MB, cid=1,0, timer=59,0,0, clock=0,39,4,1,1,1,1,1,0
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_7f040918da42c90c.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_7f040918da42c90c.jpg [200]
+srs-ms-1           | [2026-09-01 11:28:57.287][INFO][1][2u8e3fp1] Process: cpu=1.00%,20MB, threads=2
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_8e003357751e1bd5.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_8e003357751e1bd5.jpg [200]
+user-service-1     | INFO:     172.21.0.8:47996 - "GET /api/users/3931ea83-5e99-47d3-a38b-ba96e9ed59e2/relation HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.8:48010 - "GET /api/auth/me HTTP/1.1" 200 OK
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:25 +0000] "OPTIONS /api/users/3931ea83-5e99-47d3-a38b-ba96e9ed59e2/relation HTTP/1.1" 204 0 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:25 +0000] "GET /api/live/rooms/a3448f27-8b9a-4b7f-91d9-6d642ecdbe99 HTTP/1.1" 200 649 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:25 +0000] "GET /api/users/3931ea83-5e99-47d3-a38b-ba96e9ed59e2/relation HTTP/1.1" 200 96 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+user-service-1     | INFO:     127.0.0.1:47022 - "GET /ready HTTP/1.1" 200 OK
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_c1183b2b57772faf.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_c1183b2b57772faf.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_3e9d9e97ea1d3800.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_3e9d9e97ea1d3800.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_e60dceb5e5f91b0c.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_e60dceb5e5f91b0c.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_b1cfe1302c26ff61.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_b1cfe1302c26ff61.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_f45e9b2755ce8c82.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_f45e9b2755ce8c82.jpg [404]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_e43ece296b836946.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_e43ece296b836946.jpg [200]
+frontend-ms-1      | <i> [webpack-dev-server] [HPM] GET /uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_489919231decdf3a.jpg -> http://gateway/uploads/covers/3931ea83-5e99-47d3-a38b-ba96e9ed59e2_489919231decdf3a.jpg [200]
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:25 +0000] "GET /api/users/3931ea83-5e99-47d3-a38b-ba96e9ed59e2/relation HTTP/1.1" 200 96 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 127.0.0.1 - - [01/Sep/2026:11:29:25 +0000] "GET /health HTTP/1.1" 200 35 "-" "Wget"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:25 +0000] "OPTIONS /api/live/a3448f27-8b9a-4b7f-91d9-6d642ecdbe99/danmaku HTTP/1.1" 204 0 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:25 +0000] "POST /api/live/a3448f27-8b9a-4b7f-91d9-6d642ecdbe99/danmaku HTTP/1.1" 200 35 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:25 +0000] "POST /api/live/rooms/a3448f27-8b9a-4b7f-91d9-6d642ecdbe99/end HTTP/1.1" 200 38 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:25 +0000] "GET /ws/live/a3448f27-8b9a-4b7f-91d9-6d642ecdbe99?token=eyJzdWIiOiAiMWNiZWViNTUtZWQ5Mi00OWY5LTlkODktMTU1NGFlNjQzYTRiIiwgImV4cCI6IDE3ODg4NjY5NjQuMTA4MjM1fQ.7mx-TDPjFqgINiSKLtK78nbTj2MILXdIhfDBc2vF0Jc HTTP/1.1" 101 253 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+user-service-1     | INFO:     127.0.0.1:60522 - "GET /ready HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.8:52114 - "GET /health HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.8:52118 - "GET /ready HTTP/1.1" 200 OK
+user-service-1     | INFO:     172.21.0.8:52130 - "GET /version HTTP/1.1" 200 OK
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:26 +0000] "GET /ws/live/a3448f27-8b9a-4b7f-91d9-6d642ecdbe99?token=eyJzdWIiOiAiMWNiZWViNTUtZWQ5Mi00OWY5LTlkODktMTU1NGFlNjQzYTRiIiwgImV4cCI6IDE3ODg4NjY5NjQuMTA4MjM1fQ.7mx-TDPjFqgINiSKLtK78nbTj2MILXdIhfDBc2vF0Jc HTTP/1.1" 499 0 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:26 +0000] "GET /api/notifications/unread-count HTTP/1.1" 200 37 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:26 +0000] "GET /api/live/rooms/a3448f27-8b9a-4b7f-91d9-6d642ecdbe99 HTTP/1.1" 200 681 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:26 +0000] "GET /api/notifications/unread-count HTTP/1.1" 200 37 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+srs-ms-1           | [2026-09-01 11:29:01.704][INFO][1][f43vs1u5] Hybrid cpu=1.00%,20MB, cid=1,0, timer=59,0,0, clock=0,39,4,1,1,1,1,1,0
+srs-ms-1           | [2026-09-01 11:29:02.291][INFO][1][2u8e3fp1] Process: cpu=1.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:29:06.704][INFO][1][f43vs1u5] Hybrid cpu=1.00%,20MB, cid=1,0, timer=59,0,0, clock=0,39,4,1,1,1,1,1,0
+srs-ms-1           | [2026-09-01 11:29:07.299][INFO][1][2u8e3fp1] Process: cpu=1.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:29:11.705][INFO][1][f43vs1u5] Hybrid cpu=1.00%,20MB, cid=1,0, timer=61,0,0, clock=0,44,2,1,1,0,1,0,0
+srs-ms-1           | [2026-09-01 11:29:12.304][INFO][1][2u8e3fp1] Process: cpu=1.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:29:16.705][INFO][1][f43vs1u5] Hybrid cpu=2.00%,20MB, cid=1,0, timer=61,0,0, clock=0,44,2,1,1,0,1,0,0
+srs-ms-1           | [2026-09-01 11:29:17.311][INFO][1][2u8e3fp1] Process: cpu=2.00%,20MB, threads=2
+srs-ms-1           | [2026-09-01 11:29:19.496][INFO][1][0pw0s950] HTTP #0 172.21.0.1:46090 GET http://127.0.0.1:8081/live/39c8d895eb85a32f7b4a05f6.flv, content-length=-1
+srs-ms-1           | [2026-09-01 11:29:19.504][INFO][1][0pw0s950] new live source, stream_url=/live/39c8d895eb85a32f7b4a05f6
+srs-ms-1           | [2026-09-01 11:29:19.521][INFO][1][0pw0s950] http: mount flv stream for sid=/live/39c8d895eb85a32f7b4a05f6, mount=/live/39c8d895eb85a32f7b4a05f6.flv
+srs-ms-1           | [2026-09-01 11:29:19.521][INFO][1][0pw0s950] flv: source url=/live/39c8d895eb85a32f7b4a05f6, is_edge=0, source_id=/
+srs-ms-1           | [2026-09-01 11:29:19.523][INFO][1][0pw0s950] create consumer, active=0, queue_size=30000ms, jitter=1
+srs-ms-1           | [2026-09-01 11:29:19.524][INFO][1][0pw0s950] FLV /live/39c8d895eb85a32f7b4a05f6.flv, encoder=FLV, mw_sleep=350ms, cache=0, msgs=128, dinm=1, guess_av=1/1/1
+srs-ms-1           | [2026-09-01 11:29:21.705][INFO][1][f43vs1u5] Hybrid cpu=0.00%,21MB, cid=1,1, timer=57,0,0, clock=0,37,5,1,1,1,1,0,1
+srs-ms-1           | [2026-09-01 11:29:22.316][INFO][1][2u8e3fp1] Process: cpu=0.00%,21MB, threads=2
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:26 +0000] "GET /api/live/rooms/a3448f27-8b9a-4b7f-91d9-6d642ecdbe99 HTTP/1.1" 200 681 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:26 +0000] "GET /api/users/3931ea83-5e99-47d3-a38b-ba96e9ed59e2/relation HTTP/1.1" 200 96 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:26 +0000] "GET /api/users/3931ea83-5e99-47d3-a38b-ba96e9ed59e2/relation HTTP/1.1" 200 96 "http://127.0.0.1:5273/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:26 +0000] "GET /api/auth/me HTTP/1.1" 200 269 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:26 +0000] "GET /api/live/rooms HTTP/1.1" 200 12 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:27 +0000] "GET /ws/live/a3448f27-8b9a-4b7f-91d9-6d642ecdbe99?token=eyJzdWIiOiAiMWNiZWViNTUtZWQ5Mi00OWY5LTlkODktMTU1NGFlNjQzYTRiIiwgImV4cCI6IDE3ODg4NjY5NjQuMTA4MjM1fQ.7mx-TDPjFqgINiSKLtK78nbTj2MILXdIhfDBc2vF0Jc HTTP/1.1" 101 144 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:29 +0000] "GET /ws/live/a3448f27-8b9a-4b7f-91d9-6d642ecdbe99?token=eyJzdWIiOiAiMzkzMWVhODMtNWU5OS00N2QzLWEzOGItYmE5NmU5ZWQ1OWUyIiwgImV4cCI6IDE3ODg4NjY5NTUuODI3NTQzfQ.W0s0Fv2rk6Q7NDaIjwxZ3bAUtuRLrT5tziXHibJULXM HTTP/1.1" 101 302 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36"
+srs-ms-1           | [2026-09-01 11:29:25.236][INFO][1][n77zd088] HTTP #0 172.21.0.1:47658 GET http://127.0.0.1:8081/live/39c8d895eb85a32f7b4a05f6.flv, content-length=-1
+srs-ms-1           | [2026-09-01 11:29:25.236][INFO][1][n77zd088] create consumer, active=0, queue_size=30000ms, jitter=1
+srs-ms-1           | [2026-09-01 11:29:25.236][INFO][1][n77zd088] FLV /live/39c8d895eb85a32f7b4a05f6.flv, encoder=FLV, mw_sleep=350ms, cache=0, msgs=128, dinm=1, guess_av=1/1/1
+gateway-1          | 127.0.0.1 - - [01/Sep/2026:11:29:30 +0000] "GET /health HTTP/1.1" 200 35 "-" "Wget"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:32 +0000] "GET /health HTTP/1.1" 200 35 "-" "Mozilla/5.0 (Windows NT 10.0; Microsoft Windows 10.0.26200; en-MY) PowerShell/7.6.4"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:32 +0000] "GET /ready HTTP/1.1" 200 38 "-" "Mozilla/5.0 (Windows NT 10.0; Microsoft Windows 10.0.26200; en-MY) PowerShell/7.6.4"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:32 +0000] "GET /version HTTP/1.1" 200 56 "-" "Mozilla/5.0 (Windows NT 10.0; Microsoft Windows 10.0.26200; en-MY) PowerShell/7.6.4"
+srs-ms-1           | [2026-09-01 11:29:25.291][INFO][1][68026d74] HTTP #0 172.21.0.1:47662 GET http://127.0.0.1:8081/live/39c8d895eb85a32f7b4a05f6.flv, content-length=-1
+srs-ms-1           | [2026-09-01 11:29:25.291][INFO][1][68026d74] create consumer, active=0, queue_size=30000ms, jitter=1
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:32 +0000] "GET /_services/user/health HTTP/1.1" 200 32 "-" "Mozilla/5.0 (Windows NT 10.0; Microsoft Windows 10.0.26200; en-MY) PowerShell/7.6.4"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:32 +0000] "GET /_services/user/ready HTTP/1.1" 200 35 "-" "Mozilla/5.0 (Windows NT 10.0; Microsoft Windows 10.0.26200; en-MY) PowerShell/7.6.4"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:32 +0000] "GET /_services/user/version HTTP/1.1" 200 53 "-" "Mozilla/5.0 (Windows NT 10.0; Microsoft Windows 10.0.26200; en-MY) PowerShell/7.6.4"
+srs-ms-1           | [2026-09-01 11:29:25.292][INFO][1][68026d74] FLV /live/39c8d895eb85a32f7b4a05f6.flv, encoder=FLV, mw_sleep=350ms, cache=0, msgs=128, dinm=1, guess_av=1/1/1
+srs-ms-1           | [2026-09-01 11:29:25.587][INFO][1][n77zd088] TCP: before dispose resource(HttpConn)(0x7f7744071150), conns=3, zombies=0, ign=0, inz=0, ind=0
+srs-ms-1           | [33m[2026-09-01 11:29:25.589][WARN][1][n77zd088][11] client disconnect peer. ret=1007
+srs-ms-1           | [0m[2026-09-01 11:29:25.589][INFO][1][a8x9bft2] TCP: clear zombies=1 resources, conns=3, removing=0, unsubs=0
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:32 +0000] "GET /_services/content/health HTTP/1.1" 200 35 "-" "Mozilla/5.0 (Windows NT 10.0; Microsoft Windows 10.0.26200; en-MY) PowerShell/7.6.4"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:32 +0000] "GET /_services/content/ready HTTP/1.1" 200 38 "-" "Mozilla/5.0 (Windows NT 10.0; Microsoft Windows 10.0.26200; en-MY) PowerShell/7.6.4"
+srs-ms-1           | [2026-09-01 11:29:25.589][INFO][1][n77zd088] TCP: disposing #0 resource(HttpConn)(0x7f7744071150), conns=3, disposing=1, zombies=0
+srs-ms-1           | [2026-09-01 11:29:25.642][INFO][1][68026d74] TCP: before dispose resource(HttpConn)(0x7f7744074460), conns=2, zombies=0, ign=0, inz=0, ind=0
+srs-ms-1           | [33m[2026-09-01 11:29:25.642][WARN][1][68026d74][104] client disconnect peer. ret=1007
+srs-ms-1           | [0m[2026-09-01 11:29:25.642][INFO][1][a8x9bft2] TCP: clear zombies=1 resources, conns=2, removing=0, unsubs=0
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:32 +0000] "GET /_services/content/version HTTP/1.1" 200 56 "-" "Mozilla/5.0 (Windows NT 10.0; Microsoft Windows 10.0.26200; en-MY) PowerShell/7.6.4"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:32 +0000] "GET /_services/social/health HTTP/1.1" 200 34 "-" "Mozilla/5.0 (Windows NT 10.0; Microsoft Windows 10.0.26200; en-MY) PowerShell/7.6.4"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:32 +0000] "GET /_services/social/ready HTTP/1.1" 200 37 "-" "Mozilla/5.0 (Windows NT 10.0; Microsoft Windows 10.0.26200; en-MY) PowerShell/7.6.4"
+gateway-1          | 172.21.0.1 - - [01/Sep/2026:11:29:32 +0000] "GET /_services/social/version HTTP/1.1" 200 55 "-" "Mozilla/5.0 (Windows NT 10.0; Microsoft Windows 10.0.26200; en-MY) PowerShell/7.6.4"
+gateway-1          | 127.0.0.1 - - [01/Sep/2026:11:29:35 +0000] "GET /health HTTP/1.1" 200 35 "-" "Wget"
+srs-ms-1           | [2026-09-01 11:29:25.642][INFO][1][68026d74] TCP: disposing #0 resource(HttpConn)(0x7f7744074460), conns=2, disposing=1, zombies=0
+srs-ms-1           | [2026-09-01 11:29:26.230][INFO][1][8212h0c5] HTTP #0 172.21.0.1:47668 GET http://127.0.0.1:8081/live/39c8d895eb85a32f7b4a05f6.flv, content-length=-1
+srs-ms-1           | [2026-09-01 11:29:26.230][INFO][1][8212h0c5] create consumer, active=0, queue_size=30000ms, jitter=1
+srs-ms-1           | [2026-09-01 11:29:26.230][INFO][1][8212h0c5] FLV /live/39c8d895eb85a32f7b4a05f6.flv, encoder=FLV, mw_sleep=350ms, cache=0, msgs=128, dinm=1, guess_av=1/1/1
+srs-ms-1           | [2026-09-01 11:29:26.706][INFO][1][f43vs1u5] Hybrid cpu=1.00%,21MB, cid=1,1, timer=57,0,0, clock=0,37,5,1,1,1,1,0,1
+srs-ms-1           | [2026-09-01 11:29:27.325][INFO][1][2u8e3fp1] Process: cpu=1.00%,21MB, threads=2
+srs-ms-1           | [2026-09-01 11:29:27.982][INFO][1][8212h0c5] TCP: before dispose resource(HttpConn)(0x7f7744072e50), conns=2, zombies=0, ign=0, inz=0, ind=0
+srs-ms-1           | [33m[2026-09-01 11:29:27.982][WARN][1][8212h0c5][11] client disconnect peer. ret=1007
+srs-ms-1           | [0m[2026-09-01 11:29:27.982][INFO][1][a8x9bft2] TCP: clear zombies=1 resources, conns=2, removing=0, unsubs=0
+srs-ms-1           | [2026-09-01 11:29:27.982][INFO][1][8212h0c5] TCP: disposing #0 resource(HttpConn)(0x7f7744072e50), conns=2, disposing=1, zombies=0
+srs-ms-1           | [2026-09-01 11:29:30.088][INFO][1][0pw0s950] TCP: before dispose resource(HttpConn)(0x7f774406a7b0), conns=1, zombies=0, ign=0, inz=0, ind=0
+srs-ms-1           | [33m[2026-09-01 11:29:30.088][WARN][1][0pw0s950][104] client disconnect peer. ret=1007
+srs-ms-1           | [0m[2026-09-01 11:29:30.088][INFO][1][a8x9bft2] TCP: clear zombies=1 resources, conns=1, removing=0, unsubs=0
+srs-ms-1           | [2026-09-01 11:29:30.088][INFO][1][0pw0s950] TCP: disposing #0 resource(HttpConn)(0x7f774406a7b0), conns=1, disposing=1, zombies=0
+srs-ms-1           | [2026-09-01 11:29:31.706][INFO][1][f43vs1u5] Hybrid cpu=0.00%,21MB, cid=7,2, timer=61,0,0, clock=0,41,4,1,1,1,1,0,0, free=1
+srs-ms-1           | [2026-09-01 11:29:32.338][INFO][1][2u8e3fp1] Process: cpu=0.00%,21MB, threads=2

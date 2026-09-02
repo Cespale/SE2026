@@ -1,14 +1,13 @@
 services:
   postgres:
     image: postgres:16
-    container_name: streamhub-postgres
     restart: always
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
       POSTGRES_DB: streamhub
     ports:
-      - "5433:5432"
+      - "127.0.0.1:${POSTGRES_HOST_PORT:-5433}:5432"
     volumes:
       - streamhub_pgdata:/var/lib/postgresql/data
       - ./backend/docker-init:/docker-entrypoint-initdb.d
@@ -18,41 +17,69 @@ services:
       timeout: 5s
       retries: 20
 
+  minio:
+    image: quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z
+    restart: always
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-streamhub}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-${SECRET_KEY:?SECRET_KEY is required}}
+    ports:
+      - "127.0.0.1:${MINIO_API_HOST_PORT:-9000}:9000"
+      - "127.0.0.1:${MINIO_CONSOLE_HOST_PORT:-9001}:9001"
+    volumes:
+      - streamhub_minio_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9000/minio/health/live || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
   backend:
     build:
       context: .
       dockerfile: backend/Dockerfile
-    container_name: streamhub-backend
     restart: always
     environment:
-      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/streamhub
-      SECRET_KEY: ${SECRET_KEY}
+      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}@postgres:5432/streamhub
+      SECRET_KEY: ${SECRET_KEY:?SECRET_KEY is required}
+      MINIO_ENDPOINT: minio:9000
+      MINIO_ACCESS_KEY: ${MINIO_ROOT_USER:-streamhub}
+      MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-${SECRET_KEY:?SECRET_KEY is required}}
+      MINIO_BUCKET: ${MINIO_BUCKET:-streamhub-media}
+      MINIO_SECURE: "false"
+      MINIO_MIGRATE_ON_STARTUP: "true"
+      LEGACY_PUBLIC_ROOT: /app/public
+      CORS_ORIGINS: "http://127.0.0.1:${FRONTEND_HOST_PORT:-5173},http://localhost:${FRONTEND_HOST_PORT:-5173}"
       WATCHFILES_FORCE_POLLING: "true"
     ports:
-      - "8000:8000"
+      - "127.0.0.1:${BACKEND_HOST_PORT:-8000}:8000"
     depends_on:
       postgres:
         condition: service_healthy
+      minio:
+        condition: service_healthy
     volumes:
-      - ./public:/app/public
+      # 只读挂载用于首次复制旧头像/封面到 MinIO；不会删除本地原文件。
+      - ./public:/app/public:ro
       - ./backend/app:/app/backend/app
-      - ./public/avatars:/app/public/avatars
-      - ./public/uploads:/app/public/uploads
     command: python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload --reload-dir /app/backend/app
 
   frontend:
     build:
       context: .
       dockerfile: Dockerfile.frontend
-    container_name: streamhub-frontend
     restart: always
     ports:
-      - "5173:3266"
+      - "127.0.0.1:${FRONTEND_HOST_PORT:-5173}:3266"
     depends_on:
       - backend
+    environment:
+      REACT_APP_API_BASE_URL: http://127.0.0.1:${BACKEND_HOST_PORT:-8000}
+      STREAMHUB_BACKEND_PROXY_TARGET: http://backend:8000
     volumes:
       - ./src:/app/src
-      - ./public:/app/public
+      - ./public:/app/public:ro
       - ./index.html:/app/index.html
       - ./tailwind.config.js:/app/tailwind.config.js
       - ./postcss.config.js:/app/postcss.config.js
@@ -61,12 +88,12 @@ services:
 
   srs:
     image: ossrs/srs:5
-    container_name: streamhub-srs
     ports:
-      - "1935:1935"   # RTMP 推流端口
-      - "8080:8080"   # HTTP-FLV 播放端口
+      - "127.0.0.1:${SRS_RTMP_HOST_PORT:-1935}:1935"   # RTMP 推流端口
+      - "127.0.0.1:${SRS_HTTP_HOST_PORT:-8080}:8080"   # HTTP-FLV 播放端口
     restart: unless-stopped
     networks:
       - default
 volumes:
   streamhub_pgdata:
+  streamhub_minio_data:

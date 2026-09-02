@@ -1,0 +1,50 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: streamhub.spec.ts >> E2E-TC01-02：用户搜索、播放视频并发表评论和弹幕
+- Location: e2e\streamhub.spec.ts:74:5
+
+# Error details
+
+```
+Test timeout of 30000ms exceeded.
+```
+
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e5]:
+      - link "StreamHub" [ref=e6] [cursor=pointer]:
+        - /url: "#/"
+      - textbox "搜索视频、直播..." [ref=e14]
+      - generic [ref=e19]:
+        - button "登录" [ref=e20] [cursor=pointer]
+        - button "注册" [ref=e21] [cursor=pointer]
+  - complementary [ref=e22]:
+    - navigation [ref=e23]:
+      - link "首页" [ref=e24] [cursor=pointer]:
+        - /url: "#/"
+      - link "直播" [ref=e30] [cursor=pointer]:
+        - /url: "#/discover"
+      - link "动态" [ref=e35] [cursor=pointer]:
+        - /url: "#/subscriptions"
+      - link "我的" [ref=e39] [cursor=pointer]:
+        - /url: "#/profile"
+  - main [ref=e44]:
+    - generic [ref=e45]:
+      - generic [ref=e48]:
+        - button "推荐" [ref=e49] [cursor=pointer]
+        - button "游戏" [ref=e50] [cursor=pointer]
+        - button "音乐" [ref=e51] [cursor=pointer]
+        - button "影视" [ref=e52] [cursor=pointer]
+        - button "科技" [ref=e53] [cursor=pointer]
+        - button "生活" [ref=e54] [cursor=pointer]
+      - paragraph [ref=e60]: 暂无视频内容
+```

@@ -1,0 +1,7 @@
+NAME                               READY   STATUS    RESTARTS   AGE     IP            NODE                                              NOMINATED NODE   READINESS GATES
+content-service-5fdbdd46fd-l9ljl   1/1     Running   0          20s     10.244.0.23   streamhub-selftest-20260901160037-control-plane   <none>           <none>
+gateway-55fd6d4ffd-x96v7           1/1     Running   0          3h19m   10.244.0.13   streamhub-selftest-20260901160037-control-plane   <none>           <none>
+minio-ms-597bf47957-zsszc          1/1     Running   0          3h20m   10.244.0.8    streamhub-selftest-20260901160037-control-plane   <none>           <none>
+postgres-ms-79c9cbd4c5-hxtkj       1/1     Running   0          3h20m   10.244.0.7    streamhub-selftest-20260901160037-control-plane   <none>           <none>
+social-service-7f4557647-kpmlr     1/1     Running   0          3h19m   10.244.0.12   streamhub-selftest-20260901160037-control-plane   <none>           <none>
+user-service-55879c4b59-72ms6      1/1     Running   0          3h20m   10.244.0.10   streamhub-selftest-20260901160037-control-plane   <none>           <none>

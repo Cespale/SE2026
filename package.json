@@ -18,7 +18,7 @@
     "lucide-react": "^0.294.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.8.0",
+    "react-router-dom": "^7.18.3",
     "recharts": "^2.10.0",
     "selenium-webdriver": "^4.44.0",
     "zustand": "^4.4.7"
@@ -42,6 +42,6 @@
     "typescript": "^5.3.3",
     "webpack": "^5.89.0",
     "webpack-cli": "^5.1.4",
-    "webpack-dev-server": "^4.15.1"
+    "webpack-dev-server": "^6.0.0"
   }
 }

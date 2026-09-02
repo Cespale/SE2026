@@ -1,0 +1,86 @@
+[
+  {
+    "path": "/health",
+    "response": {
+      "status": "ok",
+      "service": "gateway"
+    }
+  },
+  {
+    "path": "/ready",
+    "response": {
+      "status": "ready",
+      "service": "gateway"
+    }
+  },
+  {
+    "path": "/version",
+    "response": {
+      "service": "gateway",
+      "version": "fix-errors-20260901-r2"
+    }
+  },
+  {
+    "path": "/_services/user/health",
+    "response": {
+      "status": "ok",
+      "service": "user"
+    }
+  },
+  {
+    "path": "/_services/user/ready",
+    "response": {
+      "status": "ready",
+      "service": "user"
+    }
+  },
+  {
+    "path": "/_services/user/version",
+    "response": {
+      "service": "user",
+      "version": "fix-errors-20260901-r2"
+    }
+  },
+  {
+    "path": "/_services/content/health",
+    "response": {
+      "status": "ok",
+      "service": "content"
+    }
+  },
+  {
+    "path": "/_services/content/ready",
+    "response": {
+      "status": "ready",
+      "service": "content"
+    }
+  },
+  {
+    "path": "/_services/content/version",
+    "response": {
+      "service": "content",
+      "version": "fix-errors-20260901-r2"
+    }
+  },
+  {
+    "path": "/_services/social/health",
+    "response": {
+      "status": "ok",
+      "service": "social"
+    }
+  },
+  {
+    "path": "/_services/social/ready",
+    "response": {
+      "status": "ready",
+      "service": "social"
+    }
+  },
+  {
+    "path": "/_services/social/version",
+    "response": {
+      "service": "social",
+      "version": "fix-errors-20260901-r2"
+    }
+  }
+]

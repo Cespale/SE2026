@@ -1,0 +1,52 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: data-seed
+  namespace: streamhub-ms
+spec:
+  backoffLimit: 3
+  ttlSecondsAfterFinished: 3600
+  template:
+    metadata:
+      labels:
+        app: data-seed
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: data-seed
+          image: postgres:16
+          command:
+            - bash
+            - -ec
+            - |
+              until pg_isready -h postgres-ms -U "$POSTGRES_USER" -d "$POSTGRES_DB"; do sleep 2; done
+              # 幂等：仅当 public.users 不存在时还原单体备份，保证可反复部署/复用集群。
+              if [ "$(psql --host postgres-ms --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" -tAc "SELECT to_regclass('public.users') IS NOT NULL")" != "t" ]; then
+                psql --host postgres-ms --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" --file /schema/00_monolith_backup.sql
+              fi
+              # 迁移 public.* -> 各业务 schema（ON CONFLICT DO NOTHING，幂等）。
+              psql --host postgres-ms --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" --file /schema/02-service-seed.sql
+          env:
+            - name: PGHOST
+              value: postgres-ms
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: streamhub-ms-config
+                  key: POSTGRES_DB
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: streamhub-ms-secrets
+                  key: POSTGRES_PASSWORD
+          volumeMounts:
+            - name: schema-files
+              mountPath: /schema
+              readOnly: true
+      volumes:
+        - name: schema-files
+          configMap:
+            name: streamhub-schema-files
+            defaultMode: 0555

@@ -1,0 +1,33 @@
+{
+  "version": "microservices",
+  "endpoint": "login",
+  "run": 3,
+  "url": "http://127.0.0.1:18210/api/auth/login",
+  "method": "POST",
+  "warmup_seconds": 5.0,
+  "http": {
+    "concurrency": 4,
+    "duration_seconds": 30.385,
+    "requests": 28,
+    "successes": 28,
+    "errors": 0,
+    "throughput_rps": 0.921,
+    "average_ms": 4312.816,
+    "p95_ms": 4687.729,
+    "error_rate_percent": 0.0,
+    "status_codes": {
+      "200": 28
+    }
+  },
+  "resources": {
+    "samples": 15,
+    "app_cpu_mean_percent": 83.023,
+    "app_cpu_peak_percent": 141.13,
+    "app_memory_mean_bytes": 272114560,
+    "app_memory_peak_bytes": 289606206.0,
+    "infra_cpu_mean_percent": 12.154,
+    "infra_cpu_peak_percent": 16.24,
+    "infra_memory_mean_bytes": 138104450,
+    "infra_memory_peak_bytes": 138726605.0
+  }
+}

@@ -1,0 +1,10 @@
+<testsuites id="" name="" tests="3" failures="0" skipped="0" errors="0" time="56.31020899999999">
+<testsuite name="streamhub.spec.ts" timestamp="2026-08-31T05:36:08.874Z" hostname="" tests="3" failures="0" skipped="0" time="54.406" errors="0">
+<testcase name="E2E-TC01-02：用户搜索、播放视频并发表评论和弹幕" classname="streamhub.spec.ts" time="8.175">
+</testcase>
+<testcase name="E2E-TC03-05：创作者投稿，管理员审核，创作者查看结果" classname="streamhub.spec.ts" time="28.662">
+</testcase>
+<testcase name="E2E-TC06-08：创建直播、观众发弹幕、接口结束直播" classname="streamhub.spec.ts" time="17.569">
+</testcase>
+</testsuite>
+</testsuites>

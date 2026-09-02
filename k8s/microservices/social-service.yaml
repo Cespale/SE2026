@@ -1,0 +1,98 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: social-service
+  namespace: streamhub-ms
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: social-service
+  template:
+    metadata:
+      labels:
+        app: social-service
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 100
+        runAsGroup: 101
+      containers:
+        - name: social-service
+          image: streamhub-social-service:replace-me
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          env:
+            - name: APP_VERSION
+              valueFrom:
+                configMapKeyRef:
+                  name: streamhub-ms-config
+                  key: APP_VERSION
+            - name: SERVICE_VERSION
+              valueFrom:
+                configMapKeyRef:
+                  name: streamhub-ms-config
+                  key: APP_VERSION
+            - name: SOCIAL_DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: streamhub-ms-secrets
+                  key: SOCIAL_DATABASE_URL
+            - name: USER_SERVICE_URL
+              value: http://user-service:8000
+            - name: CONTENT_SERVICE_URL
+              value: http://content-service:8000
+            - name: SERVICE_CONNECT_TIMEOUT_SECONDS
+              value: "0.5"
+            - name: SERVICE_TOTAL_TIMEOUT_SECONDS
+              value: "1.5"
+            - name: OUTBOX_WORKER_ENABLED
+              value: "true"
+            - name: SRS_PUBLIC_RTMP_BASE
+              valueFrom:
+                configMapKeyRef:
+                  name: streamhub-ms-config
+                  key: SRS_PUBLIC_RTMP_BASE
+            - name: SRS_PUBLIC_HTTP_BASE
+              valueFrom:
+                configMapKeyRef:
+                  name: streamhub-ms-config
+                  key: SRS_PUBLIC_HTTP_BASE
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: social-service
+  namespace: streamhub-ms
+spec:
+  type: ClusterIP
+  selector:
+    app: social-service
+  ports:
+    - name: http
+      port: 8000
+      targetPort: 8000
