@@ -84,6 +84,21 @@ Set-Location SE2026-microservices
 
 `git clone` 最后的 `SE2026-microservices` 很重要，它保证目录名称与本文一致。
 
+> **本机跑门禁前，先处理 `.git`**：门禁守卫会把「git 检出目录」当作只读源码而拒绝运行
+> （报错 `read-only source (git checkout)`）。两种处理任选其一：
+>
+> - 不再需要在这个目录用 git：直接删除 `.git`。它只是版本元数据，不影响任何项目文件：
+>
+>   ```powershell
+>   Remove-Item -LiteralPath .git -Recurse -Force
+>   ```
+>
+> - 想保留 clone 作为工作仓库：另建一个不带 `.git` 的目录来跑门禁，摆放要求见 3.2，
+>   不要在 clone 目录里直接跑。
+>
+> 删除 `.git` 前先确认要保留的改动已 commit/push。用 3.2 的 ZIP 解压得到的目录不含
+> `.git`，无需此步骤。
+
 ### 3.2 从 ZIP 获取
 
 1. 解压 ZIP；
@@ -423,6 +438,14 @@ Invoke-RestMethod -Uri 'http://127.0.0.1:18100/_services/social/version'
 
 四个版本号必须与本次 `$version` 一致。完成后在端口转发终端按 `Ctrl+C`，不会停止集群。
 
+要在浏览器里像第 5 节那样操作页面、并用 OBS 对 Kind 里的后端推流，一条命令连好前端与 SRS 隧道：
+
+```powershell
+.\scripts\connect-kind-dev.ps1
+```
+
+进入后请重新登录。使用说明与参数见 `docs\getting-started\README-Kind-CICD.md` 第 9 节。
+
 ### 8.3 日志和事件
 
 ```powershell
@@ -444,8 +467,8 @@ kubectl --kubeconfig $kubeconfig get events -n streamhub-ms --sort-by=.metadata.
 
 运行模型：
 
-- Pull Request 到 main：隔离的 `ubuntu-latest`；
-- Push 到 main：队友方案整合后的 Linux x64 `self-hosted` Runner；
+- Pull Request 到 main：默认 GitHub 自带 `ubuntu-latest` Runner；
+- Push 到 main：默认同样走 `ubuntu-latest`；仓库变量 `USE_SELF_HOSTED=true` 时切到队友方案整合后的 Linux x64 `self-hosted` Runner；
 - 前置门禁失败：镜像发布和部署不会执行；
 - JUnit、日志、事件和诊断 Artifact 保留 30 天。
 

@@ -131,16 +131,18 @@ docker start streamhub-cicd-control-plane
 当前 `.github/workflows/ci.yml` 已接入队友仓库提交
 `76b18e947342fcb459e3ef7c008e4c0f53aa108b` 的 self-hosted 运行方式。没有原样复制其单体流水线：原文件只构建单体后端和前端，原样覆盖会漏掉 user、content、social 三个业务服务、Gateway、MinIO、85 项公开 API 回归和微服务 Kind 清单。
 
-整合后的事件与 Runner：
+整合后的事件与 Runner 由仓库变量 `USE_SELF_HOSTED` 切换；**未设置时默认全部使用 GitHub 自带 `ubuntu-latest`**，不依赖自托管机器是否在线：
 
-| 事件 | Runner | 原因 |
+| 仓库变量 `USE_SELF_HOSTED` | `push` 到 `main` | `pull_request` 到 `main` |
 |---|---|---|
-| `push` 到 `main` | `self-hosted` | 使用队友的本地 Runner 完成全部测试、镜像和 Kind 部署 |
-| `pull_request` 到 `main` | `ubuntu-latest` | 公共仓库的未合并代码不进入长期存在的自托管机器 |
+| 未设置 / `false`（默认） | GitHub 自带 `ubuntu-latest` | GitHub 自带 `ubuntu-latest` |
+| `true` | 队友的 Linux x64 `self-hosted` | 队友的 Linux x64 `self-hosted` |
+
+在仓库 `Settings → Secrets and variables → Actions → Variables` 新建 `USE_SELF_HOSTED` 并设为 `true`，即切到自托管 Runner；删除该变量或设为 `false`，则回到 GitHub 自带 `ubuntu-latest`。
 
 self-hosted 机器必须是 **Linux x64**，并满足：Docker Engine 与 Compose 可用、至少 **8 GiB** 可用内存（推荐 12 GiB）、至少约 20 GiB 可用空间、可以访问 GitHub/容器镜像仓库、Runner 服务在线。Python 3.11、Node.js 22、Kind 和 kubectl 由工作流或 Action 准备；Docker 必须由机器管理员预装并允许 Runner 用户使用。
 
-在 GitHub 仓库进入 `Settings → Actions → Runners → New self-hosted runner`，选择 Linux x64，严格执行页面为该仓库生成的安装命令。注册令牌是临时密钥，不要写进 README、截图或提交记录。Runner 上线后，向 `main` 推送才会使用它；没有在线且标签匹配的 Runner 时，任务会保持排队。
+在 GitHub 仓库进入 `Settings → Actions → Runners → New self-hosted runner`，选择 Linux x64，严格执行页面为该仓库生成的安装命令。注册令牌是临时密钥，不要写进 README、截图或提交记录。Runner 上线并设 `USE_SELF_HOSTED=true` 后，CI 才会使用它；没有在线且标签匹配的 Runner 时，任务会保持排队。
 
 本次只改本地副本，没有 commit、push 或触发 GitHub Actions，因此结论仍是“本地配置和本地 Kind 已验证，**远程未实跑**”。远程是否成功必须以新提交产生的 Actions Run、Artifact 和日志为准。
 
@@ -166,3 +168,18 @@ docker compose -f docker-compose.microservices.yml --env-file .env.microservices
 ```
 
 遗漏这两个变量时，Compose 会尝试使用默认 `local-ms` 镜像；如果该镜像不存在，会报 `No such image`。优先使用第 3 节的一键脚本，可避免这个人工错误。
+
+## 9. 一键：本地浏览器前端 + OBS 连 Kind
+
+Kind 默认只部署后端。要在浏览器里操作界面、并用 OBS 做直播推流测试时，一条命令即可把「本地前端 + REST 网关隧道 + 直播 SRS」全部连好：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\connect-kind-dev.ps1
+```
+
+脚本会自动完成：检查/部署 `srs-ms` 并补 `social-service` 的 SRS 地址、为 SRS 打开 HTTP CORS、起 `service/gateway` 的 8099 隧道与 `service/srs-ms` 的 1936/8081 隧道、启动本地前端 dev server（API 指向 8099），最后在汇总里打印入口地址并打开浏览器。
+
+- 前置条件：已在本机成功跑过一次完整门禁（生成 `.ci-results\cloud-native\kind-lab-kubeconfig`）、已执行过 `npm ci`。
+- 入口：网页 `http://127.0.0.1:3266`；OBS 用页面「开播」页显示的推流地址 `rtmp://127.0.0.1:1936/live` 和流密钥。
+- 保持脚本窗口打开即可使用；按 `Ctrl+C` 结束并自动清理隧道。
+- 若上次没正常退出留下残留：先 `... -Teardown`。其他参数见脚本顶部注释（如 `-SkipLiveSrs` 只连 API+前端、`-NoFrontend` 只连隧道、`-NoBrowser` 不自动开浏览器）。

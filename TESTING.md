@@ -350,10 +350,10 @@ docker compose down
 1. 打开 GitHub 仓库的 `Actions`。
 2. 选择 `StreamHub Microservices CI/CD`。
 3. Pull Request 应完成契约检查、三个业务服务独立测试和完整回归。
-4. push 到 `main` 后才继续制作不可变版本镜像、推送 GHCR，并在 Linux x64 self-hosted Runner 上部署到 Kind。
+4. push 到 `main` 后才继续制作不可变版本镜像、推送 GHCR，并部署到 Kind。Runner 由仓库变量 `USE_SELF_HOSTED` 选择：默认 GitHub 自带 `ubuntu-latest`；设为 `true` 时使用队友的 Linux x64 `self-hosted`。
 5. 所有 Job 应为绿色；失败时下载该次运行保留的日志、事件、JUnit 和部署诊断 Artifact。
 
-远程部署前必须确认 self-hosted Runner 在线。Runner 的完整配置见 [Kind CI/CD 操作手册](docs/getting-started/README-Kind-CICD.md)。本地脚本成功只能证明代码和部署流程可执行，不能替代“GitHub Runner 在线、权限正确、实际工作流绿色”的远程证据。
+远程部署默认走 GitHub 自带 runner，无需预配；若设 `USE_SELF_HOSTED=true`，远程部署前必须确认 self-hosted Runner 在线。Runner 的完整配置见 [Kind CI/CD 操作手册](docs/getting-started/README-Kind-CICD.md)。本地脚本成功只能证明代码和部署流程可执行，不能替代“GitHub Runner 在线、权限正确、实际工作流绿色”的远程证据。
 
 ## 十二、失败时先去哪里看
 

@@ -13,7 +13,9 @@ module.exports = (env, argv) => {
     output: {
       path: path.resolve(__dirname, 'dist'),
       filename: 'bundle.js',
-      publicPath: 'auto'
+      // 绝对路径：让 /watch/<id>、/admin/videos 等深层路由在刷新/直达时仍能加载到
+      // /bundle.js，而不是相对解析成 /watch/bundle.js 导致 404 白屏。
+      publicPath: '/'
     },
     module: {
       rules: [

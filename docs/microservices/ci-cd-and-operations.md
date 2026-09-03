@@ -7,7 +7,7 @@
 - 上游来源：`https://github.com/Cespale/SE2026` 的 CI 专用提交 `76b18e947342fcb459e3ef7c008e4c0f53aa108b`。
 - 上游新增的关键行为是三个 Job 全部使用 `runs-on: self-hosted`；但其测试、镜像和 K8s 清单只面向单体后端与前端。
 - 原样覆盖会让三业务微服务不再独立测试、构建和部署，因此没有机械复制。当前工作流保留既有四门禁、三个服务 Matrix、85 项 API、UC01–UC08 E2E、5 个镜像、GHCR、Kind 和诊断证据，只整合上游 self-hosted 运行模型。
-- 可信的 `push main` 使用 `self-hosted`；公共仓库 `pull_request` 使用隔离的 `ubuntu-latest`。这是安全边界，不是功能删减。
+- Runner 由仓库变量 `USE_SELF_HOSTED` 选择：未设置/`false` 时 `push main` 与 `pull_request` 均用 GitHub 自带 `ubuntu-latest`；设为 `true` 时两者切到队友的 Linux x64 `self-hosted`。这是运行模型整合，不是功能删减。
 - 改造前完整副本：`C:\Users\lausu\Desktop\SE2026-microservices-backup-before-teammate-cicd-20260901-091249`。备份与源均为 31,295 个文件、1,338,318,503 字节；Robocopy 差异检查为 0，原工作流 SHA-256 为 `E37279A6D77C21D7FC48EE3DC2DF1C9D3AA2772E4B5657300016623170B6A2B6`。
 - 本次仍没有 commit/push。self-hosted 远程运行必须由 Linux x64 Runner 实际上线后另行验证，不能用本地契约测试冒充。
 - 2026-09-01 最终本地整合版本为 `teammate-cicd-integrated-final2-20260901`：合同 82 项、user 12 项、content 14 项、social 13 项、公开 API 85/85、E2E 3/3 全部通过；同版本部署到 `streamhub-cicd` 后，12/12 健康/就绪/版本检查及 Kind 网关 85/85 API 再次通过。
