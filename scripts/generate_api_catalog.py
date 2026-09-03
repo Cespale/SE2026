@@ -76,6 +76,7 @@ def internal_purpose(owner: str, route: str) -> str:
     purposes = {
         ("user", "/internal/auth/introspect"): "content/social：鉴权；失败时调用方不得写业务数据",
         ("user", "/internal/users/batch"): "content/social：批量用户资料；读场景可降级",
+        ("user", "/internal/users/{user_id}/stream-key"): "social：开播复用创作者稳定推流密钥；缺失时惰性生成",
         ("user", "/internal/users/{user_id}/following-ids"): "content：关注 ID；用户不存在返回 404",
         ("user", "/internal/notifications"): "content/social Outbox：幂等创建通知",
         ("content", "/internal/outbox/dead"): "运维：查看 dead 事件；Gateway 不公开",

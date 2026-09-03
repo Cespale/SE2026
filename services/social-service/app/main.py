@@ -379,10 +379,14 @@ async def list_replies(
     return await render_comments(rows, db, request, response)
 
 
-def reject_sensitive(db: Session, content: str) -> None:
-    words = [row[0] for row in db.query(SensitiveWord.word).all()]
-    if any(word and word in content for word in words):
-        raise HTTPException(status_code=400, detail="内容包含敏感词")
+def mask_sensitive(db: Session, content: str) -> str:
+    """敏感词替换为等长 *号(与单体一致), 而不是拒绝发送。"""
+    words = [row[0] for row in db.query(SensitiveWord.word).all() if row[0]]
+    result = content
+    for word in words:
+        if word in result:
+            result = result.replace(word, "*" * len(word))
+    return result
 
 
 @app.post("/api/videos/{video_id}/comments")
@@ -395,13 +399,13 @@ async def create_comment(
     db: Session = Depends(get_db),
 ):
     target = await validate_video(video_id, request.state.request_id)
-    reject_sensitive(db, data.content)
+    content = mask_sensitive(db, data.content)
     parent_id = None if data.parentId in {"", "0"} else UUID(data.parentId)
     reply_to = None if not data.replyToUserId else UUID(data.replyToUserId)
     if parent_id and not db.get(Comment, parent_id):
         raise HTTPException(status_code=404, detail="父评论不存在")
     comment = Comment(
-        content=data.content,
+        content=content,
         user_id=context.user_id,
         video_id=video_id,
         parent_id=parent_id,
@@ -488,9 +492,9 @@ async def create_danmaku(
     db: Session = Depends(get_db),
 ):
     await validate_video(video_id, request.state.request_id)
-    reject_sensitive(db, data.content)
+    content = mask_sensitive(db, data.content)
     row = Danmaku(
-        content=data.content,
+        content=content,
         color=data.color,
         position=data.position,
         user_id=context.user_id,
@@ -622,7 +626,20 @@ async def create_live_room(
     category_id = int(data.categoryId)
     if categories and category_id not in categories:
         raise HTTPException(status_code=400, detail="分类不存在")
-    stream_key = secrets.token_hex(12)
+    # 复用创作者账号的稳定推流密钥(与开播页 OBS 配置一致), 而不是每次随机生成,
+    # 否则按开播页第一次显示的密钥推流, 永远对不上新建房间的拉流地址。
+    stream_key = None
+    try:
+        key_resp = await get_user_client().request_json(
+            "GET",
+            f"/internal/users/{context.user_id}/stream-key",
+            request.state.request_id,
+        )
+        stream_key = key_resp.get("streamKey")
+    except (ServiceUnavailable, httpx.HTTPError, KeyError, TypeError):
+        pass
+    if not stream_key:
+        stream_key = secrets.token_hex(12)
     room = LiveRoom(
         title=data.title,
         description=data.description or "",
@@ -670,6 +687,32 @@ def stop_live_room(
 
 @app.websocket("/ws/live/{room_id}")
 async def live_websocket(websocket: WebSocket, room_id: str):
+    # 解析登录态(前端通过 ?token= 携带 JWT), 进入提示应显示真实昵称而不是"游客"
+    nickname = "游客"
+    user_avatar = ""
+    user_id = ""
+    token = websocket.query_params.get("token")
+    if token:
+        try:
+            introspect = await get_user_client().request_json(
+                "POST",
+                "/internal/auth/introspect",
+                "ws-live",
+                headers={"Authorization": f"Bearer {token}"},
+            )
+            users = await get_user_client().request_json(
+                "POST",
+                "/internal/users/batch",
+                "ws-live",
+                json={"ids": [introspect["user_id"]]},
+            )
+            if users:
+                user_id = str(users[0].get("id", introspect["user_id"]))
+                nickname = users[0].get("nickname") or nickname
+                user_avatar = users[0].get("avatar") or ""
+        except Exception:
+            # 解析失败时退回"游客", 不影响观看
+            pass
     try:
         await live_hub.connect(room_id, websocket)
         await websocket.send_json(
@@ -677,7 +720,14 @@ async def live_websocket(websocket: WebSocket, room_id: str):
         )
         await live_hub.broadcast(
             room_id,
-            {"type": "system", "content": "游客 进入直播间", "timestamp": datetime.now(timezone.utc).isoformat()},
+            {
+                "type": "system",
+                "content": f"{nickname} 进入直播间",
+                "userId": user_id,
+                "username": nickname,
+                "userAvatar": user_avatar,
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+            },
         )
         while True:
             data = json.loads(await websocket.receive_text())
@@ -697,8 +747,13 @@ async def live_websocket(websocket: WebSocket, room_id: str):
 async def send_live_danmaku(
     room_id: UUID,
     data: dict,
+    request: Request,
+    response: Response,
     context: AuthContext = Depends(current_auth_context),
 ):
+    # 带上发送者昵称/头像, 否则前端聊天室所有消息都只能显示"观众"
+    users = await fetch_users([context.user_id], request, response)
+    user = users.get(str(context.user_id), {})
     await live_hub.broadcast(
         str(room_id),
         {
@@ -706,6 +761,9 @@ async def send_live_danmaku(
             "content": data.get("content", ""),
             "color": data.get("color", "#fff"),
             "userId": str(context.user_id),
+            "username": user.get("nickname") or "观众",
+            "userAvatar": user.get("avatar") or "",
+            "id": f"{context.user_id}-{datetime.now(timezone.utc).isoformat()}",
             "timestamp": datetime.now(timezone.utc).isoformat(),
         },
     )
@@ -746,22 +804,64 @@ def create_report(
     return {"id": str(report.id), "status": report.status or 0}
 
 
-def report_payload(row: Report) -> dict:
+def report_payload(
+    row: Report,
+    users: dict[str, dict],
+    videos: dict[str, dict],
+    comments: dict[str, Comment],
+    rooms: dict[str, LiveRoom],
+) -> dict:
+    """渲染举报条目: 带上举报者、举报对象内容以及来源跳转链接。
+
+    - target_type 0=视频 1=评论 2=直播
+    - 评论举报需要借助 comments 反查所属视频, 才能跳转到原视频页。
+    """
+    target_info: dict = {}
+    target_url = "#"
+    video_id = None
+
+    if row.target_type == 0:  # 视频
+        video = videos.get(str(row.target_id))
+        target_info = {"title": video["title"] if video else "已删除", "type": "video"}
+        target_url = f"/#/video/{row.target_id}"
+    elif row.target_type == 1:  # 评论
+        comment = comments.get(str(row.target_id))
+        if comment:
+            video_id = str(comment.video_id)
+            target_info = {"content": (comment.content or "")[:50], "type": "comment"}
+            target_url = f"/#/video/{comment.video_id}#comment-{row.target_id}"
+        else:
+            target_info = {"content": "已删除", "type": "comment"}
+            target_url = "#"
+    elif row.target_type == 2:  # 直播
+        room = rooms.get(str(row.target_id))
+        target_info = {"title": room.title if room else "已删除", "type": "live"}
+        target_url = f"/#/live/{row.target_id}"
+
+    reporter = users.get(str(row.reporter_id), {})
     return {
         "id": str(row.id),
         "reporterId": str(row.reporter_id),
+        "reporterName": reporter.get("nickname") or "未知用户",
+        "reporterAvatar": reporter.get("avatar") or "",
         "targetType": row.target_type,
         "targetId": str(row.target_id),
+        "targetInfo": target_info,
+        "targetUrl": target_url,
+        "videoId": video_id,
         "reason": row.reason,
         "status": row.status or 0,
-        "handlerId": str(row.handler_id) if row.handler_id else "",
+        "handlerId": str(row.handler_id) if row.handler_id else None,
         "handledAt": row.handled_at.isoformat() if row.handled_at else "",
         "createTime": row.created_at.isoformat() if row.created_at else "",
+        "createdAt": row.created_at.isoformat() if row.created_at else "",
     }
 
 
 @app.get("/api/admin/reports")
-def admin_reports(
+async def admin_reports(
+    request: Request,
+    response: Response,
     page: int = 1,
     limit: int = 20,
     status: Optional[int] = None,
@@ -773,7 +873,48 @@ def admin_reports(
         query = query.filter(Report.status == status)
     total = query.count()
     rows = query.order_by(desc(Report.created_at)).offset((page - 1) * limit).limit(limit).all()
-    return {"items": [report_payload(row) for row in rows], "total": total, "page": page}
+    if not rows:
+        return {"items": [], "total": total, "page": page, "hasMore": False}
+
+    # 举报者信息(用户服务)
+    users = await fetch_users([row.reporter_id for row in rows], request, response)
+
+    # 评论/直播间存在社交服务本地, 先反查
+    comment_ids = [row.target_id for row in rows if row.target_type == 1]
+    comments: dict[str, Comment] = {}
+    if comment_ids:
+        for comment in db.query(Comment).filter(Comment.id.in_(comment_ids)).all():
+            comments[str(comment.id)] = comment
+
+    room_ids = [row.target_id for row in rows if row.target_type == 2]
+    rooms: dict[str, LiveRoom] = {}
+    if room_ids:
+        for room in db.query(LiveRoom).filter(LiveRoom.id.in_(room_ids)).all():
+            rooms[str(room.id)] = room
+
+    # 视频信息(内容服务)
+    video_ids = [str(row.target_id) for row in rows if row.target_type == 0]
+    videos: dict[str, dict] = {}
+    if video_ids:
+        try:
+            batch = await get_content_client().request_json(
+                "POST",
+                "/internal/videos/batch",
+                request.state.request_id,
+                json={"ids": video_ids},
+            )
+            videos = {item["id"]: item for item in batch}
+        except (ServiceUnavailable, httpx.HTTPError, KeyError, TypeError):
+            response.headers["X-StreamHub-Degraded"] = "content-service"
+
+    return {
+        "items": [
+            report_payload(row, users, videos, comments, rooms) for row in rows
+        ],
+        "total": total,
+        "page": page,
+        "hasMore": page * limit < total,
+    }
 
 
 def resolve_report(report_id: UUID, status: int, context: AuthContext, db: Session):
@@ -809,10 +950,16 @@ def ignore_report(
 def list_sensitive_words(
     _: AuthContext = Depends(require_admin), db: Session = Depends(get_db)
 ):
-    return [
-        {"id": row.id, "word": row.word, "createdAt": row.created_at.isoformat() if row.created_at else ""}
+    # 前端与管理页契约期望 {"items": [...]}（与单体一致），裸数组会让列表永远为空。
+    items = [
+        {
+            "id": row.id,
+            "word": row.word,
+            "createdAt": row.created_at.isoformat() if row.created_at else "",
+        }
         for row in db.query(SensitiveWord).order_by(SensitiveWord.id).all()
     ]
+    return {"items": items, "total": len(items)}
 
 
 @app.post("/api/admin/sensitive-words")

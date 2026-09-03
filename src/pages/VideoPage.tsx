@@ -130,6 +130,9 @@ export function VideoPage() {
           // 从 data.data.likeCount 或 data.likeCount 获取喜欢数
           const likeCount = data.data?.likeCount ?? data.likeCount;
           setLocalLikeCount(likeCount);
+        } else if (response.status === 400) {
+          // 后端认为尚未点赞(如"还没有点过赞"), 本地状态不同步 — 以真实状态为准
+          await fetchLikeStatus();
         }
       } else {
         // 添加喜欢 - POST 请求
@@ -143,8 +146,9 @@ export function VideoPage() {
           // 从 data.likeCount 或 data.data.likeCount 获取喜欢数
           const likeCount = data.likeCount ?? data.data?.likeCount;
           setLocalLikeCount(likeCount);
-        } else if (response.status === 400 && data.detail === '已经点过赞了') {
-          setIsLiked(true);
+        } else if (response.status === 400) {
+          // 后端认为已点赞(微服务文案"已经点赞"/单体"已经点过赞了"),
+          // 本地刷新后丢了点赞态 — 拉取真实状态, 使按钮标红且可再次点击取消。
           await fetchLikeStatus();
         }
       }
@@ -161,12 +165,13 @@ export function VideoPage() {
     fetchComments(id);
     fetchDanmaku(id);
     fetchRelatedVideos(id);
-    fetchLikeStatus();
     setCurrentTime(0);
     setDuration(0);
     setIsPlaying(false);
     setActiveDanmaku([]);
     setVideoErrorText('');
+    // 切到新视频时先重置点赞态, 由下方效果用真实状态重新填充
+    setIsLiked(false);
   }, [id]);
 
   useEffect(() => {
@@ -185,11 +190,19 @@ export function VideoPage() {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('auth-storage') ? JSON.parse(localStorage.getItem('auth-storage')!).state?.token : ''}` }
       });
       const data = await response.json();
-      setIsLiked(data.isLiked);
+      // 单体返回 isLiked, 微服务返回 liked —— 两者都兼容
+      setIsLiked(Boolean(data.isLiked ?? data.liked));
     } catch (error) {
       console.error('获取点赞状态失败:', error);
     }
   };
+
+  // 刷新/登录态变化后用真实状态填充点赞按钮(不依赖某一条 400 文案)。
+  useEffect(() => {
+    if (id && isLoggedIn) {
+      fetchLikeStatus();
+    }
+  }, [id, isLoggedIn]);
 
   const safeVideoUrl = getPlayableVideoUrl(currentVideo?.videoUrl);
   const safePosterUrl = currentVideo?.coverUrl || DEFAULT_COVER_URL;
@@ -263,10 +276,25 @@ export function VideoPage() {
       openLoginModal();
       return;
     }
+    const content = danmakuInput.trim();
     const videoTime = Math.floor(videoRef.current?.currentTime || currentTime || 0);
-    await sendDanmaku(id, danmakuInput.trim(), danmakuColor, videoTime);
-    await fetchDanmaku(id);
+    const sent = await sendDanmaku(id, content, danmakuColor, videoTime);
     setDanmakuInput('');
+
+    // 让刚发送的弹幕立即在画面上飞过(不依赖时间轴匹配到 videoTime),
+    // 同时仍会按 videoTime 存库, 供回放时再次展示。
+    if (sent && showDanmaku) {
+      setActiveDanmaku((prev) =>
+        prev.some((d) => d.id === sent.id) ? prev : [...prev, sent]
+      );
+      const flyMs =
+        (Math.max(3, Math.min(6, sent.content.length / 10 + 2.5)) + 0.6) * 1000;
+      window.setTimeout(() => {
+        setActiveDanmaku((prev) => prev.filter((d) => d.id !== sent.id));
+      }, flyMs);
+    }
+
+    await fetchDanmaku(id);
   };
 
   const handleSendComment = async () => {

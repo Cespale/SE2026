@@ -472,7 +472,7 @@ export function AdminPage() {
                   if (report.targetType === 0) {
                     window.open(`/#/video/${report.targetId}`, '_blank');
                   } else if (report.targetType === 1) {
-                    const videoId = report.targetUrl?.split('/video/')[1]?.split('#')[0] || report.targetId;
+                    const videoId = report.videoId || report.targetUrl?.split('/video/')[1]?.split('#')[0] || report.targetId;
                     window.open(`/#/video/${videoId}`, '_blank');
                   } else if (report.targetType === 2) {
                     window.open(`/#/live/${report.targetId}`, '_blank');

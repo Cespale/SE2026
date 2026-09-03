@@ -20,7 +20,8 @@ SELECT
     CASE WHEN to_regclass('public.danmaku')           IS NOT NULL
           AND to_regclass('social_service.danmaku')   IS NOT NULL THEN 1 ELSE 0 END AS s_danmaku,
     CASE WHEN to_regclass('public.live_rooms')        IS NOT NULL
-          AND to_regclass('social_service.live_rooms') IS NOT NULL THEN 1 ELSE 0 END AS s_live_rooms
+          AND to_regclass('social_service.live_rooms') IS NOT NULL THEN 1 ELSE 0 END AS s_live_rooms,
+    CASE WHEN to_regclass('social_service.video_interaction_baselines') IS NOT NULL THEN 1 ELSE 0 END AS s_baselines
 \gset
 
 \if :s_users
@@ -59,6 +60,25 @@ SELECT id, title, description, tags, cover_url, video_url, duration, category_id
        audit_status, status, created_at, updated_at
 FROM public.videos
 ON CONFLICT DO NOTHING;
+\endif
+
+-- 补齐互动基线：把 content 中"历史计数"沉淀为 social 基线(扣除已迁移到 social 的
+-- likes/comments/favorites 行)。否则首次点赞时 counts_for = 0+1 = 1, outbox 会把
+-- 演示视频自带的大计数(如 Big Buck Bunny 860 赞)覆盖成 1。镜像 scripts/migrate_monolith_data.py。
+\if :s_videos
+\if :s_baselines
+INSERT INTO social_service.video_interaction_baselines
+    (video_id, like_count, comment_count, favorite_count)
+SELECT v.id,
+       GREATEST(v.like_count - COALESCE(l.cnt, 0), 0),
+       GREATEST(v.comment_count - COALESCE(c.cnt, 0), 0),
+       GREATEST(v.favorite_count - COALESCE(f.cnt, 0), 0)
+FROM public.videos v
+LEFT JOIN (SELECT video_id, count(*) AS cnt FROM social_service.video_likes GROUP BY video_id) l ON l.video_id = v.id
+LEFT JOIN (SELECT video_id, count(*) AS cnt FROM social_service.comments GROUP BY video_id) c ON c.video_id = v.id
+LEFT JOIN (SELECT video_id, count(*) AS cnt FROM social_service.video_favorites GROUP BY video_id) f ON f.video_id = v.id
+ON CONFLICT DO NOTHING;
+\endif
 \endif
 
 \if :s_comments

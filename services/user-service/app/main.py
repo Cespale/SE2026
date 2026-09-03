@@ -154,7 +154,14 @@ def register(data: RegisterIn, db: Session = Depends(get_db)):
 
 
 @app.get("/api/auth/me")
-def get_me(user: User = Depends(get_current_user)):
+def get_me(
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    # 创作者需要稳定的推流密钥(开播页首次进入即展示)。
+    # 缺失时惰性生成一次, 之后每次开播都复用同一个 key。
+    if user.user_type >= 1:
+        ensure_stream_key(user, db)
     return user_out(user)
 
 
@@ -1041,6 +1048,23 @@ def introspect(user: User = Depends(get_current_user)):
         user_type=user.user_type,
         status=user.status,
     )
+
+
+def ensure_stream_key(user: User, db: Session) -> str:
+    """为创作者生成/返回其稳定的推流密钥(每个房间复用, 与 OBS 配置一致)。"""
+    if not user.stream_key:
+        user.stream_key = secrets.token_hex(6)
+        db.commit()
+        db.refresh(user)
+    return user.stream_key
+
+
+@app.get("/internal/users/{user_id}/stream-key")
+def internal_stream_key(user_id: UUID, db: Session = Depends(get_db)):
+    user = db.get(User, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="用户不存在")
+    return {"streamKey": ensure_stream_key(user, db)}
 
 
 @app.post("/internal/users/batch", response_model=list[InternalUserOut])

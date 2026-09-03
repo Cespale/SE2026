@@ -864,22 +864,22 @@ def interaction_target(video_id: UUID, db: Session = Depends(get_db)):
 
 
 @app.post("/internal/videos/batch")
-def batch_videos(data: VideoBatchIn, db: Session = Depends(get_db)):
+async def batch_videos(
+    data: VideoBatchIn,
+    request: Request,
+    response: Response,
+    db: Session = Depends(get_db),
+):
     rows = db.query(Video).filter(Video.id.in_(data.ids)).all() if data.ids else []
     by_id = {row.id: row for row in rows}
-    return [
-        {
-            "id": str(video.id),
-            "title": video.title,
-            "coverUrl": video.cover_url or "",
-            "categoryId": str(video.category_id or ""),
-            "uploaderId": str(video.uploader_id),
-            "status": video.status,
-            "auditStatus": video.audit_status,
-        }
+    videos = [
+        video
         for video_id in data.ids
         if (video := by_id.get(video_id)) is not None
     ]
+    # 复用完整的视频序列化（含作者信息、播放量等），
+    # 供跨服务的用户喜欢列表等场景直接返回给前端。
+    return await video_items(videos, db, request, response)
 
 
 @app.put("/internal/videos/{video_id}/interaction-counts")

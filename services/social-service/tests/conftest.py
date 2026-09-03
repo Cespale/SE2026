@@ -51,6 +51,8 @@ class FakeUserClient:
                 raise httpx.HTTPStatusError("unauthorized", request=response.request, response=response)
             user_id, user_type = roles[authorization]
             return {"user_id": str(user_id), "user_type": user_type, "status": 0}
+        if path.endswith("/stream-key"):
+            return {"streamKey": "streamkey-abcdef0123"}
         if path == "/internal/users/batch":
             if self.fail_batch:
                 raise ServiceUnavailable("user batch unavailable")

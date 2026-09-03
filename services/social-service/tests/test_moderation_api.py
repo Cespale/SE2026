@@ -25,12 +25,40 @@ def test_reports_and_sensitive_words_admin_flow(client, auth_headers, ids):
     )
     assert added.status_code == 200
     word_id = added.json()["id"]
-    assert client.get(
+    words = client.get(
         "/api/admin/sensitive-words", headers=auth_headers("admin")
-    ).status_code == 200
+    )
+    assert words.status_code == 200
+    # 契约：列表必须返回 {"items": [...]}，前端按 data.items 读取
+    items = words.json()["items"]
+    assert any(item["word"] == "blocked" for item in items)
     assert client.delete(
         f"/api/admin/sensitive-words/{word_id}", headers=auth_headers("admin")
     ).status_code == 200
+
+
+def test_sensitive_words_are_masked_not_rejected(client, auth_headers, ids):
+    # 敏感词应被替换成等长 *号而不是 400 拒绝发送
+    client.post(
+        "/api/admin/sensitive-words",
+        headers=auth_headers("admin"),
+        json={"word": "blocked"},
+    )
+    comment = client.post(
+        f"/api/videos/{ids['video']}/comments",
+        headers=auth_headers("viewer"),
+        json={"content": "this is blocked now", "parentId": "0"},
+    )
+    assert comment.status_code == 200, comment.text
+    assert comment.json()["content"] == "this is ******* now"
+
+    danmaku = client.post(
+        f"/api/videos/{ids['video']}/danmaku",
+        headers=auth_headers("viewer"),
+        json={"content": "blocked!!", "videoTime": 3},
+    )
+    assert danmaku.status_code == 200, danmaku.text
+    assert danmaku.json()["content"] == "*******!!"
 
 
 def test_admin_live_and_user_likes_routes(client, auth_headers, ids):

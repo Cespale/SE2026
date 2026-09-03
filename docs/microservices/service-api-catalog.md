@@ -62,7 +62,7 @@
 | GET | `/api/admin/live-rooms` | social | 管理员 | user 鉴权；outbox→user | API-S001 |
 | POST | `/api/admin/live-rooms/{room_id}/close` | social | 管理员 | user 鉴权；outbox→user | API-S002 |
 | POST | `/api/admin/live-rooms/{room_id}/warn` | social | 管理员 | user 鉴权；outbox→user | API-S003 |
-| GET | `/api/admin/reports` | social | 管理员 | user 鉴权 | API-S004 |
+| GET | `/api/admin/reports` | social | 管理员 | user 鉴权；user 批量资料（可降级） | API-S004 |
 | PATCH | `/api/admin/reports/{report_id}/handle` | social | 管理员 | user 鉴权 | API-S005 |
 | PATCH | `/api/admin/reports/{report_id}/ignore` | social | 管理员 | user 鉴权 | API-S006 |
 | GET | `/api/admin/sensitive-words` | social | 管理员 | user 鉴权 | API-S007 |
@@ -78,7 +78,7 @@
 | GET | `/api/live/rooms/{room_id}` | social | 公开 | content 分类；user 主播资料 | API-S017 |
 | POST | `/api/live/rooms/{room_id}/end` | social | 创作者 | user 鉴权；content 分类；user 主播资料 | API-S018 |
 | POST | `/api/live/rooms/{room_id}/stop` | social | 创作者 | user 鉴权；content 分类；user 主播资料 | API-S019 |
-| POST | `/api/live/{room_id}/danmaku` | social | 登录用户 | user 鉴权；content 分类；user 主播资料 | API-S020 |
+| POST | `/api/live/{room_id}/danmaku` | social | 登录用户 | user 鉴权；content 分类；user 主播资料；user 批量资料（可降级） | API-S020 |
 | POST | `/api/reports` | social | 登录用户 | user 鉴权；content 校验 | API-S021 |
 | GET | `/api/users/{user_id}/likes` | social | 登录用户 | user 鉴权 | API-S022 |
 | GET | `/api/videos/{video_id}/comments` | social | 公开 | content 校验；user 批量资料（可降级） | API-S023 |
@@ -94,7 +94,7 @@
 
 ## 内部接口
 
-内部接口总数：**11**。Gateway 对 `/internal` 和 `/internal/*` 固定返回 404。
+内部接口总数：**12**。Gateway 对 `/internal` 和 `/internal/*` 固定返回 404。
 
 | 方法 | 路径 | 归属 | 调用方/用途与失败语义 | 测试 ID |
 |---|---|---|---|---|
@@ -102,6 +102,7 @@
 | POST | `/internal/notifications` | user | content/social Outbox：幂等创建通知 | INT-U002 |
 | POST | `/internal/users/batch` | user | content/social：批量用户资料；读场景可降级 | INT-U003 |
 | GET | `/internal/users/{user_id}/following-ids` | user | content：关注 ID；用户不存在返回 404 | INT-U004 |
+| GET | `/internal/users/{user_id}/stream-key` | user | social：开播复用创作者稳定推流密钥；缺失时惰性生成 | INT-U005 |
 | GET | `/internal/outbox/dead` | content | 运维：查看 dead 事件；Gateway 不公开 | INT-C001 |
 | GET | `/internal/users/{user_id}/received-like-count` | content | user：主页收到点赞数 | INT-C002 |
 | POST | `/internal/videos/batch` | content | social：批量视频摘要 | INT-C003 |

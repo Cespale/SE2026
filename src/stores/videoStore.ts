@@ -216,7 +216,7 @@ interface VideoStore {
     content: string,
     color?: string,
     videoTime?: number
-  ) => Promise<void>;
+  ) => Promise<Danmaku>;
   uploadVideo: (videoData: any) => Promise<boolean>;
   fetchPendingVideos: () => Promise<Video[]>;
   auditVideo: (videoId: string, auditStatus: number, rejectReason?: string) => Promise<void>;
@@ -692,6 +692,8 @@ export const useVideoStore = create<VideoStore>((set, get) => ({  videos: [],
     set((state) => ({
       danmakuList: [...state.danmakuList, newDanmaku],
     }));
+
+    return newDanmaku;
   } catch (error) {
     console.error('发送弹幕失败:', error);
 
@@ -710,6 +712,8 @@ export const useVideoStore = create<VideoStore>((set, get) => ({  videos: [],
     set((state) => ({
       danmakuList: [...state.danmakuList, mockDanmaku],
     }));
+
+    return mockDanmaku;
   }
 },
 
