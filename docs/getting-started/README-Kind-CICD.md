@@ -183,3 +183,50 @@ powershell -ExecutionPolicy Bypass -File scripts\connect-kind-dev.ps1
 - 入口：网页 `http://127.0.0.1:3266`；OBS 用页面「开播」页显示的推流地址 `rtmp://127.0.0.1:1936/live` 和流密钥。
 - 保持脚本窗口打开即可使用；按 `Ctrl+C` 结束并自动清理隧道。
 - 若上次没正常退出留下残留：先 `... -Teardown`。其他参数见脚本顶部注释（如 `-SkipLiveSrs` 只连 API+前端、`-NoFrontend` 只连隧道、`-NoBrowser` 不自动开浏览器）。
+
+## 10. 发布回滚：把服务退回上一个可用版本
+
+回滚脚本是与部署脚本成对的"反向发布"，用于新版本发布后发现有问题时退回上一个不可变版本。仓库提供两个：
+
+| 部署形态 | 前向部署 | 回滚 |
+|---|---|---|
+| 微服务（`streamhub-ms`，课程自动构建部署主线） | `scripts/deploy-microservices.sh` | `scripts/rollback-microservices.sh` |
+| 单体（`streamhub`） | `scripts/deploy.sh` | `scripts/rollback.sh` |
+
+用法（微服务，回滚到上一次不可变版本）：
+
+```powershell
+$version = '你要退回的不可变版本号'   # 例如上一次 gate 的版本
+$env:KUBECONFIG = (Resolve-Path '.ci-results\cloud-native\kind-lab-kubeconfig').Path
+$env:IMAGE_TAG = $version
+$env:APP_VERSION = $version
+& 'C:\Program Files\Git\bin\bash.exe' scripts/rollback-microservices.sh
+```
+
+脚本做了什么：
+
+1. 读 ConfigMap `streamhub-ms-config` 里当前 `APP_VERSION`，找不到说明该命名空间还没做过一次前置部署，直接拒绝（退出码 2）；
+2. 目标版本与当前版本相同则无操作退出（退出码 3）；
+3. 把 `APP_VERSION` 改回目标版本，再只对版本化 Deployment（user/content/social/gateway/frontend-ms）换成目标镜像 tag，等待滚动就绪；
+4. 跑 `health-check-microservices.sh`，精确校验每个 `/version` 等于目标版本；
+5. 全部通过输出 `ROLLBACK=PASS`，否则非零退出。
+
+回滚边界（答辩口径）：
+
+- **数据库不回滚**：schema/种子始终前滚且幂等（`IF NOT EXISTS`）。回滚是应用代码/镜像级，不执行破坏性 schema 撤销。
+- postgres/minio/srs 用固定镜像，不参与回滚；未部署的 `frontend-ms`（BACKEND_ONLY 模式）会被跳过。
+- 回滚前需确认上一版本镜像仍在本 Kind 节点内（同一集群历次部署会保留旧 tag；若重建过集群，需先对上一版本执行 `kind load docker-image`）。
+
+典型演示（本地可复现）：
+
+1. 同一 Kind 集群用两个版本各跑一次门禁：先 `.\scripts\run-kind-cicd-gate.ps1 -Version $v1`，再同集群 `-Version $v2`，两版镜像都会留在节点里；
+2. 现场把服务停在 `$v2`；
+3. 执行上面的 `rollback-microservices.sh` 退回 `$v1`，观察 `/version` 从 `$v2` 回到 `$v1`、健康检查全 PASS，最后一行 `ROLLBACK=PASS`。
+
+单体回滚用法一致，只是变量名是 `VERSION`、命名空间是 `streamhub`：
+
+```powershell
+$env:KUBECONFIG = ...
+$env:VERSION = '你要退回的版本'
+& 'C:\Program Files\Git\bin\bash.exe' scripts/rollback.sh
+```

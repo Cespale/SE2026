@@ -284,3 +284,42 @@ def test_kind_health_check_covers_gateway_services_and_exact_version():
         assert path in script
     assert "EXPECTED_VERSION" in script
     assert "version mismatch" in script
+
+
+def test_microservices_rollback_script_reverts_images_version_and_verifies():
+    script = (ROOT / "scripts" / "rollback-microservices.sh").read_text(
+        encoding="utf-8"
+    )
+    for required in (
+        "IMAGE_TAG",
+        "APP_VERSION",
+        "health-check-microservices.sh",
+        "ROLLBACK=PASS",
+        "versioned_deployments=(user-service content-service social-service gateway frontend-ms)",
+        "set image",
+        "rollout status",
+        "patch configmap streamhub-ms-config",
+        "前滚",  # 数据库只前滚，回滚是应用代码/镜像级
+    ):
+        assert required in script
+    # 无前置部署(exit 2)与同版本无操作(exit 3)两条防护路径都必须存在
+    assert "exit 2" in script
+    assert "exit 3" in script
+    # 回滚不拆栈、不删集群：只改镜像/配置后做健康检查
+    assert "docker compose" not in script
+    assert "delete cluster" not in script
+
+
+def test_monolith_rollback_script_requires_version_and_runs_health_check():
+    script = (ROOT / "scripts" / "rollback.sh").read_text(encoding="utf-8")
+    for required in (
+        "VERSION",
+        "health-check.sh",
+        "ROLLBACK=PASS",
+        "set image",
+        "streamhub-backend",
+        "streamhub-frontend",
+    ):
+        assert required in script
+    assert "exit 2" in script
+    assert "exit 3" in script

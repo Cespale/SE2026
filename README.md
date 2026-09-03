@@ -272,17 +272,13 @@ KIND_CICD_GATE=PASS
 
 没有最后一行 `KIND_CICD_GATE=PASS` 就不能算完整成功。
 
-本机 2026-09-02 最新人工复跑版本 `manual-20260902110259` 的结果：
+要在浏览器里像第 5 节那样操作页面、并用 OBS 对 Kind 里的后端推流，使用以下命令连接前端与 SRS 隧道：
 
-- 契约/共享测试 85 项通过；
-- user、content、social 分别 12、14、13 项通过；
-- 公开接口 85/85；
-- Playwright 3/3；
-- Gateway 与三个业务服务 12 个 health/ready/version 检查通过；
-- Kind 中 3 个业务服务、Gateway、PostgreSQL、MinIO 均 Ready；
-- `LOCAL_MICROSERVICES_GATE=PASS` 与 `KIND_CICD_GATE=PASS` 同时存在。
+```powershell
+.\scripts\connect-kind-dev.ps1
+```
 
-对应证据目录：`SE2026-microservices\.ci-results\kind-cicd\manual-20260902110259`。
+进入后请重新登录。使用说明与参数见 `docs\getting-started\README-Kind-CICD.md` 第 9 节。
 
 `SE2026-microservices\.ci-results` 是本机运行产物，已被 Git 忽略，因此从 GitHub clone 后通常看不到上述本机目录；接收的 ZIP 只有在打包者主动保留时才会带上它。无论历史证据是否存在，接收者都应在自己的电脑重新运行门禁，生成属于本机和本次版本的新证据。仓库中随代码保留的课程原始报告位于 `SE2026-microservices\docs\microservices\evidence`。
 
@@ -330,6 +326,21 @@ DEPLOYMENT_FAILURE_DRILL=EXPECTED_FAILURE
 ```
 
 这里的 `EXPECTED_FAILURE` 是实验成功：脚本故意使用不存在的不可变镜像标签，保留失败输出，并证明当前正确版本仍在运行。它不会删除容器、数据库或数据卷。
+
+再演示"发布后回滚"时，对运行中的 Kind 集群执行回滚脚本，退回上一个不可变版本并做精确版本校验：
+
+```powershell
+$env:KUBECONFIG = '.ci-results\cloud-native\kind-lab-kubeconfig'
+$env:IMAGE_TAG = $rollbackTargetVersion     # 上一个可用版本号
+$env:APP_VERSION = $rollbackTargetVersion
+& 'C:\Program Files\Git\bin\bash.exe' scripts/rollback-microservices.sh
+```
+
+回滚只改应用镜像与 `APP_VERSION` 配置并等待滚动就绪，然后逐项校验 `/version` 等于目标版本；**不回滚数据库**（迁移只前滚且幂等）。全部通过输出：
+
+```text
+ROLLBACK=PASS version=...
+```
 
 ### 7.3 第三项：HPA 自动扩缩容和故障处理
 
@@ -438,13 +449,6 @@ Invoke-RestMethod -Uri 'http://127.0.0.1:18100/_services/social/version'
 
 四个版本号必须与本次 `$version` 一致。完成后在端口转发终端按 `Ctrl+C`，不会停止集群。
 
-要在浏览器里像第 5 节那样操作页面、并用 OBS 对 Kind 里的后端推流，一条命令连好前端与 SRS 隧道：
-
-```powershell
-.\scripts\connect-kind-dev.ps1
-```
-
-进入后请重新登录。使用说明与参数见 `docs\getting-started\README-Kind-CICD.md` 第 9 节。
 
 ### 8.3 日志和事件
 
@@ -613,6 +617,7 @@ MinIO 是对象存储，不是第二个关系数据库。PostgreSQL 保存业务
 - [ ] 12 个健康、就绪、版本检查通过；
 - [ ] `LOCAL_MICROSERVICES_GATE=PASS`；
 - [ ] `KIND_CICD_GATE=PASS`；
+- [ ] 回滚脚本能把服务退回上一个不可变版本，且 `/version` 精确校验通过（`ROLLBACK=PASS`）；
 - [ ] HPA 出现 1→多→1，故障实验出现 503/200/200 并恢复；
 - [ ] 性能脚本每个版本每个接口至少运行 3 次；
 - [ ] 没有把“本地通过”写成“远程 GitHub Actions 已通过”；
